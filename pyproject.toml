@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "speed-reduction"
+version = "0.1.0"
+authors = [
+  { name="Xuan WANG", email="eloiwangxuan@qq.com" },
+]
+description = "An automatic tool to optimize the speed of vessels."
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+  "numpy",
+  "pandas",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/tweag/nixpkgs-graph"
+"Bug Tracker" = "https://github.com/tweag/nixpkgs-graph/issues"
+
+[tool.setuptools_scm]

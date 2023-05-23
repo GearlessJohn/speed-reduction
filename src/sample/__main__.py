@@ -29,7 +29,7 @@ shg_rtm = Route(
 
 
 # Create a virual sample of vessels with same information except CII score
-vessels_virtual = [Vessel(df_vessels.iloc[1]) for i in range(1000)]
+vessels_virtual = [Vessel(df_vessels.iloc[1]) for i in range(100)]
 
 ciis = []
 for vessel in vessels_virtual:
@@ -37,13 +37,13 @@ for vessel in vessels_virtual:
     ciis.append(vessel.cii_score_2021)
 
 # plt.hist(ciis)
-# plt.show()
 
 # Launch Model
-mf = MeanField(vessels_virtual, shg_rtm, market, q=0.15)
+mf = MeanField(vessels_virtual, shg_rtm, market, q=0.05)
 print("theta:\t", mf.theta_)
+res = mf.simulate(tol=0.001, max_iter=10)
+plt.plot(res)
 y = mf.x_ + mf.lam_ * mf.delta_
-plt.plot(mf.simulate(tol=0.001, max_iter=100))
-print(np.sum(y > mf.theta_ + 1e-3))
+print(np.sum(y >= mf.theta_ + 1e-7))
 
-# plt.show()
+plt.show()

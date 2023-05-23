@@ -8,7 +8,7 @@ class MeanField:
         self.route = route
         self.global_market = global_market
 
-        self.theta_ = 0
+        self.theta_ = 10
         self.e_delta_ = 0
         self.q_ = q
 
@@ -32,17 +32,19 @@ class MeanField:
             p = route.freight_rate * 0.95 * vessel.capacity * T * u_actual / D
             a = 5 * p
             b = 4 * p / u_actual
+
             cf = -settlement.fuel_cost() / (0.95 * vessel.capacity)
             l = cf * 0.95 * vessel.capacity * T / D
             gamma = u_actual**2 / (2 * cf * 0.95 * vessel.capacity * T * u_actual / D)
             u0 = gamma * (a - l) / (1 + gamma * b)
 
             cii = vessel.cii_score_2021
-            # delta_max =
-            x = cii
-            lam = 2 * cii / u0
+            cii_e = 7.65
+            delta_max = (np.sqrt(cii_e / cii) - 1) * u0
 
-            q = 0.05
+            x = self.theta_ - delta_max
+            lam = 1
+
             p0 = a - b * u0
             c0 = l * u0 + 1.0 / 2 / gamma * u0**2
             v = (-c0 + p0 * u0) * 0.1
@@ -94,10 +96,8 @@ class MeanField:
 
     def theta_hat(self, x, delta):
         # Equation (9)
-        y = x + self.lam_ * delta
-        print("y:\t", y[:5])
-        # return np.percentile(y, 1 - self.q_)
-        return np.sort(x + delta)[int(len(x) * (1 - self.q_))]
+        # return np.percentile(x + self.lam_ * delta, 1 - self.q_)
+        return np.sort(x + self.lam_ * delta)[int(len(x) * (1 - self.q_)) - 1]
 
     def one_step(self):
         # From previous distribution of x, a new theta can be estimated
@@ -107,13 +107,21 @@ class MeanField:
         # Based on new theta, every vessel changes its speed (delta)
         self.delta_ = self.delta_hat(self.x_, self.theta_, self.e_delta_)
         print("delta:\t", self.delta_[:5])
+
+        y = self.x_ + self.lam_ * self.delta_
+        print("y:\t", y[:5])
+
         # Then we need to recalculate the E[delta]
         self.e_delta_ = np.mean(self.delta_)
         print("e_delta:\t", self.e_delta_)
+
         return
 
     def simulate(self, tol=1e-5, max_iter=20):
-        err = []
+        errs = []
+        n = len(self.x_)
+        np.set_printoptions(precision=14)
+
         for i in range(1, max_iter + 1):
             delta_current = self.delta_
 
@@ -125,21 +133,14 @@ class MeanField:
             # if np.mean((delta_current - self.delta_) ** 2) <= tol:
             #     print(f"Tolerance satisfied at iteration {i}!")
             #     break
-            err.append(
-                np.abs(
-                    np.sum((self.x_ + self.lam_ * self.delta_) >= self.theta_)
-                    / len(self.x_)
-                    - self.q_
-                )
+
+            err = (
+                np.sum((self.x_ + self.lam_ * self.delta_) >= self.theta_) / n - self.q_
             )
-            if (
-                np.abs(
-                    np.sum((self.x_ + self.lam_ * self.delta_ >= self.theta_))
-                    / len(self.x_)
-                    - self.q_
-                )
-                < tol
-            ) and np.mean((delta_current - self.delta_) ** 2) < 1e-4:
-                print(f"Tolerance satisfied at iteration {i}!")
-                break
-        return err
+
+            errs.append(err)
+
+            # if np.abs(err) < tol:
+            #     print(f"Tolerance satisfied at iteration {i}!")
+            #     break
+        return errs

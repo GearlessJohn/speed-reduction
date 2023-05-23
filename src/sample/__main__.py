@@ -40,10 +40,10 @@ for vessel in vessels_virtual:
 
 # Launch Model
 mf = MeanField(vessels_virtual, shg_rtm, market, q=0.05)
-print("theta:\t", mf.theta_)
-res = mf.simulate(tol=0.001, max_iter=10)
-plt.plot(res)
-y = mf.x_ + mf.lam_ * mf.delta_
-print(np.sum(y >= mf.theta_ + 1e-7))
+errs, delta0 = mf.simulate(tol=0.01, max_iter=20)
+
+fig, axs = plt.subplots(2)
+axs[0].plot(errs)
+axs[1].plot(delta0)
 
 plt.show()

@@ -96,8 +96,8 @@ class MeanField:
 
     def theta_hat(self, x, delta):
         # Equation (9)
-        # return np.percentile(x + self.lam_ * delta, 1 - self.q_)
-        return np.sort(x + self.lam_ * delta)[int(len(x) * (1 - self.q_)) - 1]
+        return np.percentile(x + self.lam_ * delta, 100 - self.q_ * 100)
+        # return np.sort(x + self.lam_ * delta)[int(len(x) * (1 - self.q_)) - 1]
 
     def one_step(self):
         # From previous distribution of x, a new theta can be estimated
@@ -119,6 +119,7 @@ class MeanField:
 
     def simulate(self, tol=1e-5, max_iter=20):
         errs = []
+        delta0 = []
         n = len(self.x_)
         np.set_printoptions(precision=14)
 
@@ -127,20 +128,18 @@ class MeanField:
 
             print(f"iteration {i}:")
             self.one_step()
-            # print("-gamma b e_delta", (-self.gamma_ * self.b_ * self.e_delta_)[:5])
             print()
-
-            # if np.mean((delta_current - self.delta_) ** 2) <= tol:
-            #     print(f"Tolerance satisfied at iteration {i}!")
-            #     break
 
             err = (
                 np.sum((self.x_ + self.lam_ * self.delta_) >= self.theta_) / n - self.q_
             )
 
             errs.append(err)
-
-            # if np.abs(err) < tol:
-            #     print(f"Tolerance satisfied at iteration {i}!")
-            #     break
-        return errs
+            delta0.append(self.delta_[0])
+            if (
+                np.abs(err) < tol
+                and np.mean((delta_current - self.delta_) ** 2) <= 1e-4
+            ):
+                print(f"Tolerance satisfied at iteration {i}!")
+                break
+        return errs, delta0

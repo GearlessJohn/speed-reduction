@@ -34,8 +34,8 @@ stm = Settlement(vessels[1], shg_rtm, market)
 
 vessels_virtual = [Vessel(df_vessels.iloc[1]) for i in range(100)]
 
-mf = MeanField(vessels_virtual, shg_rtm, market, q=0.15, value_exit=0.9)
-mf.x_ = mf.x_ * (1 + 0.5 * 2 * (np.random.rand(len(mf.x_)) - 0.5)) - 1
+mf = MeanField(vessels_virtual, shg_rtm, market, q=0.15, value_exit=0.2)
+mf.x_ = mf.x_ * (1 + 0.95 * 2 * (np.random.rand(len(mf.x_)) - 0.5))
 # mf.x_ = mf.x_ * (1 + np.random.randn(len(mf.x_)))
 
 # Simulate
@@ -58,6 +58,6 @@ fig.suptitle(
 )
 
 plt.show()
-# fig.savefig(
-#     f"./fig/meanfield-{len(mf.x_):d} navires-exit value rate {mf.value_exit_:.1f}.png"
-# )
+fig.savefig(
+    f"./fig/meanfield-{len(mf.x_):d} navires-exit value rate {mf.value_exit_:.1f}.png"
+)

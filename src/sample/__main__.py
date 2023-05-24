@@ -34,7 +34,7 @@ stm = Settlement(vessels[1], shg_rtm, market)
 
 vessels_virtual = [Vessel(df_vessels.iloc[1]) for i in range(100)]
 
-mf = MeanField(vessels_virtual, shg_rtm, market, q=0.15, value_exit=0.5)
+mf = MeanField(vessels_virtual, shg_rtm, market, q=0.15, value_exit=0.9)
 mf.x_ = mf.x_ * (1 + 0.5 * 2 * (np.random.rand(len(mf.x_)) - 0.5)) - 1
 # mf.x_ = mf.x_ * (1 + np.random.randn(len(mf.x_)))
 

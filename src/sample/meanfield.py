@@ -3,11 +3,11 @@ from settlement import Settlement
 
 
 class MeanField:
-    def __init__(self, vessels, route, global_market, q=0.05):
+    def __init__(self, vessels, route, global_market, q=0.05, value_exit=0.5):
         self.vessels = vessels
         self.route = route
         self.global_market = global_market
-
+        self.value_exit_ = value_exit
         self.theta_ = 10
         self.e_delta_ = 0
         self.q_ = q
@@ -47,7 +47,7 @@ class MeanField:
 
             p0 = a - b * u0
             c0 = l * u0 + 1.0 / 2 / gamma * u0**2
-            v = (-c0 + p0 * u0) * 0.1
+            v = (-c0 + p0 * u0) * self.value_exit_
 
             self.a_.append(a)
             self.b_.append(b)
@@ -89,7 +89,7 @@ class MeanField:
         x_hat = self.x_estimator(theta=theta, e_delta=e_delta)
 
         return np.where(
-            x < theta,
+            x <= theta,
             np.minimum((theta - x) / self.lam_, -self.gamma_ * self.b_ * e_delta),
             np.where(x <= x_hat, -(x - theta) / self.lam_, np.zeros(len(x))),
         )
@@ -97,7 +97,7 @@ class MeanField:
     def theta_hat(self, x, delta):
         # Equation (9)
         # return np.percentile(x + self.lam_ * delta, 100 - self.q_ * 100)
-        return np.sort(x + self.lam_ * delta)[int(len(x) * (1 - self.q_)) - 1]
+        return np.sort(x + self.lam_ * delta)[int(len(x) * (1 - self.q_))]
 
     def one_step(self):
         # From previous distribution of x, a new theta can be estimated
@@ -105,7 +105,7 @@ class MeanField:
         print("theta:\t", self.theta_)
         print(
             "proportion:",
-            np.sum((self.x_ + self.lam_ * self.delta_) >= self.theta_) / len(self.x_),
+            np.sum((self.x_ + self.lam_ * self.delta_) > self.theta_) / len(self.x_),
         )
         # Based on new theta, every vessel changes its speed (delta)
         self.delta_ = self.delta_hat(self.x_, self.theta_, self.e_delta_)
@@ -127,6 +127,18 @@ class MeanField:
         n = len(self.x_)
         np.set_printoptions(precision=14)
 
+        err = np.sum((self.x_ + self.lam_ * self.delta_) > self.theta_) / n
+
+        errs.append(err)
+        delta0.append(self.delta_[0])
+        pis.append(
+            (
+                (self.p0_ - self.b_ * self.delta_) * (self.u0_ + self.delta_)
+                - self.l_ * (self.u0_ + self.delta_)
+                - 1 / 2 / self.gamma_ * (self.u0_ + self.delta_) ** 2
+            )[0]
+        )
+
         for i in range(1, max_iter + 1):
             delta_current = self.delta_
 
@@ -134,7 +146,7 @@ class MeanField:
             self.one_step()
             print()
 
-            err = np.sum((self.x_ + self.lam_ * self.delta_) >= self.theta_) / n
+            err = np.sum((self.x_ + self.lam_ * self.delta_) > self.theta_) / n
 
             errs.append(err)
             delta0.append(self.delta_[0])

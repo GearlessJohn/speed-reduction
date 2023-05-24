@@ -36,24 +36,33 @@ vessels_virtual = [Vessel(df_vessels.iloc[1]) for i in range(100)]
 
 ciis = []
 for vessel in vessels_virtual:
-    vessel.cii_score_2021 = vessel.cii_score_2021 * (1 + (np.random.rand() - 0.5))
+    vessel.cii_score_2021 = (
+        vessel.cii_score_2021 * (1 + 0.99 * 2 * (np.random.rand() - 0.5)) ** 0.5
+    )
     ciis.append(vessel.cii_score_2021)
 
-# plt.hist(ciis)
 
 # # Launch Model
-mf = MeanField(vessels_virtual, shg_rtm, market, q=0.15)
+mf = MeanField(vessels_virtual, shg_rtm, market, q=0.15, value_exit=0.5)
 errs, delta0, pis = mf.simulate(tol=0.01, max_iter=15)
 
-fig, axs = plt.subplots(3)
-axs[0].plot(errs)
-axs[0].set_title("Proportion of vessels with y>theta")
-axs[0].axline(xy1=(0, mf.q_), slope=0, c="red")
+fig, axs = plt.subplots(4, figsize=(8, 6))
+plt.subplots_adjust(hspace=0.5)
+axs[0].hist(mf.x_)
+axs[0].set_title("Distribution of x")
+axs[1].plot(errs)
+axs[1].set_title("Proportion of vessels with y>theta")
+axs[1].axline(xy1=(0, mf.q_), slope=0, c="red")
 
-axs[1].plot(delta0)
-axs[1].set_title("Speed variationof the first vessel's ")
-axs[2].plot(pis)
-axs[2].set_title("Profit of the first vessel")
+axs[2].plot(delta0)
+axs[2].set_title("Speed variationof the first vessel's ")
+axs[3].plot(pis)
+axs[3].set_title("Profit of the first vessel")
+fig.suptitle(
+    f"{len(mf.x_):d} navires, q: {mf.q_:.2f}, exit value rate: {mf.value_exit_:.1f}"
+)
 
 plt.show()
-fig.savefig("./fig/meanfield-100.png")
+# fig.savefig(
+#     f"./fig/meanfield-{len(mf.x_):d} navires-exit value rate {mf.value_exit_:.1f}.png"
+# )

@@ -29,7 +29,7 @@ class MeanField:
             D = route.distance
             u_actual = vessel.speed_2021
 
-            p = route.freight_rate * 0.95 * vessel.capacity * T * u_actual / D
+            p = route.freight_rate * 0.95 * vessel.capacity * T / D
             a = 5 * p
             b = 4 * p / u_actual
 
@@ -96,14 +96,17 @@ class MeanField:
 
     def theta_hat(self, x, delta):
         # Equation (9)
-        return np.percentile(x + self.lam_ * delta, 100 - self.q_ * 100)
-        # return np.sort(x + self.lam_ * delta)[int(len(x) * (1 - self.q_)) - 1]
+        # return np.percentile(x + self.lam_ * delta, 100 - self.q_ * 100)
+        return np.sort(x + self.lam_ * delta)[int(len(x) * (1 - self.q_)) - 1]
 
     def one_step(self):
         # From previous distribution of x, a new theta can be estimated
         self.theta_ = self.theta_hat(self.x_, self.delta_)
         print("theta:\t", self.theta_)
-
+        print(
+            "proportion:",
+            np.sum((self.x_ + self.lam_ * self.delta_) >= self.theta_) / len(self.x_),
+        )
         # Based on new theta, every vessel changes its speed (delta)
         self.delta_ = self.delta_hat(self.x_, self.theta_, self.e_delta_)
         print("delta:\t", self.delta_[:5])
@@ -120,6 +123,7 @@ class MeanField:
     def simulate(self, tol=1e-5, max_iter=20):
         errs = []
         delta0 = []
+        pis = []
         n = len(self.x_)
         np.set_printoptions(precision=14)
 
@@ -130,16 +134,21 @@ class MeanField:
             self.one_step()
             print()
 
-            err = (
-                np.sum((self.x_ + self.lam_ * self.delta_) >= self.theta_) / n - self.q_
-            )
+            err = np.sum((self.x_ + self.lam_ * self.delta_) >= self.theta_) / n
 
             errs.append(err)
             delta0.append(self.delta_[0])
+            pis.append(
+                (
+                    (self.p0_ - self.b_ * self.delta_) * (self.u0_ + self.delta_)
+                    - self.l_ * (self.u0_ + self.delta_)
+                    - 1 / 2 / self.gamma_ * (self.u0_ + self.delta_) ** 2
+                )[0]
+            )
             if (
-                np.abs(err) < tol
+                np.abs(err - self.q_) <= tol
                 and np.mean((delta_current - self.delta_) ** 2) <= 1e-4
             ):
                 print(f"Tolerance satisfied at iteration {i}!")
                 break
-        return errs, delta0
+        return errs, delta0, pis

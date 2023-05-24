@@ -39,10 +39,15 @@ class Settlement:
             self.vessel.capacity * self.route.utilization_rate * self.route.freight_rate
         )
 
-    def fuel_cost_unit(self, speed=None):
-        print(
-            f"Fuel cost of {self.vessel.name} for route {self.route.name}: {self.fuel_cost(speed)/(self.vessel.capacity*self.route.utilization_rate):.1f} dollars/{self.vessel.unit}"
+    def fuel_cost_unit(self, speed=None, pr=False):
+        cost = self.fuel_cost(speed) / (
+            self.vessel.capacity * self.route.utilization_rate
         )
+        if pr:
+            print(
+                f"Fuel cost of {self.vessel.name} for route {self.route.name}: {cost:.1f} dollars/{self.vessel.unit}"
+            )
+        return
 
     def profit(self, speed=None):
         return (

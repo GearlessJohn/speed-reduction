@@ -52,7 +52,7 @@ class Vessel:
     def fuel_consumption(self, speed=None):
         # Calculating fuel consumption based on the vessel's speed and distance traveled
         if speed is None:
-            speed = self.service_speed
+            speed = self.speed_2021
         return (
             (
                 self.hfo_quantity_2021
@@ -61,7 +61,7 @@ class Vessel:
                 + self.lng_2021
             )
             / self.distance_2021
-            * (speed / self.service_speed) ** 3
+            * (speed / self.speed_2021) ** 3
         )
 
     def ges_emission(self, speed=None):

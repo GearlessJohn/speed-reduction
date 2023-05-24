@@ -28,6 +28,9 @@ shg_rtm = Route(
 )
 
 
+stm = Settlement(vessels[1], shg_rtm, market)
+stm.fuel_cost_unit(pr=True)
+
 # Create a virual sample of vessels with same information except CII score
 vessels_virtual = [Vessel(df_vessels.iloc[1]) for i in range(100)]
 
@@ -38,12 +41,19 @@ for vessel in vessels_virtual:
 
 # plt.hist(ciis)
 
-# Launch Model
-mf = MeanField(vessels_virtual, shg_rtm, market, q=0.05)
-errs, delta0 = mf.simulate(tol=0.01, max_iter=20)
+# # Launch Model
+mf = MeanField(vessels_virtual, shg_rtm, market, q=0.15)
+errs, delta0, pis = mf.simulate(tol=0.01, max_iter=15)
 
-fig, axs = plt.subplots(2)
+fig, axs = plt.subplots(3)
 axs[0].plot(errs)
+axs[0].set_title("Proportion of vessels with y>theta")
+axs[0].axline(xy1=(0, mf.q_), slope=0, c="red")
+
 axs[1].plot(delta0)
+axs[1].set_title("Speed variationof the first vessel's ")
+axs[2].plot(pis)
+axs[2].set_title("Profit of the first vessel")
 
 plt.show()
+fig.savefig("./fig/meanfield-100.png")

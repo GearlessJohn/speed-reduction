@@ -23,7 +23,7 @@ class Settlement:
             * self.global_market.carbon_tax_rates
         )
 
-    def operational_cost(self):
+    def operational_cost(self, cost=None):
         # Determine the expenses associated with vessel operations
         return self.fuel_cost()
 

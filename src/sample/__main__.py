@@ -27,23 +27,18 @@ shg_rtm = Route(
     freight_rate=1479.0,
 )
 
-
 stm = Settlement(vessels[1], shg_rtm, market)
-stm.fuel_cost_unit(pr=True)
 
-# Create a virual sample of vessels with same information except CII score
+# Launch Model
+# Create a virual sample of vessels with same information
+
 vessels_virtual = [Vessel(df_vessels.iloc[1]) for i in range(100)]
 
-ciis = []
-for vessel in vessels_virtual:
-    vessel.cii_score_2021 = (
-        vessel.cii_score_2021 * (1 + 0.99 * 2 * (np.random.rand() - 0.5)) ** 0.5
-    )
-    ciis.append(vessel.cii_score_2021)
-
-
-# # Launch Model
 mf = MeanField(vessels_virtual, shg_rtm, market, q=0.15, value_exit=0.5)
+mf.x_ = mf.x_ * (1 + 0.5 * 2 * (np.random.rand(len(mf.x_)) - 0.5)) - 1
+# mf.x_ = mf.x_ * (1 + np.random.randn(len(mf.x_)))
+
+# Simulate
 errs, delta0, pis = mf.simulate(tol=0.01, max_iter=15)
 
 fig, axs = plt.subplots(4, figsize=(8, 6))
@@ -55,7 +50,7 @@ axs[1].set_title("Proportion of vessels with y>theta")
 axs[1].axline(xy1=(0, mf.q_), slope=0, c="red")
 
 axs[2].plot(delta0)
-axs[2].set_title("Speed variationof the first vessel's ")
+axs[2].set_title("Speed variation of the first vessel's ")
 axs[3].plot(pis)
 axs[3].set_title("Profit of the first vessel")
 fig.suptitle(

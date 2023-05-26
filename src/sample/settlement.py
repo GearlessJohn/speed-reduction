@@ -85,7 +85,7 @@ class Settlement:
         return res
 
     def plot_profit_year(self):
-        vs = np.linspace(10, 24, 0.5)
-        profits = np.array([self.profit_year(speed=v) for v in vs])
+        vs = np.arange(10, 24, 0.5)
+        profits = np.array([self.profit_year(speed=vs[i]) for i in range(len(vs))])
         plt.plot(vs, profits)
         plt.show()

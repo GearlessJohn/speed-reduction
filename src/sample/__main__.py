@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Importing custom classes
 from vessel import Vessel
 from global_market import GlobalMarket
 from route import Route
@@ -16,13 +15,13 @@ df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
 vessels = [Vessel(row) for _, row in df_vessels.iterrows()]
 
 # Initializing GlobalMarket object
-market = GlobalMarket(ifo380_price=494.0, vlsifo_price=631.5, carbon_tax_rates=0.0)
+market = GlobalMarket(ifo380_price=494.0, vlsifo_price=631.5, carbon_tax_rates=94.0)
 
 # Initializing Route object
 shg_rtm = Route(
     name="Shanghai-Rotterdam",
     route_type="CONTAINER SHIPS",
-    distance=11999,
+    distance=11999.0,
     freight_rate=1479.0,
 )
 

@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class Settlement:
@@ -83,8 +84,8 @@ class Settlement:
 
         return res
 
-    # def plot_profit_year(self):
-    #     vs = np.linspace(10, 24, 0.5)
-
-    #     for v in vs:
-    #         profit = self.profit_year()
+    def plot_profit_year(self):
+        vs = np.linspace(10, 24, 0.5)
+        profits = np.array([self.profit_year(speed=v) for v in vs])
+        plt.plot(vs, profits)
+        plt.show()

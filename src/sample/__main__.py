@@ -30,7 +30,7 @@ stm = Settlement(
 )
 stm.cost_fuel_unit(pr=True)
 stm.profit_year(pr=True)
-
+stm.plot_profit_year()
 # # Launch Model
 # # Create a virual sample of vessels with same information
 

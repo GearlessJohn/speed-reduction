@@ -3,10 +3,12 @@ from settlement import Settlement
 
 
 class MeanField:
-    def __init__(self, vessels, route, global_market, q=0.05, value_exit=0.5):
+    def __init__(
+        self, vessels, route, global_env, q=0.05, value_exit=0.5, utilization_rate=0.95
+    ):
         self.vessels = vessels
         self.route = route
-        self.global_market = global_market
+        self.global_env = global_env
         self.value_exit_ = value_exit
         self.theta_ = 10
         self.e_delta_ = 0
@@ -24,7 +26,7 @@ class MeanField:
         self.delta_ = []
 
         for vessel in self.vessels:
-            settlement = Settlement(vessel, route, global_market)
+            settlement = Settlement(vessel, route, global_env, utilization_rate)
             T = vessel.hours_2021
             D = route.distance
             u_actual = vessel.speed_2021
@@ -33,7 +35,7 @@ class MeanField:
             a = 5 * p
             b = 4 * p / u_actual
 
-            cf = -settlement.fuel_cost() / (0.95 * vessel.capacity)
+            cf = -settlement.cost_fuel() / (0.95 * vessel.capacity)
             l = cf * 0.95 * vessel.capacity * T / D
             gamma = u_actual**2 / (2 * cf * 0.95 * vessel.capacity * T * u_actual / D)
             u0 = gamma * (a - l) / (1 + gamma * b)

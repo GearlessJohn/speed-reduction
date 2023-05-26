@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 class Settlement:
-    def __init__(self, vessel, route, global_market, utilization_rate):
+    def __init__(self, vessel, route, global_market, utilization_rate=0.95):
         self.vessel = vessel
         self.route = route
         self.global_market = global_market

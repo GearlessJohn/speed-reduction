@@ -1,4 +1,4 @@
-class GlobalMarket:
+class GlobalEnv:
     def __init__(self, ifo380_price, vlsifo_price, carbon_tax_rates):
         # Initializing the attributes of the GlobalMarket object
         self.ifo380_price = ifo380_price
@@ -17,4 +17,3 @@ class GlobalMarket:
 
             case _:
                 return self.vlsifo_price
-

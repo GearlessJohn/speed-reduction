@@ -1,12 +1,17 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
+
+from vessel import Vessel
+from global_env import GlobalEnv
+from route import Route
 
 
 class Settlement:
-    def __init__(self, vessel, route, global_market, utilization_rate=0.95):
+    def __init__(self, vessel, route, global_env, utilization_rate=0.95):
         self.vessel = vessel
         self.route = route
-        self.global_market = global_market
+        self.global_env = global_env
         self.utilization_rate = utilization_rate
 
     def cost_fuel(self, speed=None):
@@ -15,7 +20,7 @@ class Settlement:
         return -(
             self.vessel.fuel_consumption_rate(speed)
             * self.route.distance
-            * self.global_market.fuel_price(self.vessel.main_engine_fuel_type)
+            * self.global_env.fuel_price(self.vessel.main_engine_fuel_type)
         )
 
     def cost_fuel_unit(self, speed=None, pr=False):
@@ -40,7 +45,7 @@ class Settlement:
         return -(
             self.ghg_operation(speed)
             * self.route.distance
-            * self.global_market.carbon_tax_rates
+            * self.global_env.carbon_tax_rates
         )
 
     def cost_operation(self, ratio=1.0):
@@ -92,3 +97,28 @@ class Settlement:
         profits = np.array([self.profit_year(speed=vs[i]) for i in range(len(vs))])
         plt.plot(vs, profits)
         plt.show()
+
+
+def settle():
+    # Reading an Excel file using Pandas
+    df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
+
+    # Creating a list of Vessel objects
+    vessels = [Vessel(row) for _, row in df_vessels.iterrows()]
+
+    # Initializing GlobalEnv object
+    env = GlobalEnv(ifo380_price=494.0, vlsifo_price=631.5, carbon_tax_rates=2000.0)
+
+    # Initializing Route object
+    shg_rtm = Route(
+        name="Shanghai-Rotterdam",
+        route_type="CONTAINER SHIPS",
+        distance=11999.0,
+        freight_rate=1479.0,
+    )
+    stm = Settlement(
+        vessel=vessels[1], route=shg_rtm, global_env=env, utilization_rate=0.95
+    )
+    stm.cost_fuel_unit(pr=True)
+    stm.profit_year(pr=True)
+    stm.plot_profit_year()

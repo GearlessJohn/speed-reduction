@@ -1,4 +1,10 @@
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from vessel import Vessel
+from global_env import GlobalEnv
+from route import Route
 from settlement import Settlement
 
 
@@ -166,3 +172,61 @@ class MeanField:
                 print(f"Tolerance satisfied at iteration {i}!")
                 break
         return errs, delta0, pis
+
+
+def simulation():
+    # Reading an Excel file using Pandas
+    df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
+
+    # Creating a list of Vessel objects
+    vessels = [Vessel(row) for _, row in df_vessels.iterrows()]
+
+    # Initializing GlobalEnv object
+    env = GlobalEnv(ifo380_price=494.0, vlsifo_price=631.5, carbon_tax_rates=2000.0)
+
+    # Initializing Route object
+    shg_rtm = Route(
+        name="Shanghai-Rotterdam",
+        route_type="CONTAINER SHIPS",
+        distance=11999.0,
+        freight_rate=1479.0,
+    )
+
+    # Launch Model
+    # Create a virual sample of vessels with same information
+
+    vessels_virtual = [vessels[1] for i in range(100)]
+
+    mf = MeanField(vessels_virtual, shg_rtm, env, q=0.15, value_exit=0)
+    mf.x_ = mf.x_ * (1 + 0.5 * 2 * (np.random.rand(len(mf.x_)) - 0.5))
+    # mf.x_ = mf.x_ * (1 + np.random.randn(len(mf.x_)))
+
+    # Simulate
+    errs, delta0, pis = mf.simulate(tol=0.01, max_iter=15)
+
+    fig, axs = plt.subplots(5, figsize=(8, 8))
+    plt.subplots_adjust(hspace=0.7)
+    axs[0].hist(mf.x_)
+    axs[0].set_title("Distribution of x")
+    axs[1].plot(errs)
+    axs[1].set_title("Proportion of vessels with y>theta")
+    axs[1].axline(xy1=(0, mf.q_), slope=0, c="red")
+
+    axs[2].plot(delta0)
+    axs[2].set_title("Speed variation of the first vessel's ")
+
+    axs[3].plot(pis)
+    axs[3].set_title("Profit of the first vessel")
+
+    axs[4].scatter(range(len(mf.x_)), mf.x_ + mf.lam_ * mf.delta_)
+    axs[4].axline(xy1=(0, mf.theta_), slope=0, c="red")
+    axs[4].set_title("Distribution of final y")
+
+    fig.suptitle(
+        f"{len(mf.x_):d} navires, q: {mf.q_:.2f}, exit value rate: {mf.value_exit_:.1f}"
+    )
+
+    plt.show()
+    fig.savefig(
+        f"./fig/meanfield-{len(mf.x_):d} navires-exit value rate {mf.value_exit_:.1f}.png"
+    )

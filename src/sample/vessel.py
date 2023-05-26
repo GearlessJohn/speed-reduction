@@ -51,8 +51,7 @@ class Vessel:
 
     def fuel_consumption_rate(self, speed=None):
         # Calculating fuel consumption based on the vessel's speed and distance traveled
-        if speed is None:
-            speed = self.speed_2021
+        speed = speed or self.speed_2021
         return (
             (
                 self.hfo_quantity_2021
@@ -66,8 +65,7 @@ class Vessel:
 
     def co2_emission(self, speed=None):
         # Calculating greenhouse gas emissions based on the vessel's speed and distance traveled
-        if speed is None:
-            speed = self.service_speed
+        speed = speed or self.speed_2021
         return (
             self.co2_emission_2021
             / self.distance_2021

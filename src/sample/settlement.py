@@ -10,6 +10,7 @@ class Settlement:
         self.utilization_rate = utilization_rate
 
     def cost_fuel(self, speed=None):
+        speed = speed or self.vessel.speed_2021
         # Calculate the expenditure on fuel
         return -(
             self.vessel.fuel_consumption_rate(speed)
@@ -18,6 +19,7 @@ class Settlement:
         )
 
     def cost_fuel_unit(self, speed=None, pr=False):
+        speed = speed or self.vessel.speed_2021
         cost = self.cost_fuel(speed) / (self.vessel.capacity * self.utilization_rate)
         if pr:
             print(
@@ -26,12 +28,14 @@ class Settlement:
         return cost
 
     def ghg_operation(self, speed=None):
+        speed = speed or self.vessel.speed_2021
         return self.vessel.co2_emission(speed)
 
     def ghg_construction(self, ratio=None):
         return self.vessel.co2_emission(self.vessel.speed_2021) * ratio
 
     def cost_carbon_tax(self, speed=None):
+        speed = speed or self.vessel.speed_2021
         # Assess the financial implications of carbon emissions
         return -(
             self.ghg_operation(speed)
@@ -55,12 +59,12 @@ class Settlement:
         return self.vessel.hours_2021
 
     def nmb_trip(self, speed=None):
-        if speed is None:
-            speed = self.vessel.speed_2021
-
+        speed = speed or self.vessel.speed_2021
         return self.hours_voyage(speed) * speed / self.route.distance
 
     def profit_trip(self, speed=None):
+        speed = speed or self.vessel.speed_2021
+
         res = 0.0
         res += self.cost_fuel(speed)
         res += self.cost_carbon_tax(speed)
@@ -72,8 +76,7 @@ class Settlement:
         return res
 
     def profit_year(self, pr=False, speed=None):
-        if speed is None:
-            speed = self.vessel.speed_2021
+        speed = speed or self.vessel.speed_2021
 
         res = self.profit_trip(speed) * self.nmb_trip(speed)
 

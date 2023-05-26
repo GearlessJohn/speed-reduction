@@ -49,7 +49,7 @@ class Vessel:
     #     self.capacity = capacity
     #     self.cii_score_2021 = cii_score_2021
 
-    def fuel_consumption(self, speed=None):
+    def fuel_consumption_rate(self, speed=None):
         # Calculating fuel consumption based on the vessel's speed and distance traveled
         if speed is None:
             speed = self.speed_2021
@@ -64,7 +64,7 @@ class Vessel:
             * (speed / self.speed_2021) ** 3
         )
 
-    def ges_emission(self, speed=None):
+    def co2_emission(self, speed=None):
         # Calculating greenhouse gas emissions based on the vessel's speed and distance traveled
         if speed is None:
             speed = self.service_speed

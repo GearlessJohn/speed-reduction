@@ -71,12 +71,17 @@ class Settlement:
         # Estimate the revenue generated from the transportation of goods
         return self.vessel.capacity * self.utilization_rate * self.route.freight_rate
 
-    def hours_voyage(self, speed=None):
-        return self.vessel.hours_2021
+    def hours_voyage(self, speed=None, acc=False):
+        if acc:
+            h0 = self.vessel.hours_2021
+            p0 = (365 * 24 - h0) * 0.5
+            return (h0 + p0) / (1 + p0 * speed / (h0 * self.vessel.speed_2021))
+        else:
+            return self.vessel.hours_2021
 
-    def nmb_trip(self, speed=None):
+    def nmb_trip(self, speed=None, acc=False):
         speed = speed or self.vessel.speed_2021
-        return self.hours_voyage(speed) * speed / self.route.distance
+        return self.hours_voyage(speed, acc) * speed / self.route.distance
 
     def profit_trip(self, speed=None):
         speed = speed or self.vessel.speed_2021
@@ -94,7 +99,7 @@ class Settlement:
     def profit_year(self, pr=False, speed=None):
         speed = speed or self.vessel.speed_2021
 
-        res = self.profit_trip(speed) * self.nmb_trip(speed)
+        res = self.profit_trip(speed) * self.nmb_trip(speed, acc=True)
 
         if pr:
             print(

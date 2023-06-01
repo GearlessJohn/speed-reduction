@@ -93,7 +93,6 @@ class GlobalEnv:
         year = year or self.year_actual
 
         expd = np.array(self.cii_expd(vessel_type, sub_type, dwt))
-        print("year", year)
         return expd * self.cii_ref(vessel_type, sub_type, dwt, year)
 
     def cii_class(self, cii_atteined, vessel_type, sub_type, dwt, year=None):
@@ -103,12 +102,7 @@ class GlobalEnv:
 
         print("Fronts:", self.cii_fronts(vessel_type, sub_type, dwt, year))
         print("Cii:", cii_atteined)
-        print(
-            "index:",
-            bisect.bisect(
-                self.cii_fronts(vessel_type, sub_type, dwt, year), cii_atteined
-            ),
-        )
+
         return cii_classes[
             bisect.bisect(
                 self.cii_fronts(vessel_type, sub_type, dwt, year), cii_atteined

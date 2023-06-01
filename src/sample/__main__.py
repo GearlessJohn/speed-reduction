@@ -8,5 +8,5 @@ from route import Route
 from settlement import settle
 from meanfield import simulation
 
-# settle()
+settle()
 # simulation()

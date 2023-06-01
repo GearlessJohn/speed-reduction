@@ -32,6 +32,17 @@ class Settlement:
             )
         return cost
 
+    def cii_class(self, speed=None, year=2023):
+        speed = speed or self.vessel.speed_2021
+        cla = self.global_env.cii_class(
+            self.vessel.cii_score_2021,
+            self.vessel.vessel_type,
+            self.vessel.sub_type,
+            self.vessel.dwt,
+            year=year,
+        )
+        return cla
+
     def ghg_operation(self, speed=None):
         speed = speed or self.vessel.speed_2021
         return self.vessel.co2_emission(speed)
@@ -92,11 +103,17 @@ class Settlement:
 
         return res
 
-    def plot_profit_year(self):
-        vs = np.arange(10, 24, 0.5)
+    def plot_profit_year(self, pr=False):
+        vs = np.arange(10, 24, 0.1)
         profits = np.array([self.profit_year(speed=vs[i]) for i in range(len(vs))])
+        best = vs[np.argmax(profits)]
+        if pr:
+            print(f"Best speed: {best:.1f}")
+
         plt.plot(vs, profits)
         plt.show()
+
+        return best
 
 
 def settle():
@@ -107,7 +124,7 @@ def settle():
     vessels = [Vessel(row) for _, row in df_vessels.iterrows()]
 
     # Initializing GlobalEnv object
-    env = GlobalEnv(ifo380_price=494.0, vlsifo_price=631.5, carbon_tax_rates=2000.0)
+    env = GlobalEnv(ifo380_price=494.0, vlsifo_price=631.5, carbon_tax_rates=94.0)
 
     # Initializing Route object
     shg_rtm = Route(
@@ -121,4 +138,15 @@ def settle():
     )
     stm.cost_fuel_unit(pr=True)
     stm.profit_year(pr=True)
-    stm.plot_profit_year()
+    print(f"True Class: {vessels[9].name} {vessels[9].cii_class_2021}")
+    print(
+        "Calculated Class:",
+        stm.global_env.cii_class(
+            vessels[9].cii_score_2021,
+            vessels[9].vessel_type,
+            vessels[9].sub_type,
+            vessels[9].dwt,
+            year=2021,
+        ),
+    )
+    stm.plot_profit_year(pr=True)

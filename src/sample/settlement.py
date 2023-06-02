@@ -14,8 +14,7 @@ class Settlement:
         self.global_env = global_env
         self.utilization_rate = utilization_rate
 
-    def cost_fuel(self, speed=None, saving=0.0):
-        speed = speed or self.vessel.speed_2021
+    def cost_fuel(self, speed, saving):
         # Calculate the expenditure on fuel
         return -(
             self.vessel.fuel_consumption_rate(speed)
@@ -23,9 +22,8 @@ class Settlement:
             * self.global_env.fuel_price(self.vessel.main_engine_fuel_type)
         ) * (1 - saving)
 
-    def cost_retrofit(self, speed=None):
-        speed = speed or self.vessel.speed_2021
-        fuel_cost = self.cost_fuel(speed=speed)
+    def cost_retrofit(self, speed):
+        fuel_cost = self.cost_fuel(speed=speed, saving=0.0)
         # Consider now the possible retrofitting measures
         years_left = 25 - self.vessel.age
         engine = 10000.0 / years_left  # 2.5%
@@ -45,38 +43,36 @@ class Settlement:
             saving += 0.04
         return cost_retrofit, saving
 
-    def cost_fuel_unit(self, speed=None, pr=False):
-        speed = speed or self.vessel.speed_2021
-        cost = self.cost_fuel(speed) / (self.vessel.capacity * self.utilization_rate)
+    def cost_fuel_unit(self, speed, saving, pr=False):
+        cost = self.cost_fuel(speed=speed, saving=saving) / (
+            self.vessel.capacity * self.utilization_rate
+        )
         if pr:
             print(
                 f"Fuel cost of {self.vessel.name} for route {self.route.name}: {cost:.1f} dollars/{self.vessel.unit}"
             )
         return cost
 
-    def cii_class(self, speed=None, year=2023):
-        speed = speed or self.vessel.speed_2021
-        cla = self.global_env.cii_class(
-            self.vessel.cii_score_2021,
+    def cii_class(self, speed, year):
+        class_abcde = self.global_env.cii_class(
+            self.vessel.cii_score_2021 * (speed / self.vessel.speed_2021) ** 3,
             self.vessel.vessel_type,
             self.vessel.sub_type,
             self.vessel.dwt,
             year=year,
         )
-        return cla
+        return class_abcde
 
-    def ghg_operation(self, speed=None, saving=0.0):
-        speed = speed or self.vessel.speed_2021
+    def ghg_operation(self, speed, saving):
         return self.vessel.co2_emission(speed) * (1 - saving)
 
-    def ghg_construction(self, ratio=None):
+    def ghg_construction(self, ratio):
         return self.vessel.co2_emission(self.vessel.speed_2021) * ratio
 
-    def cost_carbon_tax(self, speed=None, saving=0.0):
-        speed = speed or self.vessel.speed_2021
+    def cost_carbon_tax(self, speed, saving):
         # Assess the financial implications of carbon emissions
         return -(
-            self.ghg_operation(speed, saving=saving)
+            self.ghg_operation(speed=speed, saving=saving)
             * self.route.distance
             * self.global_env.carbon_tax_rates
         )
@@ -93,7 +89,7 @@ class Settlement:
         # Estimate the revenue generated from the transportation of goods
         return self.vessel.capacity * self.utilization_rate * self.route.freight_rate
 
-    def hours_voyage(self, speed=None, acc=False):
+    def hours_voyage(self, speed, acc=True):
         if acc:
             h0 = self.vessel.hours_2021
             p0 = (365 * 24 - h0) * 0.5
@@ -101,18 +97,15 @@ class Settlement:
         else:
             return self.vessel.hours_2021
 
-    def nmb_trip(self, speed=None, acc=True):
-        speed = speed or self.vessel.speed_2021
+    def nmb_trip(self, speed, acc=True):
         return self.hours_voyage(speed, acc) * speed / self.route.distance
 
-    def profit_trip(self, speed=None):
-        speed = speed or self.vessel.speed_2021
-
+    def profit_trip(self, speed, retrofit):
         res = 0.0
         saving = 0.0
-
-        cost_retrofit, saving = self.cost_retrofit(speed)
-        res += cost_retrofit
+        if retrofit:
+            cost_retrofit, saving = self.cost_retrofit(speed)
+            res += cost_retrofit
         res += self.cost_fuel(speed, saving=saving)
         res += self.cost_carbon_tax(speed, saving=saving)
         res += self.cost_operation()
@@ -121,10 +114,10 @@ class Settlement:
 
         return res
 
-    def profit_year(self, pr=False, speed=None):
-        speed = speed or self.vessel.speed_2021
-
-        res = self.profit_trip(speed) * self.nmb_trip(speed, acc=True)
+    def profit_year(self, speed, retrofit, pr=False):
+        res = self.profit_trip(speed=speed, retrofit=retrofit) * self.nmb_trip(
+            speed=speed, acc=True
+        )
 
         if pr:
             print(
@@ -133,20 +126,27 @@ class Settlement:
 
         return res
 
-    def emission_year(self, speed=None, saving=0.0):
+    def emission_year(self, speed, saving):
         return self.ghg_operation(speed=speed, saving=saving) * self.nmb_trip(
             speed=speed, acc=True
         )
 
-    def plot_profit_year(self, pr=False):
+    def plot_profit_year(self, retrofit, pr=False):
         vs = np.arange(10, 24, 0.01)
         profits = (
-            np.array([self.profit_year(speed=vs[i]) for i in range(len(vs))]) / 1e6
+            np.array(
+                [
+                    self.profit_year(speed=vs[i], retrofit=retrofit)
+                    for i in range(len(vs))
+                ]
+            )
+            / 1e6
         )
         emissions = np.array(
             [
                 self.emission_year(
-                    speed=vs[i], saving=self.cost_retrofit(speed=vs[i])[1]
+                    speed=vs[i],
+                    saving=self.cost_retrofit(speed=vs[i])[1] if retrofit else 0.0,
                 )
                 for i in range(len(vs))
             ]
@@ -154,10 +154,29 @@ class Settlement:
         v_best = vs[np.argmax(profits)]
         profit_best = np.max(profits)
         if pr:
-            print(
-                f"Profit of {self.vessel.name} in one year at speed {v_best:.2f} knots: {profit_best:.2f} million dollars"
-            )
+            print("-" * 60)
+            print("\tVessel Name:\t", self.vessel.name)
+            print("\tType:\t\t", self.vessel.vessel_type)
+            print("\tSub-type:\t", self.vessel.sub_type)
+            print("\tCapacity:\t", self.vessel.capacity, self.vessel.unit)
+            print()
 
+            print("\tRoute:\t\t", self.route.name)
+            print("\tDistance:\t", self.route.distance, "knots")
+            print("\tFreight Rate:\t", self.route.freight_rate, "$/unit")
+            print(
+                "\tFuel Price:\t",
+                self.global_env.fuel_price(self.vessel.main_engine_fuel_type),
+                "$/ton",
+            )
+            print("\tCarbon Tax:\t", self.global_env.carbon_tax_rates, "$/ton")
+            print("\tUtilization:\t", self.utilization_rate * 100, "%")
+            print("\tRetrofit:\t", retrofit)
+            print()
+
+            print("\tOptimal Speed:\t", f"{v_best:.2f} knots")
+            print("\tAnnual Profit:\t", f"{profit_best:.2f} M $")
+            print("-" * 60)
         fig, ax = plt.subplots()
         ax.plot(vs, profits, label="profit")
         ax.annotate(
@@ -182,7 +201,18 @@ class Settlement:
         return v_best
 
 
-def settle():
+def settle(
+    i,
+    ifo380_price,
+    vlsifo_price,
+    carbon_tax_rates,
+    name,
+    route_type,
+    distance,
+    freight_rate,
+    utilization_rate,
+    retrofit,
+):
     # Reading an Excel file using Pandas
     df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
 
@@ -190,16 +220,23 @@ def settle():
     vessels = [Vessel(row) for _, row in df_vessels.iterrows()]
 
     # Initializing GlobalEnv object
-    env = GlobalEnv(ifo380_price=494.0, vlsifo_price=631.5, carbon_tax_rates=94.0)
+    env = GlobalEnv(
+        ifo380_price=ifo380_price,
+        vlsifo_price=vlsifo_price,
+        carbon_tax_rates=carbon_tax_rates,
+    )
 
     # Initializing Route object
     shg_rtm = Route(
-        name="Shanghai-Rotterdam",
-        route_type="CONTAINER SHIPS",
-        distance=11999.0,
-        freight_rate=1479.0,
+        name=name,
+        route_type=route_type,
+        distance=distance,
+        freight_rate=freight_rate,
     )
     stm = Settlement(
-        vessel=vessels[1], route=shg_rtm, global_env=env, utilization_rate=0.95
+        vessel=vessels[i],
+        route=shg_rtm,
+        global_env=env,
+        utilization_rate=utilization_rate,
     )
-    stm.plot_profit_year(pr=True)
+    stm.plot_profit_year(retrofit=retrofit, pr=True)

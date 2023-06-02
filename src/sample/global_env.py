@@ -100,9 +100,6 @@ class GlobalEnv:
 
         cii_classes = ["A", "B", "C", "D", "E"]
 
-        print("Fronts:", self.cii_fronts(vessel_type, sub_type, dwt, year))
-        print("Cii:", cii_atteined)
-
         return cii_classes[
             bisect.bisect(
                 self.cii_fronts(vessel_type, sub_type, dwt, year), cii_atteined

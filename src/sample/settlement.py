@@ -101,7 +101,7 @@ class Settlement:
         else:
             return self.vessel.hours_2021
 
-    def nmb_trip(self, speed=None, acc=False):
+    def nmb_trip(self, speed=None, acc=True):
         speed = speed or self.vessel.speed_2021
         return self.hours_voyage(speed, acc) * speed / self.route.distance
 
@@ -133,24 +133,50 @@ class Settlement:
 
         return res
 
+    def emission_year(self, speed=None, saving=0.0):
+        return self.ghg_operation(speed=speed, saving=saving) * self.nmb_trip(
+            speed=speed, acc=True
+        )
+
     def plot_profit_year(self, pr=False):
         vs = np.arange(10, 24, 0.01)
-        profits = np.array([self.profit_year(speed=vs[i]) for i in range(len(vs))])
+        profits = (
+            np.array([self.profit_year(speed=vs[i]) for i in range(len(vs))]) / 1e6
+        )
+        emissions = np.array(
+            [
+                self.emission_year(
+                    speed=vs[i], saving=self.cost_retrofit(speed=vs[i])[1]
+                )
+                for i in range(len(vs))
+            ]
+        )
         v_best = vs[np.argmax(profits)]
         profit_best = np.max(profits)
         if pr:
             print(
-                f"Profit of {self.vessel.name} in one year at speed {v_best:.2f} knots: {profit_best/1e6:.2f} million dollars"
+                f"Profit of {self.vessel.name} in one year at speed {v_best:.2f} knots: {profit_best:.2f} million dollars"
             )
-        plt.plot(vs, profits)
-        plt.annotate(
+
+        fig, ax = plt.subplots()
+        ax.plot(vs, profits, label="profit")
+        ax.annotate(
             f"Best speed={v_best:0.2f} knots",
             xy=(v_best, profit_best),
-            xytext=(v_best, profit_best + 5),
+            xytext=(v_best, profit_best),
             arrowprops=dict(facecolor="red"),
         )
-        plt.xlabel("Vessel Speed (knot)")
-        plt.ylabel("Profit (dollar)")
+        ax.set_xlabel("Vessel Speed (knot)")
+        ax.set_ylabel("Profit (dollar)", color="blue")
+        ax.axvline(x=v_best, ymax=profit_best, c="red", linestyle="--")
+        ax.legend(loc="upper left")
+
+        ax1 = ax.twinx()
+        ax1.plot(vs, emissions, label="emission", color="green")
+        ax1.set_ylabel("Emission (ton)", color="green")
+        ax1.legend(loc="upper right")
+
+        fig.suptitle("Annual result")
         plt.show()
 
         return v_best
@@ -176,5 +202,4 @@ def settle():
     stm = Settlement(
         vessel=vessels[1], route=shg_rtm, global_env=env, utilization_rate=0.95
     )
-    stm.profit_year(pr=True)
     stm.plot_profit_year(pr=True)

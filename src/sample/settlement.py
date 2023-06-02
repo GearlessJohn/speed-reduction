@@ -14,14 +14,36 @@ class Settlement:
         self.global_env = global_env
         self.utilization_rate = utilization_rate
 
-    def cost_fuel(self, speed=None):
+    def cost_fuel(self, speed=None, saving=0.0):
         speed = speed or self.vessel.speed_2021
         # Calculate the expenditure on fuel
         return -(
             self.vessel.fuel_consumption_rate(speed)
             * self.route.distance
             * self.global_env.fuel_price(self.vessel.main_engine_fuel_type)
-        )
+        ) * (1 - saving)
+
+    def cost_retrofit(self, speed=None):
+        speed = speed or self.vessel.speed_2021
+        fuel_cost = self.cost_fuel(speed=speed)
+        # Consider now the possible retrofitting measures
+        years_left = 25 - self.vessel.age
+        engine = 10000.0 / years_left  # 2.5%
+        propeller = 450000.0 / years_left  # 7.0%
+        bulbous = 550000.0 / years_left  # 4.0%
+
+        cost_retrofit = 0.0
+        saving = 0.0
+        if -fuel_cost * 0.025 > engine:
+            cost_retrofit += -engine
+            saving += 0.025
+        if -fuel_cost * 0.07 > propeller:
+            cost_retrofit += -propeller
+            saving += 0.07
+        if -fuel_cost * 0.04 > bulbous:
+            cost_retrofit += -bulbous
+            saving += 0.04
+        return cost_retrofit, saving
 
     def cost_fuel_unit(self, speed=None, pr=False):
         speed = speed or self.vessel.speed_2021
@@ -43,25 +65,25 @@ class Settlement:
         )
         return cla
 
-    def ghg_operation(self, speed=None):
+    def ghg_operation(self, speed=None, saving=0.0):
         speed = speed or self.vessel.speed_2021
-        return self.vessel.co2_emission(speed)
+        return self.vessel.co2_emission(speed) * (1 - saving)
 
     def ghg_construction(self, ratio=None):
         return self.vessel.co2_emission(self.vessel.speed_2021) * ratio
 
-    def cost_carbon_tax(self, speed=None):
+    def cost_carbon_tax(self, speed=None, saving=0.0):
         speed = speed or self.vessel.speed_2021
         # Assess the financial implications of carbon emissions
         return -(
-            self.ghg_operation(speed)
+            self.ghg_operation(speed, saving=saving)
             * self.route.distance
             * self.global_env.carbon_tax_rates
         )
 
     def cost_operation(self, ratio=1.0):
         # Determine the expenses associated with vessel operations
-        return self.cost_fuel(speed=self.vessel.speed_2021) * ratio
+        return self.cost_fuel(speed=self.vessel.speed_2021, saving=0.0) * ratio
 
     def cost_route(self):
         # Evaluate costs associated with traversing specific routes or canals
@@ -87,11 +109,14 @@ class Settlement:
         speed = speed or self.vessel.speed_2021
 
         res = 0.0
-        res += self.cost_fuel(speed)
-        res += self.cost_carbon_tax(speed)
+        saving = 0.0
+
+        cost_retrofit, saving = self.cost_retrofit(speed)
+        res += cost_retrofit
+        res += self.cost_fuel(speed, saving=saving)
+        res += self.cost_carbon_tax(speed, saving=saving)
         res += self.cost_operation()
         res += self.cost_route()
-
         res += self.income_freight()
 
         return res
@@ -109,16 +134,26 @@ class Settlement:
         return res
 
     def plot_profit_year(self, pr=False):
-        vs = np.arange(10, 24, 0.1)
+        vs = np.arange(10, 24, 0.01)
         profits = np.array([self.profit_year(speed=vs[i]) for i in range(len(vs))])
-        best = vs[np.argmax(profits)]
+        v_best = vs[np.argmax(profits)]
+        profit_best = np.max(profits)
         if pr:
-            print(f"Best speed: {best:.1f}")
-
+            print(
+                f"Profit of {self.vessel.name} in one year at speed {v_best:.2f} knots: {profit_best/1e6:.2f} million dollars"
+            )
         plt.plot(vs, profits)
+        plt.annotate(
+            f"Best speed={v_best:0.2f} knots",
+            xy=(v_best, profit_best),
+            xytext=(v_best, profit_best + 5),
+            arrowprops=dict(facecolor="red"),
+        )
+        plt.xlabel("Vessel Speed (knot)")
+        plt.ylabel("Profit (dollar)")
         plt.show()
 
-        return best
+        return v_best
 
 
 def settle():
@@ -141,17 +176,5 @@ def settle():
     stm = Settlement(
         vessel=vessels[1], route=shg_rtm, global_env=env, utilization_rate=0.95
     )
-    stm.cost_fuel_unit(pr=True)
     stm.profit_year(pr=True)
-    print(f"True Class: {vessels[9].name} {vessels[9].cii_class_2021}")
-    print(
-        "Calculated Class:",
-        stm.global_env.cii_class(
-            vessels[9].cii_score_2021,
-            vessels[9].vessel_type,
-            vessels[9].sub_type,
-            vessels[9].dwt,
-            year=2021,
-        ),
-    )
     stm.plot_profit_year(pr=True)

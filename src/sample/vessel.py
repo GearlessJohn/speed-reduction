@@ -18,6 +18,7 @@ class Vessel:
 
         # Build
         self.built = row["Built"]
+        self.age = int(2023 - self.built)
         self.builder = row["Builder"]
         self.length = row["Length overall (m)"]
         self.beam = row["Beam (m)"]
@@ -43,11 +44,6 @@ class Vessel:
         self.cii_score_2021 = row["Actual CII 2021"]
         self.cii_class_2021 = row["2021 CII rating"]
 
-    # def __init__(self, hours_2021, speed_2021, capacity, cii_score_2021):
-    #     self.hours_2021 = hours_2021
-    #     self.speed_2021 = speed_2021
-    #     self.capacity = capacity
-    #     self.cii_score_2021 = cii_score_2021
 
     def fuel_consumption_rate(self, speed=None):
         # Calculating fuel consumption based on the vessel's speed and distance traveled
@@ -61,7 +57,7 @@ class Vessel:
             )
             / self.distance_2021
             * (speed / self.speed_2021) ** 3
-        )
+        ) 
 
     def co2_emission(self, speed=None):
         # Calculating greenhouse gas emissions based on the vessel's speed and distance traveled
@@ -70,7 +66,7 @@ class Vessel:
             self.co2_emission_2021
             / self.distance_2021
             * (speed / self.service_speed) ** 3
-        )
+        ) 
 
 
 if __name__ == "__main__":

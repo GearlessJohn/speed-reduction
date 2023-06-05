@@ -163,7 +163,7 @@ class Settlement:
 
             print("\tRoute:\t\t", self.route.name)
             print("\tDistance:\t", self.route.distance, "knots")
-            print("\tFreight Rate:\t", self.route.freight_rate, "$/unit")
+            print("\tFreight Rate:\t", self.route.freight_rate, f"$/{self.vessel.unit}")
             print(
                 "\tFuel Price:\t",
                 self.global_env.fuel_price(self.vessel.main_engine_fuel_type),
@@ -178,9 +178,9 @@ class Settlement:
             print("\tAnnual Profit:\t", f"{profit_best:.2f} M $")
             print("-" * 60)
         fig, ax = plt.subplots()
-        ax.plot(vs, profits, label="profit")
+        ax.plot(vs, profits, label="profit", color="blue")
         ax.annotate(
-            f"Best speed={v_best:0.2f} knots",
+            f"Optimal Speed={v_best:0.2f} knots",
             xy=(v_best, profit_best),
             xytext=(v_best, profit_best),
             arrowprops=dict(facecolor="red"),
@@ -192,10 +192,12 @@ class Settlement:
 
         ax1 = ax.twinx()
         ax1.plot(vs, emissions, label="emission", color="green")
-        ax1.set_ylabel("Emission (ton)", color="green")
+        ax1.set_ylabel("CO2 Emission (ton)", color="green")
         ax1.legend(loc="upper right")
 
-        fig.suptitle("Annual result")
+        fig.suptitle(
+            f"Annual result, Carbon Tax: {self.global_env.carbon_tax_rates}, Retrofit: {retrofit} "
+        )
         plt.show()
 
         return v_best

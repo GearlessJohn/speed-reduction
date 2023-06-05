@@ -8,11 +8,10 @@ from route import Route
 
 
 class Settlement:
-    def __init__(self, vessels, route, global_env, utilization_rate=0.95):
+    def __init__(self, vessels, route, global_env):
         self.vessels = vessels
         self.route = route
         self.global_env = global_env
-        self.utilization_rate = utilization_rate
 
     def cost_fuel(self, i, speed, saving):
         # Calculate the expenditure on fuel
@@ -45,12 +44,10 @@ class Settlement:
 
     def cost_fuel_unit(self, i, speed, saving, pr=False):
         cost = self.cost_fuel(i=i, speed=speed, saving=saving) / (
-            self.vessels[i].capacity * self.utilization_rate
+            self.vessels[i].capacity * self.route.utilization_rate
         )
         if pr:
-            print(
-                f"Fuel cost of {self.vessels[i].name} for route {self.route.name}: {cost:.1f} dollars/{self.vessels[i].unit}"
-            )
+            print(f"\tFuel cost:\t {cost:.1f} $/{self.vessels[i].unit}")
         return cost
 
     def cii_class(self, i, speed, year):
@@ -77,9 +74,13 @@ class Settlement:
             * self.global_env.carbon_tax_rates
         )
 
-    def cost_operation(self, i, ratio=1.0):
+    def cost_operation(self, i):
         # Determine the expenses associated with vessel operations
-        return self.cost_fuel(i=i, speed=self.vessels[i].speed_2021, saving=0.0) * ratio
+        return (
+            self.cost_fuel(i=i, speed=self.vessels[i].speed_2021, saving=0.0)
+            * (1 - self.route.fuel_ratio)
+            / self.route.fuel_ratio
+        )
 
     def cost_route(self, i):
         # Evaluate costs associated with traversing specific routes or canals
@@ -88,7 +89,9 @@ class Settlement:
     def income_freight(self, i):
         # Estimate the revenue generated from the transportation of goods
         return (
-            self.vessels[i].capacity * self.utilization_rate * self.route.freight_rate
+            self.vessels[i].capacity
+            * self.route.utilization_rate
+            * self.route.freight_rate
         )
 
     def hours_voyage(self, i, speed, acc=True):
@@ -136,7 +139,7 @@ class Settlement:
         )
 
     def plot_profit_year(self, i, retrofit, pr=False):
-        vs = np.arange(10, 24, 0.01)
+        vs = np.arange(7, 24, 0.01)
         profits = (
             np.array(
                 [
@@ -151,13 +154,15 @@ class Settlement:
                 self.emission_year(
                     i=i,
                     speed=vs[j],
-                    saving=self.cost_retrofit(speed=vs[j])[1] if retrofit else 0.0,
+                    saving=self.cost_retrofit(i=i, speed=vs[j])[1] if retrofit else 0.0,
                 )
                 for j in range(len(vs))
             ]
         )
         v_best = vs[np.argmax(profits)]
         profit_best = np.max(profits)
+        saving_best = self.cost_retrofit(i=i, speed=v_best)[1]
+
         if pr:
             print("-" * 60)
             print("\tVessel Name:\t", self.vessels[i].name)
@@ -179,12 +184,29 @@ class Settlement:
                 "$/ton",
             )
             print("\tCarbon Tax:\t", self.global_env.carbon_tax_rates, "$/ton")
-            print("\tUtilization:\t", self.utilization_rate * 100, "%")
+            print("\tUtilization:\t", self.route.utilization_rate * 100, "%")
             print("\tRetrofit:\t", retrofit)
             print()
 
+            print("\tInitial Speed:\t", f"{self.vessels[i].speed_2021:.2f} knots")
             print("\tOptimal Speed:\t", f"{v_best:.2f} knots")
+            print(
+                "\tFuel cost:\t",
+                f"{self.cost_fuel_unit(i=i,speed=v_best, saving=saving_best):.2f} $/{self.vessels[i].unit}",
+            )
             print("\tAnnual Profit:\t", f"{profit_best:.2f} M $")
+            print(
+                "\tSpeed Reduction:\t",
+                f"{(v_best-self.vessels[i].speed_2021)/self.vessels[i].speed_2021*100:.2f} %",
+            )
+            print(
+                "\tEmission Reduction:\t",
+                f"{(emissions[np.argmax(profits)]-self.emission_year(i=i, speed=self.vessels[i].speed_2021,saving=0.0))/self.emission_year(i=i, speed=self.vessels[i].speed_2021, saving=0.0)*100:.2f} %",
+            )
+            print(
+                "\tCurrennt CII class:\t",
+                f"{self.cii_class(i=i,speed=v_best, year=2023)}",
+            )
             print("-" * 60)
         fig, ax = plt.subplots()
         ax.plot(vs, profits, label="profit", color="blue")
@@ -222,6 +244,7 @@ def settle(
     distance,
     freight_rate,
     utilization_rate,
+    fuel_ratio,
     retrofit,
 ):
     # Reading an Excel file using Pandas
@@ -243,11 +266,12 @@ def settle(
         route_type=route_type,
         distance=distance,
         freight_rate=freight_rate,
+        utilization_rate=utilization_rate,
+        fuel_ratio=fuel_ratio,
     )
     stm = Settlement(
         vessels=vessels,
         route=shg_rtm,
         global_env=env,
-        utilization_rate=utilization_rate,
     )
     stm.plot_profit_year(i=i, retrofit=retrofit, pr=True)

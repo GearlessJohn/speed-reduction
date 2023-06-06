@@ -175,7 +175,36 @@ class MeanField:
         return errs, delta0, pis
 
 
-def simulation():
+def vessels_sampling(vessel, global_env, num, pcts=[0.15, 0.2, 0.3, 0.2, 0.15]):
+    """Create a sample of num vessels from an origin vessel"""
+    assert np.abs(np.sum(pcts) - 1.0) <= 1e-10, "Wrong distribution of CII scores"
+
+    vessels_virual = [vessel for i in range(num)]
+
+    fronts = np.insert(
+        global_env.cii_fronts(
+            vessel.vessel_type, vessel.sub_type, vessel.dwt, year=2021
+        ),
+        0,
+        0.0,
+    )
+    fronts = np.append(fronts, [1.5 * fronts[-1]])
+
+    ciis = []
+    for i in range(len(pcts)):
+        ciis.extend(
+            np.linspace(
+                fronts[i], fronts[i + 1], int(num * pcts[i]), endpoint=False
+            ).tolist()
+        )
+
+    for i in range(num):
+        vessels_virual[i].cii_score_2021 = ciis[i]
+
+    return vessels_virual, ciis, fronts
+
+
+def mf():
     # Reading an Excel file using Pandas
     df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
 
@@ -198,19 +227,26 @@ def simulation():
     # Launch Model
     # Create a virual sample of vessels with same information
 
-    vessels_virtual = [vessels[1] for i in range(100)]
+    vessels_virtual, ciis, fronts = vessels_sampling(
+        vessel=vessels[1], global_env=env, num=100
+    )
 
-    mf = MeanField(vessels_virtual, shg_rtm, env, q=0.15, value_exit=0)
-    mf.x_ = mf.x_ * (1 + 0.5 * 2 * (np.random.rand(len(mf.x_)) - 0.5))
-    # mf.x_ = mf.x_ * (1 + np.random.randn(len(mf.x_)))
+    mf = MeanField(vessels_virtual, shg_rtm, env, q=0.15, value_exit=0.5)
+    # mf.x_ = mf.x_ * (1 + 0.5 * 2 * (np.random.rand(len(mf.x_)) - 0.5))
+    # # mf.x_ = mf.x_ * (1 + np.random.randn(len(mf.x_)))
 
     # Simulate
     errs, delta0, pis = mf.simulate(tol=0.01, max_iter=15)
 
     fig, axs = plt.subplots(5, figsize=(8, 8))
     plt.subplots_adjust(hspace=0.7)
-    axs[0].hist(mf.x_)
-    axs[0].set_title("Distribution of x")
+    axs[0].hist(ciis, bins=50)
+    axs[0].axvline(x=fronts[1], color="green")
+    axs[0].axvline(x=fronts[2], color="yellow")
+    axs[0].axvline(x=fronts[3], color="purple")
+    axs[0].axvline(x=fronts[4], color="red")
+    axs[0].set_title("Distribution of CII")
+
     axs[1].plot(errs)
     axs[1].set_title("Proportion of vessels with y>theta")
     axs[1].axline(xy1=(0, mf.q_), slope=0, c="red")

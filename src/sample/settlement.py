@@ -210,21 +210,38 @@ class Settlement:
 
             print("\t2021 Speed:\t", f"{self.vessels[i].speed_2021:.2f} knots")
             print("\tOptimal Speed:\t", f"{v_best:.2f} knots")
+            fc = self.cost_fuel_unit(i=i, speed=v_best, saving=saving_best, power=power)
             print(
                 "\tFuel cost:\t",
-                f"{self.cost_fuel_unit(i=i,speed=v_best, saving=saving_best, power=power):.2f} $/{self.vessels[i].unit}",
+                f"{fc:.2f} $/{self.vessels[i].unit}",
+            )
+            oc = self.cost_operation(i=i) / (
+                self.vessels[i].capacity * self.route.utilization_rate
+            )
+            print(
+                "\tOperation cost:\t",
+                f"{oc:.2f} $/{self.vessels[i].unit}",
+            )
+            print(
+                "\tProfitability:\t",
+                f"{(self.route.freight_rate+oc + fc)/self.route.freight_rate*100:.2f} %",
             )
             print("\tAnnual Profit:\t", f"{profit_best:.2f} M $")
+            print()
             print(
-                "\tSpeed Reduction:\t",
-                f"{(v_best-self.vessels[i].speed_2021)/self.vessels[i].speed_2021*100:.2f} %",
+                "\tSpeed Variation:\t",
+                f"{(v_best-self.vessels[i].speed_2021)/self.vessels[i].speed_2021*100:+.2f} %",
             )
             print(
-                "\tEmission Reduction:\t",
-                f"{(emissions[np.argmax(profits)]-self.emission_year(i=i, speed=self.vessels[i].speed_2021,saving=0.0, power=power))/self.emission_year(i=i, speed=self.vessels[i].speed_2021, saving=0.0, power=power)*100:.2f} %",
+                "\tEmission Variation:\t",
+                f"{(emissions[np.argmax(profits)]-self.emission_year(i=i, speed=self.vessels[i].speed_2021,saving=0.0, power=power))/self.emission_year(i=i, speed=self.vessels[i].speed_2021, saving=0.0, power=power)*100:+.2f} %",
             )
             print(
-                "\tCurrennt CII class:\t",
+                "\t2021 CII class:\t\t",
+                f"{self.vessels[i].cii_class_2021}",
+            )
+            print(
+                "\tCurrent CII class:\t",
                 f"{self.cii_class(i=i,speed=v_best,power=power, year=2023)}",
             )
             print("-" * 60)

@@ -1,6 +1,3 @@
-import pandas as pd
-
-
 class Vessel:
     def __init__(self, row):
         # Initializing the attributes of the Vessel object

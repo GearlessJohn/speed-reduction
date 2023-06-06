@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import sys
 
-from vessel import Vessel
 from global_env import GlobalEnv
 from route import Route
 from settlement import settle
@@ -38,32 +37,40 @@ hst_shg = Route(
     fuel_ratio=0.5,
 )
 
-s1 = settle(
-    i=1,
-    data_vessels=df_vessels,
-    env=env,
-    route=shg_rtm,
-    power=3.0,
-    retrofit=False,
-    pr=True,
-)
+
+def main(regime):
+    if regime == 0:
+        return settle(
+            i=1,
+            data_vessels=df_vessels,
+            env=env,
+            route=shg_rtm,
+            power=3.0,
+            retrofit=False,
+            pr=True,
+        )
+    elif regime == 1:
+        return settle(
+            i=5,
+            data_vessels=df_vessels,
+            env=env,
+            route=hst_shg,
+            power=2.0,
+            retrofit=False,
+            pr=True,
+        )
+    elif regime == 2:
+        return mf(
+            num=100,
+            data_vessels=df_vessels,
+            env=env,
+            route=shg_rtm,
+            value_exit=0.5,
+            binary=False,
+        )
+    else:
+        return
 
 
-# s2 = settle(
-#     i=5,
-#     data_vessels=df_vessels,
-#     env=env,
-#     route=hst_shg,
-#     power=2.0,
-#     retrofit=False,
-#     pr=True,
-# )
-
-# mf(
-#     num=100,
-#     data_vessels=df_vessels,
-#     env=env,
-#     route=shg_rtm,
-#     value_exit=0.5,
-#     binary=False,
-# )
+if __name__ == "__main__":
+    main(int(sys.argv[1]) if len(sys.argv) > 1 else 0)

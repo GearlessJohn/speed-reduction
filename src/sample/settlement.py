@@ -1,10 +1,6 @@
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-
 from vessel import Vessel
-from global_env import GlobalEnv
-from route import Route
 
 
 class Settlement:
@@ -26,8 +22,8 @@ class Settlement:
                 + self.vessels[i].lng_quantity_2021 * self.global_env.lng_price
             )
             / self.vessels[i].distance_2021
-            * self.route.distance
             * (speed / self.vessels[i].speed_2021) ** power
+            * self.route.distance
             * (1 - saving)
         )
 

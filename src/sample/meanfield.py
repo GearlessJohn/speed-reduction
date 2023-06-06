@@ -9,9 +9,7 @@ from settlement import Settlement
 
 
 class MeanField:
-    def __init__(
-        self, vessels, route, global_env, q=0.05, value_exit=0.5, utilization_rate=0.95
-    ):
+    def __init__(self, vessels, route, global_env, q=0.05, value_exit=0.5):
         self.vessels = vessels
         self.route = route
         self.global_env = global_env
@@ -31,8 +29,9 @@ class MeanField:
         self.v_ = []
         self.delta_ = []
 
-        for vessel in self.vessels:
-            settlement = Settlement(vessel, route, global_env, utilization_rate)
+        settlement = Settlement(vessels, route, global_env)
+        for i in range(len(self.vessels)):
+            vessel = vessels[i]
             T = vessel.hours_2021
             D = route.distance
             u_actual = vessel.speed_2021
@@ -41,7 +40,9 @@ class MeanField:
             a = 5 * p
             b = 4 * p / u_actual
 
-            cf = -settlement.cost_fuel() / (0.95 * vessel.capacity)
+            cf = -settlement.cost_fuel(i, speed=vessel.speed_2021, saving=0.0) / (
+                0.95 * vessel.capacity
+            )
             l = cf * 0.95 * vessel.capacity * T / D
             gamma = u_actual**2 / (2 * cf * 0.95 * vessel.capacity * T * u_actual / D)
             u0 = gamma * (a - l) / (1 + gamma * b)
@@ -182,7 +183,7 @@ def simulation():
     vessels = [Vessel(row) for _, row in df_vessels.iterrows()]
 
     # Initializing GlobalEnv object
-    env = GlobalEnv(ifo380_price=494.0, vlsifo_price=631.5, carbon_tax_rates=2000.0)
+    env = GlobalEnv(ifo380_price=494.0, vlsifo_price=631.5, carbon_tax_rates=94.0)
 
     # Initializing Route object
     shg_rtm = Route(
@@ -190,6 +191,8 @@ def simulation():
         route_type="CONTAINER SHIPS",
         distance=11999.0,
         freight_rate=1479.0,
+        utilization_rate=0.95,
+        fuel_ratio=0.5,
     )
 
     # Launch Model

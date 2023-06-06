@@ -7,6 +7,15 @@ data_cacib = pd.read_excel(
     "./data/CACIB fleet sample V2.xlsx", skiprows=[1], usecols="A:AN"
 ).dropna(subset=["Hours Under way 2021"])
 
+data_cacib = data_cacib.fillna(
+    {
+        "HFO quantity 2021": 0,
+        "LFO quantity 2021": 0,
+        "Diesel/Gas Oil quantity 2021": 0,
+        "LNG 2021": 0,
+    }
+)
+
 print(data_cacib.columns)
 # Converting the "Name" column to uppercase
 data_cacib["Name"] = data_cacib["Name"].str.upper()

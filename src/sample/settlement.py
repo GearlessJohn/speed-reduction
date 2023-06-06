@@ -61,7 +61,7 @@ class Settlement:
         return class_abcde
 
     def ghg_operation(self, i, speed, saving):
-        return self.vessels[i].co2_emission(speed) * (1 - saving)
+        return self.vessels[i].co2_emission(speed) * self.route.distance * (1 - saving)
 
     def ghg_construction(self, i, ratio):
         return self.vessels[i].co2_emission(self.vessels[i].speed_2021) * ratio
@@ -70,7 +70,6 @@ class Settlement:
         # Assess the financial implications of carbon emissions
         return -(
             self.ghg_operation(i=i, speed=speed, saving=saving)
-            * self.route.distance
             * self.global_env.carbon_tax_rates
         )
 
@@ -161,7 +160,7 @@ class Settlement:
         )
         v_best = vs[np.argmax(profits)]
         profit_best = np.max(profits)
-        saving_best = self.cost_retrofit(i=i, speed=v_best)[1]
+        saving_best = self.cost_retrofit(i=i, speed=v_best)[1] if retrofit else 0.0
 
         if pr:
             print("-" * 60)
@@ -208,28 +207,28 @@ class Settlement:
                 f"{self.cii_class(i=i,speed=v_best, year=2023)}",
             )
             print("-" * 60)
-        fig, ax = plt.subplots()
-        ax.plot(vs, profits, label="profit", color="blue")
-        ax.annotate(
-            f"Optimal Speed={v_best:0.2f} knots",
-            xy=(v_best, profit_best),
-            xytext=(v_best, profit_best),
-            arrowprops=dict(facecolor="red"),
-        )
-        ax.set_xlabel("Vessel Speed (knot)")
-        ax.set_ylabel("Profit (dollar)", color="blue")
-        ax.axvline(x=v_best, ymax=profit_best, c="red", linestyle="--")
-        ax.legend(loc="upper left")
+            fig, ax = plt.subplots()
+            ax.plot(vs, profits, label="profit", color="blue")
+            ax.annotate(
+                f"Optimal Speed={v_best:0.2f} knots",
+                xy=(v_best, profit_best),
+                xytext=(v_best, profit_best),
+                arrowprops=dict(facecolor="red"),
+            )
+            ax.set_xlabel("Vessel Speed (knot)")
+            ax.set_ylabel("Profit (dollar)", color="blue")
+            ax.axvline(x=v_best, ymax=profit_best, c="red", linestyle="--")
+            ax.legend(loc="upper left")
 
-        ax1 = ax.twinx()
-        ax1.plot(vs, emissions, label="emission", color="green")
-        ax1.set_ylabel("CO2 Emission (ton)", color="green")
-        ax1.legend(loc="upper right")
+            ax1 = ax.twinx()
+            ax1.plot(vs, emissions, label="emission", color="green")
+            ax1.set_ylabel("CO2 Emission (ton)", color="green")
+            ax1.legend(loc="upper right")
 
-        fig.suptitle(
-            f"Annual result, Carbon Tax: {self.global_env.carbon_tax_rates}, Retrofit: {retrofit} "
-        )
-        plt.show()
+            fig.suptitle(
+                f"Annual result, Carbon Tax: {self.global_env.carbon_tax_rates}, Retrofit: {retrofit} "
+            )
+            plt.show()
 
         return v_best
 
@@ -246,6 +245,7 @@ def settle(
     utilization_rate,
     fuel_ratio,
     retrofit,
+    pr,
 ):
     # Reading an Excel file using Pandas
     df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
@@ -274,4 +274,5 @@ def settle(
         route=shg_rtm,
         global_env=env,
     )
-    stm.plot_profit_year(i=i, retrofit=retrofit, pr=True)
+    stm.plot_profit_year(i=i, retrofit=retrofit, pr=pr)
+    return stm

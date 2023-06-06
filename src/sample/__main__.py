@@ -13,7 +13,8 @@ from meanfield import simulation
 #     i=1,
 #     ifo380_price=494.0,
 #     vlsifo_price=631.5,
-#     carbon_tax_rates=94.0,
+#     # vlsifo_price=494.0,
+#     carbon_tax_rates=0,
 #     name="Shanghai-Rotterdam",
 #     route_type="CONTAINER SHIPS",
 #     distance=11999.0,
@@ -21,20 +22,22 @@ from meanfield import simulation
 #     utilization_rate=0.95,
 #     fuel_ratio=0.5,
 #     retrofit=False,
+#     pr=True,
 # )
 
 
-settle(
-    i=0,
-    ifo380_price=494.0,
-    vlsifo_price=494.0,
-    carbon_tax_rates=0,
-    name="Houston-Shanghai",
-    route_type="BULKERS",
-    distance=12324.0,
-    freight_rate=35.0,
-    utilization_rate=0.9,
-    retrofit=False,
-    fuel_ratio=0.5,
-)
-# simulation()
+# s1 = settle(
+#     i=5,
+#     ifo380_price=494.0,
+#     vlsifo_price=494.0,
+#     carbon_tax_rates=0,
+#     name="Houston-Shanghai",
+#     route_type="BULKERS",
+#     distance=12324.0,
+#     freight_rate=35.0,
+#     utilization_rate=0.9,
+#     retrofit=False,
+#     fuel_ratio=0.5,
+# )
+
+simulation()

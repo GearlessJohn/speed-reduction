@@ -44,7 +44,6 @@ class Vessel:
         self.cii_score_2021 = row["Actual CII 2021"]
         self.cii_class_2021 = row["2021 CII rating"]
 
-
     def fuel_consumption_rate(self, speed=None):
         # Calculating fuel consumption based on the vessel's speed and distance traveled
         speed = speed or self.speed_2021
@@ -57,16 +56,14 @@ class Vessel:
             )
             / self.distance_2021
             * (speed / self.speed_2021) ** 3
-        ) 
+        )
 
     def co2_emission(self, speed=None):
         # Calculating greenhouse gas emissions based on the vessel's speed and distance traveled
         speed = speed or self.speed_2021
         return (
-            self.co2_emission_2021
-            / self.distance_2021
-            * (speed / self.service_speed) ** 3
-        ) 
+            self.co2_emission_2021 / self.distance_2021 * (speed / self.speed_2021) ** 3
+        )
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ from vessel import Vessel
 from global_env import GlobalEnv
 from route import Route
 from settlement import settle
-from meanfield import simulation
+from meanfield import mf
 
 
 # settle(
@@ -40,4 +40,4 @@ from meanfield import simulation
 #     fuel_ratio=0.5,
 # )
 
-simulation()
+mf(num=100, value_exit=0.5, binary=False)

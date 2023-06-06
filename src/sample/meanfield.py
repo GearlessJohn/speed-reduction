@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import random
 
 from vessel import Vessel
 from global_env import GlobalEnv
@@ -9,7 +10,7 @@ from settlement import Settlement
 
 
 class MeanField:
-    def __init__(self, vessels, route, global_env, q=0.05, value_exit=0.5):
+    def __init__(self, vessels, route, global_env, q, value_exit):
         self.vessels = vessels
         self.route = route
         self.global_env = global_env
@@ -93,14 +94,25 @@ class MeanField:
         print("x_hat\t", x_hat[:5])
         return x_hat
 
-    def delta_hat(self, x, theta, e_delta):
+    def delta_hat(self, x, theta, e_delta, binary=False, lim=0.3):
         # Equation (16)
         x_hat = self.x_estimator(theta=theta, e_delta=e_delta)
 
-        return np.where(
+        res = np.where(
             x <= theta,
             np.minimum((theta - x) / self.lam_, -self.gamma_ * self.b_ * e_delta),
             np.where(x <= x_hat, -(x - theta) / self.lam_, np.zeros(len(x))),
+        )
+        if binary:
+            return np.where(
+                res < -self.vessels[0].speed_2021 * 0.05,
+                -self.vessels[0].speed_2021 * 0.05,
+                self.delta_,
+            )
+        return np.where(
+            np.abs(res) > self.vessels[0].speed_2021 * lim,
+            self.vessels[0].speed_2021 * lim * np.sign(res),
+            res,
         )
 
     def theta_hat(self, x, delta):
@@ -108,7 +120,7 @@ class MeanField:
         # return np.percentile(x + self.lam_ * delta, 100 - self.q_ * 100)
         return np.sort(x + self.lam_ * delta)[int(len(x) * (1 - self.q_))]
 
-    def one_step(self):
+    def one_step(self, binary=False):
         # From previous distribution of x, a new theta can be estimated
         self.theta_ = self.theta_hat(self.x_, self.delta_)
         print("theta:\t", self.theta_)
@@ -117,7 +129,9 @@ class MeanField:
             np.sum((self.x_ + self.lam_ * self.delta_) > self.theta_) / len(self.x_),
         )
         # Based on new theta, every vessel changes its speed (delta)
-        self.delta_ = self.delta_hat(self.x_, self.theta_, self.e_delta_)
+        self.delta_ = self.delta_hat(
+            x=self.x_, theta=self.theta_, e_delta=self.e_delta_, binary=binary
+        )
         print("delta:\t", self.delta_[:5])
 
         y = self.x_ + self.lam_ * self.delta_
@@ -129,7 +143,7 @@ class MeanField:
 
         return
 
-    def simulate(self, tol=1e-5, max_iter=20):
+    def simulate(self, tol=1e-5, max_iter=20, binary=False):
         errs = []
         delta0 = []
         pis = []
@@ -152,7 +166,7 @@ class MeanField:
             delta_current = self.delta_
 
             print(f"iteration {i}:")
-            self.one_step()
+            self.one_step(binary=binary)
             print()
 
             err = np.sum((self.x_ + self.lam_ * self.delta_) > self.theta_) / n
@@ -175,41 +189,38 @@ class MeanField:
         return errs, delta0, pis
 
 
-def vessels_sampling(vessel, global_env, num, pcts=[0.15, 0.2, 0.3, 0.2, 0.15]):
+def vessels_sampling(row, global_env, num, pcts=[0.15, 0.2, 0.3, 0.2, 0.15]):
     """Create a sample of num vessels from an origin vessel"""
     assert np.abs(np.sum(pcts) - 1.0) <= 1e-10, "Wrong distribution of CII scores"
 
-    vessels_virual = [vessel for i in range(num)]
+    vessels_virual = [Vessel(row) for i in range(num)]
 
     fronts = np.insert(
         global_env.cii_fronts(
-            vessel.vessel_type, vessel.sub_type, vessel.dwt, year=2021
+            vessels_virual[0].vessel_type,
+            vessels_virual[0].sub_type,
+            vessels_virual[0].dwt,
+            year=2021,
         ),
         0,
-        0.0,
+        1,
     )
     fronts = np.append(fronts, [1.5 * fronts[-1]])
 
     ciis = []
     for i in range(len(pcts)):
-        ciis.extend(
-            np.linspace(
-                fronts[i], fronts[i + 1], int(num * pcts[i]), endpoint=False
-            ).tolist()
-        )
+        ciis.extend(np.random.uniform(fronts[i], fronts[i + 1], int(num * pcts[i])))
 
+    random.shuffle(ciis)
     for i in range(num):
         vessels_virual[i].cii_score_2021 = ciis[i]
 
     return vessels_virual, ciis, fronts
 
 
-def mf():
+def mf(num=100, q=0.15, value_exit=0.5, binary=False):
     # Reading an Excel file using Pandas
     df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
-
-    # Creating a list of Vessel objects
-    vessels = [Vessel(row) for _, row in df_vessels.iterrows()]
 
     # Initializing GlobalEnv object
     env = GlobalEnv(ifo380_price=494.0, vlsifo_price=631.5, carbon_tax_rates=94.0)
@@ -228,15 +239,15 @@ def mf():
     # Create a virual sample of vessels with same information
 
     vessels_virtual, ciis, fronts = vessels_sampling(
-        vessel=vessels[1], global_env=env, num=100
+        row=df_vessels.iloc[1], global_env=env, num=num
     )
 
-    mf = MeanField(vessels_virtual, shg_rtm, env, q=0.15, value_exit=0.5)
-    # mf.x_ = mf.x_ * (1 + 0.5 * 2 * (np.random.rand(len(mf.x_)) - 0.5))
-    # # mf.x_ = mf.x_ * (1 + np.random.randn(len(mf.x_)))
+    mf = MeanField(vessels_virtual, shg_rtm, env, q=q, value_exit=value_exit)
+    # mf.x_ = mf.x_ * (1 + 0.9 * 2 * (np.random.rand(len(mf.x_)) - 0.5))
+    # mf.x_ = mf.x_ * (1 + np.random.randn(len(mf.x_)))
 
     # Simulate
-    errs, delta0, pis = mf.simulate(tol=0.01, max_iter=15)
+    errs, delta0, pis = mf.simulate(tol=0.01, max_iter=15, binary=binary)
 
     fig, axs = plt.subplots(5, figsize=(8, 8))
     plt.subplots_adjust(hspace=0.7)
@@ -252,20 +263,20 @@ def mf():
     axs[1].axline(xy1=(0, mf.q_), slope=0, c="red")
 
     axs[2].plot(delta0)
-    axs[2].set_title("Speed variation of the first vessel's ")
+    axs[2].set_title("Speed variation of the first vessel")
 
     axs[3].plot(pis)
     axs[3].set_title("Profit of the first vessel")
 
-    axs[4].scatter(range(len(mf.x_)), mf.x_ + mf.lam_ * mf.delta_)
+    axs[4].scatter(range(len(mf.x_)), mf.x_ + mf.lam_ * mf.delta_, s=0.7)
     axs[4].axline(xy1=(0, mf.theta_), slope=0, c="red")
     axs[4].set_title("Distribution of final y")
 
     fig.suptitle(
-        f"{len(mf.x_):d} navires, q: {mf.q_:.2f}, exit value rate: {mf.value_exit_:.1f}"
+        f"{len(mf.x_):d} navires, q: {mf.q_:.2f}, exit value rate: {mf.value_exit_:.2f}"
     )
 
     plt.show()
-    fig.savefig(
-        f"./fig/meanfield-{len(mf.x_):d} navires-exit value rate {mf.value_exit_:.1f}.png"
-    )
+    # fig.savefig(
+    #     f"./fig/meanfield-{len(mf.x_):d} navires-exitz value rate {mf.value_exit_:.1f}.png"
+    # )

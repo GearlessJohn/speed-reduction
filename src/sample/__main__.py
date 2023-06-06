@@ -40,4 +40,4 @@ from meanfield import mf
 #     fuel_ratio=0.5,
 # )
 
-mf()
+mf(num=100, value_exit=0.5, binary=False)

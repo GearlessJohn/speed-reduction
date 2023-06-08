@@ -27,19 +27,19 @@ class MeanField:
         self.v_ = []
         self.delta_ = []
 
-        settlement = Settlement(vessels, route, global_env)
         for i in range(len(self.vessels)):
             vessel = vessels[i]
             T = vessel.hours_2021
             D = route.distance
             u_actual = vessel.speed_2021
+            settlement = Settlement(vessel, route, global_env)
 
             p = route.freight_rate * 0.95 * vessel.capacity * T / D
             a = 5 * p
             b = 4 * p / u_actual
 
             cf = -settlement.cost_fuel(
-                i, speed=vessel.speed_2021, saving=0.0, power=2.0
+                speed=vessel.speed_2021, saving=0.0, power=2.0
             ) / (0.95 * vessel.capacity)
             l = cf * 0.95 * vessel.capacity * T / D
             gamma = u_actual**2 / (2 * cf * 0.95 * vessel.capacity * T * u_actual / D)

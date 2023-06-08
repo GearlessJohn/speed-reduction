@@ -267,14 +267,6 @@ class Settlement:
 
         return v_best
 
-    def global_optimization(
-        self, power, retrofit, lim=0.2, years=[2023, 2024, 2025, 2026], pr=False
-    ):
-        speed_ini = self.vessel.speed_2021
-        vs = np.tile(speed_ini + np.linspace(-3, 3, 0.1), (4, 1))
-
-        return
-
 
 def settle(i, data_vessels, env, route, power, retrofit, pr):
     # Creating a list of Vessel objects

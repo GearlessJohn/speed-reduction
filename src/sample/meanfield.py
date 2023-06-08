@@ -1,11 +1,8 @@
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import random
 
 from vessel import Vessel
-from global_env import GlobalEnv
-from route import Route
 from settlement import Settlement
 
 
@@ -30,20 +27,20 @@ class MeanField:
         self.v_ = []
         self.delta_ = []
 
-        settlement = Settlement(vessels, route, global_env)
         for i in range(len(self.vessels)):
             vessel = vessels[i]
             T = vessel.hours_2021
             D = route.distance
             u_actual = vessel.speed_2021
+            settlement = Settlement(vessel, route, global_env)
 
             p = route.freight_rate * 0.95 * vessel.capacity * T / D
             a = 5 * p
             b = 4 * p / u_actual
 
-            cf = -settlement.cost_fuel(i, speed=vessel.speed_2021, saving=0.0) / (
-                0.95 * vessel.capacity
-            )
+            cf = -settlement.cost_fuel(
+                speed=vessel.speed_2021, saving=0.0, power=2.0
+            ) / (0.95 * vessel.capacity)
             l = cf * 0.95 * vessel.capacity * T / D
             gamma = u_actual**2 / (2 * cf * 0.95 * vessel.capacity * T * u_actual / D)
             u0 = gamma * (a - l) / (1 + gamma * b)
@@ -218,31 +215,15 @@ def vessels_sampling(row, global_env, num, pcts=[0.15, 0.2, 0.3, 0.2, 0.15]):
     return vessels_virual, ciis, fronts
 
 
-def mf(num=100, q=0.15, value_exit=0.5, binary=False):
-    # Reading an Excel file using Pandas
-    df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
-
-    # Initializing GlobalEnv object
-    env = GlobalEnv(ifo380_price=494.0, vlsifo_price=631.5, carbon_tax_rates=94.0)
-
-    # Initializing Route object
-    shg_rtm = Route(
-        name="Shanghai-Rotterdam",
-        route_type="CONTAINER SHIPS",
-        distance=11999.0,
-        freight_rate=1479.0,
-        utilization_rate=0.95,
-        fuel_ratio=0.5,
-    )
-
+def mf(num, data_vessels, env, route, q=0.15, value_exit=0.5, binary=False):
     # Launch Model
     # Create a virual sample of vessels with same information
 
     vessels_virtual, ciis, fronts = vessels_sampling(
-        row=df_vessels.iloc[1], global_env=env, num=num
+        row=data_vessels.iloc[1], global_env=env, num=num
     )
 
-    mf = MeanField(vessels_virtual, shg_rtm, env, q=q, value_exit=value_exit)
+    mf = MeanField(vessels_virtual, route, env, q=q, value_exit=value_exit)
     # mf.x_ = mf.x_ * (1 + 0.9 * 2 * (np.random.rand(len(mf.x_)) - 0.5))
     # mf.x_ = mf.x_ * (1 + np.random.randn(len(mf.x_)))
 

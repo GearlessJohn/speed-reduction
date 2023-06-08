@@ -11,10 +11,10 @@ df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
 
 # Initializing GlobalEnv object
 env = GlobalEnv(
-    ifo380_price=494.0,
-    vlsifo_price=594,
-    mgo_price=781,
-    lng_price=1500,
+    ifo380_prices=494.0,
+    vlsifo_prices=594,
+    mgo_prices=781,
+    lng_prices=1500,
     carbon_tax_rates=0.0,
 )
 
@@ -23,7 +23,7 @@ shg_rtm = Route(
     name="Shanghai-Rotterdam",
     route_type="CONTAINER SHIPS",
     distance=11999.0,
-    freight_rate=1479.0,
+    freight_rates=1479.0,
     utilization_rate=0.95,
     fuel_ratio=0.46,
 )
@@ -32,7 +32,7 @@ hst_shg = Route(
     name="Houston-Shanghai",
     route_type="BULKERS",
     distance=12324.0,
-    freight_rate=35.0,
+    freight_rates=35.0,
     utilization_rate=0.9,
     fuel_ratio=0.5,
 )

@@ -4,22 +4,15 @@ import bisect
 
 class GlobalEnv:
     def __init__(
-        self,
-        ifo380_price,
-        vlsifo_price,
-        mgo_price,
-        lng_price,
-        carbon_tax_rates,
-        year_actual=2023,
+        self, ifo380_prices, vlsifo_prices, mgo_prices, lng_prices, carbon_tax_rates
     ):
         # Initializing the attributes of the GlobalMarket object
-        self.ifo380_price = ifo380_price
-        self.vlsifo_price = vlsifo_price
-        self.mgo_price = mgo_price
-        self.lng_price = lng_price
+        self.ifo380_prices = ifo380_prices
+        self.vlsifo_prices = vlsifo_prices
+        self.mgo_prices = mgo_prices
+        self.lng_prices = lng_prices
 
         self.carbon_tax_rates = carbon_tax_rates
-        self.year_actual = year_actual
 
     def cii_reduction(self, year):
         reductions = {
@@ -57,9 +50,7 @@ class GlobalEnv:
             case _:
                 raise ValueError("CII Calculation: Unknow vessel type to get a and c")
 
-    def cii_ref(self, vessel_type, sub_type, dwt, year=None):
-        year = year or self.year_actual
-
+    def cii_ref(self, vessel_type, sub_type, dwt, year):
         a, c = self.cii_ac(vessel_type, sub_type, dwt)
         cii_ref = (a * dwt**-c) * (1 - self.cii_reduction(year))
         return cii_ref
@@ -87,15 +78,11 @@ class GlobalEnv:
             case _:
                 raise ValueError("CII Calculation: Unknow vessel type to get exp(d)")
 
-    def cii_fronts(self, vessel_type, sub_type, dwt, year=None):
-        year = year or self.year_actual
-
+    def cii_fronts(self, vessel_type, sub_type, dwt, year):
         expd = np.array(self.cii_expd(vessel_type, sub_type, dwt))
         return expd * self.cii_ref(vessel_type, sub_type, dwt, year)
 
-    def cii_class(self, cii_atteined, vessel_type, sub_type, dwt, year=None):
-        year = year or self.year_actual
-
+    def cii_class(self, cii_atteined, vessel_type, sub_type, dwt, year):
         cii_classes = ["A", "B", "C", "D", "E"]
 
         return cii_classes[

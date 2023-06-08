@@ -13,10 +13,10 @@ class Settlement:
         # Calculate the expenditure on fuel
         return (
             -(
-                self.vessel.hfo_quantity_2021 * self.global_env.ifo380_price
+                self.vessel.hfo_quantity_2021 * self.global_env.ifo380_prices
                 + (self.vessel.lfo_quantity_2021 + self.vessel.diesel_quantity_2021)
-                * self.global_env.mgo_price
-                + self.vessel.lng_quantity_2021 * self.global_env.lng_price
+                * self.global_env.mgo_prices
+                + self.vessel.lng_quantity_2021 * self.global_env.lng_prices
             )
             / self.vessel.distance_2021
             * (speed / self.vessel.speed_2021) ** power
@@ -102,7 +102,9 @@ class Settlement:
     def income_freight(self):
         # Estimate the revenue generated from the transportation of goods
         return (
-            self.vessel.capacity * self.route.utilization_rate * self.route.freight_rate
+            self.vessel.capacity
+            * self.route.utilization_rate
+            * self.route.freight_rates
         )
 
     def hours_voyage(self, speed, acc=True):
@@ -186,7 +188,7 @@ class Settlement:
             print("\tDistance:\t", self.route.distance, "knots")
             print(
                 "\tFreight Rate:\t",
-                self.route.freight_rate,
+                self.route.freight_rates,
                 f"$/{self.vessel.unit}",
             )
             # print(
@@ -215,7 +217,7 @@ class Settlement:
             )
             print(
                 "\tProfitability:\t",
-                f"{(self.route.freight_rate+oc + fc)/self.route.freight_rate*100:.2f} %",
+                f"{(self.route.freight_rates+oc + fc)/self.route.freight_rates*100:.2f} %",
             )
             print("\tAnnual Profit:\t", f"{profit_best:.2f} M $")
             print()

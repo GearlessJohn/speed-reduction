@@ -34,7 +34,7 @@ class MeanField:
             u_actual = vessel.speed_2021
             settlement = Settlement(vessel, route, global_env)
 
-            p = route.freight_rate * 0.95 * vessel.capacity * T / D
+            p = route.freight_rates * 0.95 * vessel.capacity * T / D
             a = 5 * p
             b = 4 * p / u_actual
 

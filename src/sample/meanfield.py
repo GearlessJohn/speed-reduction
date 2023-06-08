@@ -7,7 +7,7 @@ from settlement import Settlement
 
 
 class MeanField:
-    def __init__(self, vessels, route, global_env, q, value_exit):
+    def __init__(self, vessels, route, global_env, q, value_exit, year):
         self.vessels = vessels
         self.route = route
         self.global_env = global_env
@@ -34,12 +34,12 @@ class MeanField:
             u_actual = vessel.speed_2021
             settlement = Settlement(vessel, route, global_env)
 
-            p = route.freight_rates * 0.95 * vessel.capacity * T / D
+            p = route.freight_rates[year] * 0.95 * vessel.capacity * T / D
             a = 5 * p
             b = 4 * p / u_actual
 
             cf = -settlement.cost_fuel(
-                speed=vessel.speed_2021, saving=0.0, power=2.0
+                speed=vessel.speed_2021, saving=0.0, power=3.0, year=year
             ) / (0.95 * vessel.capacity)
             l = cf * 0.95 * vessel.capacity * T / D
             gamma = u_actual**2 / (2 * cf * 0.95 * vessel.capacity * T * u_actual / D)
@@ -215,7 +215,7 @@ def vessels_sampling(row, global_env, num, pcts=[0.15, 0.2, 0.3, 0.2, 0.15]):
     return vessels_virual, ciis, fronts
 
 
-def mf(num, data_vessels, env, route, q=0.15, value_exit=0.5, binary=False):
+def mf(num, data_vessels, env, route, q=0.15, value_exit=0.5, binary=False, year=0):
     # Launch Model
     # Create a virual sample of vessels with same information
 
@@ -223,7 +223,7 @@ def mf(num, data_vessels, env, route, q=0.15, value_exit=0.5, binary=False):
         row=data_vessels.iloc[1], global_env=env, num=num
     )
 
-    mf = MeanField(vessels_virtual, route, env, q=q, value_exit=value_exit)
+    mf = MeanField(vessels_virtual, route, env, q=q, value_exit=value_exit, year=year)
     # mf.x_ = mf.x_ * (1 + 0.9 * 2 * (np.random.rand(len(mf.x_)) - 0.5))
     # mf.x_ = mf.x_ * (1 + np.random.randn(len(mf.x_)))
 

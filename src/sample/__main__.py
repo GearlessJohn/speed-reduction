@@ -70,6 +70,17 @@ def main(regime):
             value_exit=0.5,
             binary=False,
         )
+    elif regime == 3:
+        return settle(
+            i=1,
+            data_vessels=df_vessels,
+            env=env,
+            route=shg_rtm,
+            power=3.0,
+            retrofit=False,
+            year=0,
+            pr=False,
+        ).optimization(retrofit=False, power=3.0, years=np.arange(4), pr=True)
     else:
         return
 

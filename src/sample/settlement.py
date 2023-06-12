@@ -118,7 +118,7 @@ class Settlement:
     def nmb_trip(self, speed, acc=True):
         return self.hours_voyage(speed=speed, acc=acc) * speed / self.route.distance
 
-    def profit_trip(self, speed, power, retrofit, year: int):
+    def profit_trip(self, speed, power, retrofit, year):
         res = 0.0
         saving = 0.0
         if retrofit:
@@ -279,6 +279,61 @@ class Settlement:
 
         return v_best
 
+    def exit_value(self):
+        return 0.0
+
+    def cii_profits(self, profits, cii_class):
+        m = profits.shape[1]
+        total_profit = np.zeros((m, m, m, m))
+        for i0 in range(m):
+            for i1 in range(m):
+                print(i0, i1)
+                for i2 in range(m):
+                    for i3 in range(m):
+                        total_profit[i0, i1, i2, i3] = (
+                            profits[0, i0]
+                            + profits[1, i1]
+                            + profits[2, i2]
+                            + (
+                                profits[3, i3]
+                                if (
+                                    cii_class[0, i1] in {"D", "E"}
+                                    and cii_class[1, i2] in {"D", "E"}
+                                    and cii_class[2, i3] in {"D", "E"}
+                                )
+                                else 0.0
+                            )
+                        )
+
+        return np.unravel_index(np.argmax(total_profit, axis=None), total_profit.shape)
+
+    def optimization(self, retrofit, power, years, pr=False):
+        m = 61
+        speed_ini = self.vessel.speed_2021
+        vs = np.tile(speed_ini + np.linspace(-3, 3, m), (len(years), 1))
+
+        profits = np.array(
+            [
+                [
+                    self.profit_year(
+                        speed=vs[i, j], power=power, retrofit=retrofit, year=i
+                    )
+                    for j in range(m)
+                ]
+                for i in years
+            ]
+        )
+
+        cii_class = np.array(
+            [
+                [self.cii_class(speed=vs[i, j], power=power, year=i) for j in range(m)]
+                for i in years
+            ]
+        )
+        best = self.cii_profits(profits=profits, cii_class=cii_class)
+        print(best, [vs[0, i] for i in best])
+        return best
+
 
 def settle(i, data_vessels, env, route, power, retrofit, year, pr):
     # Creating a list of Vessel objects
@@ -289,5 +344,6 @@ def settle(i, data_vessels, env, route, power, retrofit, year, pr):
         route=route,
         global_env=env,
     )
-    stm.plot_profit_year(retrofit=retrofit, power=power, year=year, pr=pr)
+    if pr:
+        stm.plot_profit_year(retrofit=retrofit, power=power, year=year, pr=pr)
     return stm

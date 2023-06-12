@@ -283,6 +283,41 @@ class Settlement:
     def exit_value(self):
         return 0.0
 
+    def cii_profits2(self, profits, cii_class):
+        m = profits.shape[1]
+
+        # Construct an open mesh for efficient computation
+        indices = np.ix_(np.arange(m), np.arange(m), np.arange(m), np.arange(m))
+
+        # Calculate profits according to your conditions
+        condition = (cii_class[0, indices[0]] == "D") | (
+            cii_class[0, indices[0]] == "E"
+        )
+        condition &= (cii_class[1, indices[1]] == "D") | (
+            cii_class[1, indices[1]] == "E"
+        )
+        condition &= (cii_class[2, indices[2]] == "D") | (
+            cii_class[2, indices[2]] == "E"
+        )
+
+        # Use np.where to switch between profits and 0 based on condition
+        profits_3 = np.where(condition, profits[3, indices[3]], 0.0)
+
+        # Calculate total_profit
+        total_profit = (
+            profits[0, indices[0]]
+            + profits[1, indices[1]]
+            + profits[2, indices[2]]
+            + profits_3
+        )
+
+        # Find the index of maximum total_profit
+        max_index = np.unravel_index(
+            np.argmax(total_profit, axis=None), total_profit.shape
+        )
+
+        return max_index
+
     def cii_profits(self, profits, cii_class):
         m = profits.shape[1]
         total_profit = np.zeros((m, m, m, m))
@@ -309,36 +344,30 @@ class Settlement:
         return np.unravel_index(np.argmax(total_profit, axis=None), total_profit.shape)
 
     def optimization(self, retrofit, power, years, pr=False):
+        n = len(years)
         m = 61
         speed_ini = self.vessel.speed_2021
-        vs = np.tile(speed_ini + np.linspace(-3, 3, m), (len(years), 1))
+        vs = speed_ini + np.linspace(-3, 3, m)
 
-        profits = np.array(
-            [
-                [
-                    self.profit_year(
-                        speed=vs[i, j], power=power, retrofit=retrofit, year=i
-                    )
-                    for j in range(m)
-                ]
-                for i in years
-            ]
-        )
+        profits = np.empty((n, m))
+        cii_class = np.empty((n, m), dtype=object)
 
-        cii_class = np.array(
-            [
-                [self.cii_class(speed=vs[i, j], power=power, year=i) for j in range(m)]
-                for i in years
-            ]
-        )
+        for i in years:
+            for j in range(m):
+                profits[i, j] = self.profit_year(
+                    speed=vs[j], power=power, retrofit=retrofit, year=i
+                )
+                cii_class[i, j] = self.cii_class(speed=vs[j], power=power, year=i)
+
         best = self.cii_profits(profits=profits, cii_class=cii_class)
-        v_best = [vs[i, best[i]] for i in years]
-        profits_best = [profits[i, best(i)] for i in years]
-
-        print("CII Class:", [cii_class[i, best(i)] for i in years])
+        v_best = np.array([vs[best[i]] for i in years])
+        profits_best = np.array([profits[i, best[i]] for i in years])
+        print("Optimal Speed:", v_best)
+        print("CII Class:", [cii_class[i, best[i]] for i in years])
         plt.plot(v_best, label="speed")
         plt.plot(profits_best / 10e6, label="profits")
         plt.legend()
+        # plt.show()
         return best
 
 

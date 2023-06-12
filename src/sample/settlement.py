@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from vessel import Vessel
+from tqdm import tqdm
 
 
 class Settlement:
@@ -285,9 +286,9 @@ class Settlement:
     def cii_profits(self, profits, cii_class):
         m = profits.shape[1]
         total_profit = np.zeros((m, m, m, m))
-        for i0 in range(m):
+        for i0 in tqdm(range(m)):
             for i1 in range(m):
-                print(i0, i1)
+                # print(i0, i1)
                 for i2 in range(m):
                     for i3 in range(m):
                         total_profit[i0, i1, i2, i3] = (

@@ -332,7 +332,13 @@ class Settlement:
             ]
         )
         best = self.cii_profits(profits=profits, cii_class=cii_class)
-        print(best, [vs[0, i] for i in best])
+        v_best = [vs[i, best[i]] for i in years]
+        profits_best = [profits[i, best(i)] for i in years]
+
+        print("CII Class:", [cii_class[i, best(i)] for i in years])
+        plt.plot(v_best, label="speed")
+        plt.plot(profits_best / 10e6, label="profits")
+        plt.legend()
         return best
 
 

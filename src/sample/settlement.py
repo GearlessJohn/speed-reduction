@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from vessel import Vessel
 from tqdm import tqdm
 
+# from matplotlib.ticker import MaxNLocator
+
 
 class Settlement:
     def __init__(self, vessel, route, global_env):
@@ -283,65 +285,56 @@ class Settlement:
     def exit_value(self):
         return 0.0
 
-    def cii_profits2(self, profits, cii_class):
-        m = profits.shape[1]
-
-        # Construct an open mesh for efficient computation
-        indices = np.ix_(np.arange(m), np.arange(m), np.arange(m), np.arange(m))
-
-        # Calculate profits according to your conditions
-        condition = (cii_class[0, indices[0]] == "D") | (
-            cii_class[0, indices[0]] == "E"
-        )
-        condition &= (cii_class[1, indices[1]] == "D") | (
-            cii_class[1, indices[1]] == "E"
-        )
-        condition &= (cii_class[2, indices[2]] == "D") | (
-            cii_class[2, indices[2]] == "E"
-        )
-
-        # Use np.where to switch between profits and 0 based on condition
-        profits_3 = np.where(condition, profits[3, indices[3]], 0.0)
-
-        # Calculate total_profit
-        total_profit = (
-            profits[0, indices[0]]
-            + profits[1, indices[1]]
-            + profits[2, indices[2]]
-            + profits_3
-        )
-
-        # Find the index of maximum total_profit
-        max_index = np.unravel_index(
-            np.argmax(total_profit, axis=None), total_profit.shape
-        )
-
-        return max_index
-
     def cii_profits(self, profits, cii_class):
         m = profits.shape[1]
-        total_profit = np.zeros((m, m, m, m))
-        for i0 in tqdm(range(m)):
-            for i1 in range(m):
-                # print(i0, i1)
-                for i2 in range(m):
-                    for i3 in range(m):
-                        total_profit[i0, i1, i2, i3] = (
-                            profits[0, i0]
-                            + profits[1, i1]
-                            + profits[2, i2]
-                            + (
-                                profits[3, i3]
-                                if (
-                                    cii_class[0, i1] in {"D", "E"}
-                                    and cii_class[1, i2] in {"D", "E"}
-                                    and cii_class[2, i3] in {"D", "E"}
-                                )
-                                else 0.0
-                            )
-                        )
 
-        return np.unravel_index(np.argmax(total_profit, axis=None), total_profit.shape)
+        # Create an array of profit indices
+        indices = np.arange(m)
+
+        # Create a grid of all combinations of indices
+        I0, I1, I2, I3 = np.meshgrid(indices, indices, indices, indices, indexing="ij")
+
+        # Create a condition mask for cii_class values
+        mask = (cii_class[0, I0] == "D") | (cii_class[0, I0] == "E")
+        mask &= (cii_class[1, I1] == "D") | (cii_class[1, I1] == "E")
+        mask &= (cii_class[2, I2] == "D") | (cii_class[2, I2] == "E")
+
+        # Calculate total profits using the indices and the condition mask
+        total_profit = (
+            profits[0, I0]
+            + profits[1, I1]
+            + profits[2, I2]
+            + np.where(mask, 0.0, profits[3, I3])
+        )
+
+        return np.unravel_index(
+            np.argmax(total_profit, axis=None), total_profit.shape
+        ), np.max(total_profit)
+
+    # def cii_profits2(self, profits, cii_class):
+    #     m = profits.shape[1]
+    #     total_profit = np.zeros((m, m, m, m))
+
+    #     for i0 in tqdm(range(m)):
+    #         for i1 in range(m):
+    #             for i2 in range(m):
+    #                 for i3 in range(m):
+    #                     if (
+    #                         (cii_class[0, i0] == "D" or cii_class[0, i0] == "E")
+    #                         and (cii_class[1, i1] == "D" or cii_class[1, i1] == "E")
+    #                         and (cii_class[2, i2] == "D" or cii_class[2, i2] == "E")
+    #                     ):
+    #                         p3 = 0.0
+    #                     else:
+    #                         p3 = profits[3, i3]
+
+    #                     total_profit[i0, i1, i2, i3] = (
+    #                         profits[0, i0] + profits[1, i1] + profits[2, i2] + p3
+    #                     )
+
+    #     return np.unravel_index(
+    #         np.argmax(total_profit, axis=None), total_profit.shape
+    #     ), np.max(total_profit)
 
     def optimization(self, retrofit, power, years, pr=False):
         n = len(years)
@@ -359,15 +352,31 @@ class Settlement:
                 )
                 cii_class[i, j] = self.cii_class(speed=vs[j], power=power, year=i)
 
-        best = self.cii_profits(profits=profits, cii_class=cii_class)
+        profits = profits / 1e6
+        best, profit_max = self.cii_profits(profits=profits, cii_class=cii_class)
+        print("Max profit:", profit_max)
+        print("True max profit:", sum([profits[i, best[i]] for i in years]))
+
         v_best = np.array([vs[best[i]] for i in years])
         profits_best = np.array([profits[i, best[i]] for i in years])
+        if np.sum(profits_best[:-1]) == profit_max:
+            profits_best[3] = 0.0
+
         print("Optimal Speed:", v_best)
         print("CII Class:", [cii_class[i, best[i]] for i in years])
-        plt.plot(v_best, label="speed")
-        plt.plot(profits_best / 10e6, label="profits")
-        plt.legend()
-        # plt.show()
+
+        fig, ax = plt.subplots()
+        ax.plot(2023 + np.array(years), v_best, c="blue")
+        ax.set_xlabel("Year")
+        ax.set_xticks(2023 + np.array(years))
+        ax.set_ylabel("Speed (knot)", color="blue")
+        # ax.legend()
+
+        ax1 = ax.twinx()
+        ax1.plot(2023 + np.array(years), profits_best, c="green")
+        ax1.set_ylabel("Profit (M$)", color="green")
+        # ax1.legend()
+        plt.show()
         return best
 
 

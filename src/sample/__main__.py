@@ -81,9 +81,20 @@ def main(regime):
             year=0,
             pr=False,
         ).optimization(retrofit=False, power=3.0, years=np.arange(4), pr=True)
+    elif regime == 4:
+        return settle(
+            i=5,
+            data_vessels=df_vessels,
+            env=env,
+            route=hst_shg,
+            power=2.0,
+            retrofit=False,
+            year=0,
+            pr=False,
+        ).optimization(retrofit=False, power=2.0, years=np.arange(4), pr=True)
     else:
         return
 
 
 if __name__ == "__main__":
-    main(int(sys.argv[1]) if len(sys.argv) > 1 else 0)
+    main(int(sys.argv[1]) if len(sys.argv) > 1 else 3)

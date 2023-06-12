@@ -2,10 +2,10 @@ import numpy as np
 
 
 class fleet:
-    def __init__(self, vessels, routes, global_envs, years=[2023, 2024, 2025, 2026]):
+    def __init__(self, vessels, routes, global_env, years=[2023, 2024, 2025, 2026]):
         self.vessels = vessels
         self.routes = routes
-        self.global_envs = global_envs
+        self.global_env = global_env
 
     def global_optimization(
         self, power, retrofit, lim=0.2, years=[2023, 2024, 2025, 2026], pr=False

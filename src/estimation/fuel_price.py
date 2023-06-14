@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 
 # prices of 2023-06-14
-price_eu_current = {"ifo380": 457, "vlsfo": 530, "mgo": 680}
-price_ww_current = {"ifo380": 495, "vlsfo": 625, "mgo": 816}
+price_eu_current = {"ifo380": 457, "vlsfo": 530, "mgo": 680, "lng": 650}
+price_ww_current = {"ifo380": 495, "vlsfo": 625, "mgo": 816, "lng": 650}
 
 ifo380 = (
     pd.read_excel("./data/EU IFO380 Future Price.xlsx")
@@ -41,6 +41,20 @@ mgo_prices = (
     mgo_year["PRIOR"] * price_ww_current["mgo"] / price_eu_current["mgo"]
 ).to_numpy()
 
+# 1 metric ton LNG = 52.0 million British thermal unists (MMBtu)
+lng = (
+    pd.read_excel("./data/EU LNG Future Price.xlsx")
+    .dropna(subset=["PRIOR"])[["MONTH", "PRIOR"]]
+    .dropna()
+)
+lng["MONTH"] = lng["MONTH"].astype("datetime64[ns]")
+lng["PRIOR"] = lng["PRIOR"].astype("float64") * 52.0
+lng_year = lng.groupby(lng.MONTH.dt.year).mean()
+lng_prices = (
+    lng_year["PRIOR"] * price_ww_current["lng"] / price_eu_current["lng"]
+).to_numpy()
+
 print(f"ifo380\t{ifo380_prices}")
 print(f"vlsfo\t{vlsfo_prices}")
 print(f"mgo\t{mgo_prices}")
+print(f"lng\t{lng_prices}")

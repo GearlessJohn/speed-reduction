@@ -18,7 +18,7 @@ env = GlobalEnv(
     ifo380_prices=np.array([433.1, 404.9, 390.4, 375.0]),
     vlsifo_prices=np.array([569.0, 534.9, 523.5, 506.9]),
     mgo_prices=np.array([825.8, 805.5, 782.6, 766.5]),
-    lng_prices=np.array([1500.0, 1500.0, 1500.0, 1500.0]),
+    lng_prices=np.array([609.9, 744.6, 697.9, 608.4]),
     carbon_tax_rates=np.array([0.0, 94.0 * 0.4, 94.0 * 0.7, 94.0 * 1.0]),
 )
 

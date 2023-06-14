@@ -1,9 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from vessel import Vessel
-from tqdm import tqdm
-
-# from matplotlib.ticker import MaxNLocator
 
 
 class Settlement:
@@ -311,32 +308,7 @@ class Settlement:
             np.argmax(total_profit, axis=None), total_profit.shape
         ), np.max(total_profit)
 
-    # def cii_profits2(self, profits, cii_class):
-    #     m = profits.shape[1]
-    #     total_profit = np.zeros((m, m, m, m))
-
-    #     for i0 in tqdm(range(m)):
-    #         for i1 in range(m):
-    #             for i2 in range(m):
-    #                 for i3 in range(m):
-    #                     if (
-    #                         (cii_class[0, i0] == "D" or cii_class[0, i0] == "E")
-    #                         and (cii_class[1, i1] == "D" or cii_class[1, i1] == "E")
-    #                         and (cii_class[2, i2] == "D" or cii_class[2, i2] == "E")
-    #                     ):
-    #                         p3 = 0.0
-    #                     else:
-    #                         p3 = profits[3, i3]
-
-    #                     total_profit[i0, i1, i2, i3] = (
-    #                         profits[0, i0] + profits[1, i1] + profits[2, i2] + p3
-    #                     )
-
-    #     return np.unravel_index(
-    #         np.argmax(total_profit, axis=None), total_profit.shape
-    #     ), np.max(total_profit)
-
-    def optimization(self, retrofit, power, years, pr=False):
+    def optimization(self, retrofit, power, years, cii_limit=True, pr=False):
         n = len(years)
         m = 61
         speed_ini = self.vessel.speed_2021
@@ -353,31 +325,43 @@ class Settlement:
                 cii_class[i, j] = self.cii_class(speed=vs[j], power=power, year=i)
 
         profits = profits / 1e6
-        best, profit_max = self.cii_profits(profits=profits, cii_class=cii_class)
-        print("Max profit:", profit_max)
-        print("True max profit:", sum([profits[i, best[i]] for i in years]))
+        if cii_limit:
+            best, profit_max = self.cii_profits(profits=profits, cii_class=cii_class)
+        else:
+            best = [np.argmax(profits[i]) for i in years]
+            profit_max = np.sum([profits[i, best[i]] for i in years])
 
         v_best = np.array([vs[best[i]] for i in years])
+        savings = [
+            self.cost_retrofit(speed=v_best[i], power=power, year=i)[1] for i in years
+        ]
+        emissions_best = [
+            self.emission_year(v_best[i], saving=savings[i], power=power) for i in years
+        ]
+
         profits_best = np.array([profits[i, best[i]] for i in years])
         if np.sum(profits_best[:-1]) == profit_max:
             profits_best[3] = 0.0
 
-        print("Optimal Speed:", v_best)
-        print("CII Class:", [cii_class[i, best[i]] for i in years])
+        if pr:
+            print("Max profit:", profit_max)
+            print("True max profit:", sum([profits[i, best[i]] for i in years]))
+            print("Optimal Speed:", v_best)
+            print("CII Class:", [cii_class[i, best[i]] for i in years])
 
-        fig, ax = plt.subplots()
-        ax.plot(2023 + np.array(years), v_best, c="blue")
-        ax.set_xlabel("Year")
-        ax.set_xticks(2023 + np.array(years))
-        ax.set_ylabel("Speed (knot)", color="blue")
-        # ax.legend()
+            fig, ax = plt.subplots()
+            ax.plot(2023 + np.array(years), v_best, c="blue")
+            ax.set_xlabel("Year")
+            ax.set_xticks(2023 + np.array(years))
+            ax.set_ylabel("Speed (knot)", color="blue")
+            # ax.legend()
 
-        ax1 = ax.twinx()
-        ax1.plot(2023 + np.array(years), profits_best, c="green")
-        ax1.set_ylabel("Profit (M$)", color="green")
-        # ax1.legend()
-        plt.show()
-        return best
+            ax1 = ax.twinx()
+            ax1.plot(2023 + np.array(years), profits_best, c="green")
+            ax1.set_ylabel("Profit (M$)", color="green")
+            # ax1.legend()
+            plt.show()
+        return (v_best, profits_best, emissions_best)
 
 
 def settle(i, data_vessels, env, route, power, retrofit, year, pr):

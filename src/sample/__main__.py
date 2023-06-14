@@ -1,13 +1,18 @@
 import numpy as np
 import pandas as pd
 import sys
+import time
 
+from vessel import Vessel
 from global_env import GlobalEnv
 from route import Route
 from settlement import settle
 from meanfield import mf
+from fleet import Fleet
 
+start_time = time.time()
 df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
+vessels = [Vessel(row) for _, row in df_vessels.iterrows()]
 
 # Initializing GlobalEnv object
 env = GlobalEnv(
@@ -80,7 +85,9 @@ def main(regime):
             retrofit=False,
             year=0,
             pr=False,
-        ).optimization(retrofit=False, power=3.0, years=np.arange(4), pr=True)
+        ).optimization(
+            retrofit=False, power=3.0, years=np.arange(4), cii_limit=True, pr=True
+        )
     elif regime == 4:
         return settle(
             i=5,
@@ -92,9 +99,14 @@ def main(regime):
             year=0,
             pr=False,
         ).optimization(retrofit=False, power=2.0, years=np.arange(4), pr=True)
+    elif regime == 5:
+        return Fleet(
+            vessels=[vessels[1], vessels[5]], routes=[shg_rtm, hst_shg], global_env=env
+        ).global_optimization(retrofit=False, cii_limit=True, pr=True)
     else:
         return
 
 
 if __name__ == "__main__":
     main(int(sys.argv[1]) if len(sys.argv) > 1 else 3)
+    print("--- %s seconds ---" % (time.time() - start_time))

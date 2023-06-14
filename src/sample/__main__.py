@@ -10,15 +10,14 @@ from settlement import settle
 from meanfield import mf
 from fleet import Fleet
 
-start_time = time.time()
 df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
 vessels = [Vessel(row) for _, row in df_vessels.iterrows()]
 
 # Initializing GlobalEnv object
 env = GlobalEnv(
-    ifo380_prices=np.array([433.0, 494.0, 494.0, 494.0]),
-    vlsifo_prices=np.array([594.0, 594.0, 594.0, 594.0]),
-    mgo_prices=np.array([781.0, 781.0, 781.0, 781.0]),
+    ifo380_prices=np.array([433.1, 404.9, 390.4, 375.0]),
+    vlsifo_prices=np.array([569.0, 534.9, 523.5, 506.9]),
+    mgo_prices=np.array([825.8, 805.5, 782.6, 766.5]),
     lng_prices=np.array([1500.0, 1500.0, 1500.0, 1500.0]),
     carbon_tax_rates=np.array([0.0, 94.0 * 0.4, 94.0 * 0.7, 94.0 * 1.0]),
 )
@@ -109,4 +108,3 @@ def main(regime):
 
 if __name__ == "__main__":
     main(int(sys.argv[1]) if len(sys.argv) > 1 else 3)
-    print("--- %s seconds ---" % (time.time() - start_time))

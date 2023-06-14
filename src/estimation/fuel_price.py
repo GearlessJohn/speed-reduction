@@ -40,3 +40,7 @@ mgo_year = mgo.groupby(mgo.MONTH.dt.year).mean()
 mgo_prices = (
     mgo_year["PRIOR"] * price_ww_current["mgo"] / price_eu_current["mgo"]
 ).to_numpy()
+
+print(f"ifo380\t{ifo380_prices}")
+print(f"vlsfo\t{vlsfo_prices}")
+print(f"mgo\t{mgo_prices}")

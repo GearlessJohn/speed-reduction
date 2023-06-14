@@ -5,6 +5,9 @@ from vessel import Vessel
 
 class Settlement:
     def __init__(self, vessel, route, global_env):
+        assert (
+            vessel.vessel_type == route.route_type
+        ), "Route and vessel types do not match!"
         self.vessel = vessel
         self.route = route
         self.global_env = global_env
@@ -14,8 +17,8 @@ class Settlement:
         return (
             -(
                 self.vessel.hfo_quantity_2021 * self.global_env.ifo380_prices[year]
-                + (self.vessel.lfo_quantity_2021 + self.vessel.diesel_quantity_2021)
-                * self.global_env.mgo_prices[year]
+                + self.vessel.lfo_quantity_2021 * self.global_env.vlsifo_prices[year]
+                + self.vessel.diesel_quantity_2021 * self.global_env.mgo_prices[year]
                 + self.vessel.lng_quantity_2021 * self.global_env.lng_prices[year]
             )
             / self.vessel.distance_2021

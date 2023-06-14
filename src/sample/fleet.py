@@ -18,7 +18,7 @@ class Fleet:
         diff = 1 - (
             speed
             * stm.hours_voyage(speed=speed, acc=True)
-            * self.nmb[i][j]
+            * (self.nmb[i + 1][j] if i + 1 <= self.years[-1] else self.nmb[i][j])
             / (stm.vessel.speed_2021 * stm.vessel.hours_2021)
         )
 
@@ -73,9 +73,9 @@ class Fleet:
                     emissions_best[i] += emission_construction
                     profits_best[i] -= cost_construction
                     if i + 2 <= self.years[-1]:
-                        self.nmb[i + 2][j] += diff
-                        emissions_best[i + 2] *= self.nmb[i + 2][j]
-                        profits_best[i + 2] *= self.nmb[i + 2][j]
+                        self.nmb[i + 2 :, j] += diff
+                        emissions_best[i + 2] *= self.nmb[i + 2, j]
+                        profits_best[i + 2] *= self.nmb[i + 2, j]
 
             profits.append(profits_best)
             emissions.append(emissions_best)
@@ -90,6 +90,9 @@ class Fleet:
             print(f"Average Speed:\t{np.average(speeds, axis=1)}")
             print(f"Average Profits:\t{np.average(profits, axis=1)}")
             print(f"Average Emissions:\t{np.average(emissions, axis=1)}")
+            print(
+                f"2021 Emissions:\t{np.array([self.vessels[j].co2_emission_2021 for j in range(len(self.vessels))])}"
+            )
 
             print("Number of vessels by type:")
             for j in range(len(self.vessels)):

@@ -58,7 +58,7 @@ def main(regime):
         )
     elif regime == 1:
         return settle(
-            i=5,
+            i=7,
             data_vessels=df_vessels,
             env=env,
             route=hst_shg,

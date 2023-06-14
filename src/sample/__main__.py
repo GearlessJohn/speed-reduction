@@ -20,6 +20,7 @@ env = GlobalEnv(
     mgo_prices=np.array([825.8, 805.5, 782.6, 766.5]),
     lng_prices=np.array([609.9, 744.6, 697.9, 608.4]),
     carbon_tax_rates=np.array([0.0, 94.0 * 0.4, 94.0 * 0.7, 94.0 * 1.0]),
+    # carbon_tax_rates=np.zeros(4),
 )
 
 # Initializing Route objects
@@ -51,6 +52,7 @@ def main(regime):
             route=shg_rtm,
             power=3.0,
             retrofit=False,
+            acc=True,
             year=0,
             pr=True,
         )
@@ -62,6 +64,7 @@ def main(regime):
             route=hst_shg,
             power=2.0,
             retrofit=False,
+            acc=True,
             year=0,
             pr=True,
         )
@@ -85,7 +88,12 @@ def main(regime):
             year=0,
             pr=False,
         ).optimization(
-            retrofit=False, power=3.0, years=np.arange(4), cii_limit=True, pr=True
+            retrofit=False,
+            power=3.0,
+            years=np.arange(4),
+            cii_limit=True,
+            acc=True,
+            pr=True,
         )
     elif regime == 4:
         return settle(
@@ -96,12 +104,24 @@ def main(regime):
             power=2.0,
             retrofit=False,
             year=0,
+            acc=True,
             pr=False,
-        ).optimization(retrofit=False, power=2.0, years=np.arange(4), pr=True)
+        ).optimization(
+            retrofit=False,
+            power=2.0,
+            years=np.arange(4),
+            cii_limit=True,
+            acc=True,
+            pr=True,
+        )
     elif regime == 5:
         return Fleet(
-            vessels=[vessels[1], vessels[5]], routes=[shg_rtm, hst_shg], global_env=env
-        ).global_optimization(retrofit=False, cii_limit=True, pr=True)
+            vessels=[vessels[1], vessels[0], vessels[5], vessels[7]],
+            routes=[shg_rtm, hst_shg, hst_shg, hst_shg],
+            global_env=env,
+        ).global_optimization(
+            retrofit=False, cii_limit=True, construction=True, pr=True
+        )
     else:
         return
 

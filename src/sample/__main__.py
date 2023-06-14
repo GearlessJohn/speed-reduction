@@ -16,7 +16,7 @@ vessels = [Vessel(row) for _, row in df_vessels.iterrows()]
 
 # Initializing GlobalEnv object
 env = GlobalEnv(
-    ifo380_prices=np.array([494.0, 494.0, 494.0, 494.0]),
+    ifo380_prices=np.array([433.0, 494.0, 494.0, 494.0]),
     vlsifo_prices=np.array([594.0, 594.0, 594.0, 594.0]),
     mgo_prices=np.array([781.0, 781.0, 781.0, 781.0]),
     lng_prices=np.array([1500.0, 1500.0, 1500.0, 1500.0]),
@@ -28,7 +28,7 @@ shg_rtm = Route(
     name="Shanghai-Rotterdam",
     route_type="CONTAINER SHIPS",
     distance=11999.0,
-    freight_rates=np.array([1479.0, 1479.0, 1479.0, 1479.0]),
+    freight_rates=np.array([1000.0, 1000.0, 1000.0, 1000.0]),
     utilization_rate=0.95,
     fuel_ratio=0.5,
 )

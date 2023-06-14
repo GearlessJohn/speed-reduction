@@ -196,7 +196,7 @@ class Settlement:
             print("\tDistance:\t", self.route.distance, "knots")
             print(
                 "\tFreight Rate:\t",
-                self.route.freight_rates,
+                self.route.freight_rates[year],
                 f"$/{self.vessel.unit}",
             )
             # print(
@@ -204,7 +204,7 @@ class Settlement:
             #     self.global_env.fuel_price(self.vessel.main_engine_fuel_type),
             #     "$/ton",
             # )
-            print("\tCarbon Tax:\t", self.global_env.carbon_tax_rates, "$/ton")
+            print("\tCarbon Tax:\t", self.global_env.carbon_tax_rates[year], "$/ton")
             print("\tUtilization:\t", self.route.utilization_rate * 100, "%")
             print("\tRetrofit:\t", retrofit)
             print()

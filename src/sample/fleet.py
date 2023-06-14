@@ -8,6 +8,14 @@ class Fleet:
         self.routes = routes
         self.global_env = global_env
 
+    def construction(self, vessel, speed):
+        """
+        This function estimates the excess demand of maritime transport due to speed reduction and returns the cost and ghg emission of construction of new vessel.
+        """
+        cost = 0.0
+        emission = 0.0
+        return
+
     def global_optimization(self, retrofit, years=range(4), cii_limit=True, pr=False):
         speeds = []
         profits = []
@@ -38,12 +46,4 @@ class Fleet:
             print(f"Average Profits:\t{np.average(profits, axis=1)}")
             print(f"Average Emissions:\t{np.average(emissions, axis=1)}")
 
-        return
-
-    def construction(self, vessel, speed):
-        """
-        This function estimates the excess demand of maritime transport due to speed reduction and returns the cost and ghg emission of construction of new vessel.
-        """
-        cost = 0.0
-        emission = 0.0
         return

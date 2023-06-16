@@ -340,7 +340,12 @@ class Settlement:
             self.cost_retrofit(speed=v_best[i], power=power, year=i)[1] for i in years
         ]
         emissions_best = [
-            self.emission_year(v_best[i], saving=savings[i], power=power, acc=acc)
+            self.emission_year(
+                v_best[i],
+                saving=(savings[i] if retrofit else 0.0),
+                power=power,
+                acc=acc,
+            )
             for i in years
         ]
 

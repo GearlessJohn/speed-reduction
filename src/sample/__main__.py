@@ -24,7 +24,7 @@ env = GlobalEnv(
 )
 
 # Initializing Route objects
-shg_rtm = Route(
+route_container_0 = Route(
     name="Shanghai-Rotterdam",
     route_type="CONTAINER SHIPS",
     distance=11999.0,
@@ -33,7 +33,7 @@ shg_rtm = Route(
     fuel_ratio=0.5,
 )
 
-hst_shg = Route(
+route_bulker_0 = Route(
     name="Houston-Shanghai",
     route_type="BULKERS",
     distance=12324.0,
@@ -49,7 +49,7 @@ def main(regime):
             i=1,
             data_vessels=df_vessels,
             env=env,
-            route=shg_rtm,
+            route=route_container_0,
             power=3.0,
             retrofit=False,
             acc=True,
@@ -61,7 +61,7 @@ def main(regime):
             i=5,
             data_vessels=df_vessels,
             env=env,
-            route=hst_shg,
+            route=route_bulker_0,
             power=2.0,
             retrofit=False,
             acc=True,
@@ -73,7 +73,7 @@ def main(regime):
             num=100,
             data_vessels=df_vessels,
             env=env,
-            route=shg_rtm,
+            route=route_container_0,
             value_exit=0.5,
             binary=False,
         )
@@ -82,7 +82,7 @@ def main(regime):
             i=1,
             data_vessels=df_vessels,
             env=env,
-            route=shg_rtm,
+            route=route_container_0,
             power=3.0,
             retrofit=False,
             year=0,
@@ -100,7 +100,7 @@ def main(regime):
             i=5,
             data_vessels=df_vessels,
             env=env,
-            route=hst_shg,
+            route=route_bulker_0,
             power=2.0,
             retrofit=False,
             year=0,
@@ -119,14 +119,12 @@ def main(regime):
             vessels=[
                 vessels[1],
                 vessels[5],
-                #  vessels[0],
-                #  vessels[7]
+                #  vessels[0], vessels[7]
             ],
             routes=[
-                shg_rtm,
-                hst_shg,
-                # hst_shg,
-                # hst_shg
+                route_container_0,
+                route_bulker_0,
+                # route_bulker_0, route_bulker_0
             ],
             global_env=env,
         ).global_optimization(

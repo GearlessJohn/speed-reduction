@@ -24,7 +24,7 @@ class Fleet:
         )
 
         # If there if more supply than demand, the fleet will not order new vessels.
-        if diff < 0:
+        if diff <= 0:
             return 0, 0, 0
 
         # CO20 = 4.103e4
@@ -72,12 +72,13 @@ class Fleet:
                     diff, cost_construction, emission_construction = self.construction(
                         i=i, j=j, stm=stm, speed=v_best[i]
                     )
+                    emissions_best[i] *= self.nmb[i, j]
+                    profits_best[i] *= self.nmb[i, j]
+
                     emissions_best[i] += emission_construction
                     profits_best[i] -= cost_construction
                     if i + 2 <= self.years[-1]:
                         self.nmb[i + 2 :, j] += diff
-                        emissions_best[i + 2] *= self.nmb[i + 2, j]
-                        profits_best[i + 2] *= self.nmb[i + 2, j]
 
             profits.append(profits_best)
             emissions.append(emissions_best)

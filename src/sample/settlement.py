@@ -350,8 +350,10 @@ class Settlement:
 
         cii_best = [cii_class[i, best[i]] for i in years]
         if pr:
-            print("Max profit:", profit_max / 10e6)
+            print("Max profit:", profit_max / 1e6)
             print("Optimal Speed:", v_best)
+            print("Optimal Profit:", profits_best)
+            print("Emission:", emissions_best)
             print("CII Class:", cii_best)
 
             fig, ax = plt.subplots()

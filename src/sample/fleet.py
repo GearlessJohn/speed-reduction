@@ -1,5 +1,6 @@
 import numpy as np
 from settlement import Settlement
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 
@@ -26,7 +27,8 @@ class Fleet:
         if diff < 0:
             return 0, 0, 0
 
-        CO20 = 4.103e4
+        # CO20 = 4.103e4
+        CO20 = 2.29e4
         dwt0 = 74296
         if stm.vessel.vessel_type == "CONTAINERS":
             cost_construction = (95e6 * stm.vessel.capacity / 8000) * diff
@@ -86,20 +88,56 @@ class Fleet:
         emissions = np.array(emissions)
 
         np.set_printoptions(formatter={"float": lambda x: "{0:0.3f}".format(x)})
+        nmb_vessels = len(self.vessels)
         if pr:
-            print(f"Average Speed:\t{np.average(speeds, axis=1)}")
-            print(f"Average Profits:\t{np.average(profits, axis=1)}")
-            print(f"Average Emissions:\t{np.average(emissions, axis=1)}")
-            print(
-                f"2021 Emissions:\t{np.array([self.vessels[j].co2_emission_2021 for j in range(len(self.vessels))])}"
-            )
+            print("Speed of vessels by type:")
+            for j in range(nmb_vessels):
+                print(
+                    f"\t{self.vessels[j].name}: (2021: {self.vessels[j].speed_2021:0.3f}) \t",
+                    speeds[j],
+                )
+
+            print("Emission of vessels by type:")
+            for j in range(nmb_vessels):
+                print(
+                    f"\t{self.vessels[j].name}: (2021: {self.vessels[j].co2_emission_2021:0.3f}) \t",
+                    emissions[j],
+                )
 
             print("Number of vessels by type:")
-            for j in range(len(self.vessels)):
+            for j in range(nmb_vessels):
                 print(f"\t{self.vessels[j].name}: \t", self.nmb[:, j])
 
             print("CII class of vessels by type:")
-            for j in range(len(self.vessels)):
+            for j in range(nmb_vessels):
                 print(f"\t{self.vessels[j].name}: \t", ciis[j])
+
+            fig, axs = plt.subplots(nrows=nmb_vessels, ncols=2, figsize=(10, 6))
+            for j in range(nmb_vessels):
+                axs[j][0].plot(2023 + self.years, speeds[j])
+                axs[j][0].axline(
+                    xy1=(2023, self.vessels[j].speed_2021),
+                    slope=0,
+                    c="red",
+                    ls="-.",
+                    label="2021 speed",
+                )
+                axs[j][0].set_title(f"Speed of {self.vessels[j].name}")
+                axs[j][0].set_xticks(2023 + self.years)
+                axs[j][0].legend()
+
+                axs[j][1].plot(2023 + self.years, emissions[j])
+                axs[j][1].axline(
+                    xy1=(2023, self.vessels[j].co2_emission_2021),
+                    slope=0,
+                    c="red",
+                    ls="-.",
+                    label="2021 emission",
+                )
+                axs[j][1].set_title(f"Emission of {self.vessels[j].name}")
+                axs[j][1].set_xticks(2023 + self.years)
+                axs[j][1].legend()
+            plt.subplots_adjust(hspace=0.584)
+            plt.show()
 
         return

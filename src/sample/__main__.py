@@ -58,7 +58,7 @@ def main(regime):
         )
     elif regime == 1:
         return settle(
-            i=7,
+            i=5,
             data_vessels=df_vessels,
             env=env,
             route=hst_shg,
@@ -116,8 +116,18 @@ def main(regime):
         )
     elif regime == 5:
         return Fleet(
-            vessels=[vessels[1], vessels[0], vessels[5], vessels[7]],
-            routes=[shg_rtm, hst_shg, hst_shg, hst_shg],
+            vessels=[
+                vessels[1],
+                vessels[5],
+                #  vessels[0],
+                #  vessels[7]
+            ],
+            routes=[
+                shg_rtm,
+                hst_shg,
+                # hst_shg,
+                # hst_shg
+            ],
             global_env=env,
         ).global_optimization(
             retrofit=False, cii_limit=True, construction=True, pr=True

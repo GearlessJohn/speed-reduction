@@ -116,20 +116,19 @@ def main(regime):
         )
     elif regime == 5:
         return Fleet(
-            vessels=[
-                vessels[1],
-                vessels[5],
-                #  vessels[0], vessels[7]
-            ],
-            routes=[
-                route_container_0,
-                route_bulker_0,
-                # route_bulker_0, route_bulker_0
-            ],
+            vessels=[vessels[1], vessels[5], vessels[0], vessels[7]],
+            routes=[route_container_0, route_bulker_0, route_bulker_0, route_bulker_0],
             global_env=env,
         ).global_optimization(
             retrofit=False, cii_limit=True, construction=True, pr=True
         )
+    elif regime == 6:
+        fleet = Fleet(
+            vessels=[vessels[1], vessels[5], vessels[0], vessels[7]],
+            routes=[route_container_0, route_bulker_0, route_bulker_0, route_bulker_0],
+            global_env=env,
+        )
+        return
     else:
         return
 

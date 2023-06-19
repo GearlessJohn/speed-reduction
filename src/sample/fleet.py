@@ -58,7 +58,7 @@ class Fleet:
         profits = []
         emissions = []
         ciis = []
-        for j in tqdm(range(len(self.vessels))) if pr else range(len(self.vessels)):
+        for j in tqdm(range(len(self.vessels))):
             vessel = self.vessels[j]
             power = 2.0 if vessel.speed_2021 < 13.0 else 3.0
 
@@ -101,6 +101,13 @@ class Fleet:
                 print(
                     f"\t{self.vessels[j].name}: (2021: {self.vessels[j].speed_2021:0.3f}) \t",
                     self.speeds[j],
+                )
+
+            print("Profits of vessels by type (M $):")
+            for j in range(nmb_vessels):
+                print(
+                    f"\t{self.vessels[j].name}:\t",
+                    profits[j] / 1e6,
                 )
 
             print("Emission of vessels by type:")
@@ -148,7 +155,7 @@ class Fleet:
 
         return
 
-    def freight_estimator(self, capacity_by_type_ini):
+    def freight_estimator(self, capacity_by_type_ini, elas):
         capacity_by_type = {}
         for j in range(len(self.vessels)):
             vessel = self.vessels[j]
@@ -164,14 +171,17 @@ class Fleet:
 
         for j in range(len(self.routes)):
             self.routes[j].freight_rates = self.routes[j].freight_rates * (
-                5
-                - 4
+                elas
+                + 1
+                - elas
                 * capacity_by_type[self.routes[j].route_type]
                 / capacity_by_type_ini[self.routes[j].route_type]
             )
         return
 
-    def one_step(self, capacity_by_type_ini, retrofit, acc, cii_limit, construction):
+    def one_step(
+        self, capacity_by_type_ini, elas, retrofit, acc, cii_limit, construction
+    ):
         self.global_optimization(
             retrofit=retrofit,
             acc=acc,
@@ -179,13 +189,14 @@ class Fleet:
             construction=construction,
             pr=False,
         )
-        self.freight_estimator(capacity_by_type_ini=capacity_by_type_ini)
+        self.freight_estimator(capacity_by_type_ini=capacity_by_type_ini, elas=elas)
         return
 
     def mean_field(
         self,
         tol=1e-1,
-        max_iter=10,
+        max_iter=20,
+        elas=1.9321,
         retrofit=False,
         acc=True,
         cii_limit=True,
@@ -201,16 +212,51 @@ class Fleet:
                 vessel.capacity * vessel.speed_2021 * vessel.hours_2021
             )
 
-        speeds_previous = self.speeds
         for i in range(1, max_iter + 1):
+            speeds_previous = self.speeds
+            print(f"iteration {i}:")
             self.one_step(
                 capacity_by_type_ini=capacity_by_type_ini,
+                elas=elas,
                 retrofit=retrofit,
                 acc=acc,
                 cii_limit=cii_limit,
                 construction=construction,
             )
+            print("Speed of vessels by type:")
+            for j in range(len(self.vessels)):
+                print(
+                    f"\t{self.vessels[j].name}:\t",
+                    self.speeds[j] - speeds_previous[j],
+                )
+
+            print("Freight rates:")
+            routes = set()
+            for j in range(len(self.vessels)):
+                if self.routes[j].name not in routes:
+                    print(
+                        f"\t{self.routes[j].name}:\t",
+                        self.routes[j].freight_rates,
+                    )
+                    routes.add(self.routes[j].name)
+            print()
             if np.mean(np.abs(self.speeds - speeds_previous)) < tol:
+                print(f"Tolerance satisfied at iteration {i}!")
                 break
 
+        print("Final speed of vessels:")
+        for j in range(len(self.vessels)):
+            print(
+                f"\t{self.vessels[j].name}:\t",
+                self.speeds[j],
+            )
+        print("Final freight rates:")
+        routes = set()
+        for j in range(len(self.vessels)):
+            if self.routes[j].name not in routes:
+                print(
+                    f"\t{self.routes[j].name}:\t",
+                    self.routes[j].freight_rates,
+                )
+                routes.add(self.routes[j].name)
         return

@@ -1,13 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from vessel import Vessel
-from tqdm import tqdm
-
-# from matplotlib.ticker import MaxNLocator
 
 
 class Settlement:
     def __init__(self, vessel, route, global_env):
+        assert (
+            vessel.vessel_type == route.route_type
+        ), "Route and vessel types do not match!"
         self.vessel = vessel
         self.route = route
         self.global_env = global_env
@@ -17,8 +17,8 @@ class Settlement:
         return (
             -(
                 self.vessel.hfo_quantity_2021 * self.global_env.ifo380_prices[year]
-                + (self.vessel.lfo_quantity_2021 + self.vessel.diesel_quantity_2021)
-                * self.global_env.mgo_prices[year]
+                + self.vessel.lfo_quantity_2021 * self.global_env.vlsifo_prices[year]
+                + self.vessel.diesel_quantity_2021 * self.global_env.mgo_prices[year]
                 + self.vessel.lng_quantity_2021 * self.global_env.lng_prices[year]
             )
             / self.vessel.distance_2021
@@ -110,7 +110,7 @@ class Settlement:
             * self.route.freight_rates[year]
         )
 
-    def hours_voyage(self, speed, acc=True):
+    def hours_voyage(self, speed, acc):
         if acc:
             h0 = self.vessel.hours_2021
             p0 = (365 * 24 - h0) * 0.5
@@ -118,7 +118,7 @@ class Settlement:
         else:
             return self.vessel.hours_2021
 
-    def nmb_trip(self, speed, acc=True):
+    def nmb_trip(self, speed, acc):
         return self.hours_voyage(speed=speed, acc=acc) * speed / self.route.distance
 
     def profit_trip(self, speed, power, retrofit, year):
@@ -137,15 +137,15 @@ class Settlement:
 
         return res
 
-    def emission_year(self, speed, saving, power):
+    def emission_year(self, speed, saving, power, acc):
         return self.ghg_operation(
             speed=speed, saving=saving, power=power
-        ) * self.nmb_trip(speed=speed, acc=True)
+        ) * self.nmb_trip(speed=speed, acc=acc)
 
-    def profit_year(self, speed, power, retrofit, year, pr=False):
+    def profit_year(self, speed, power, retrofit, year, acc, pr=False):
         res = self.profit_trip(
             speed=speed, power=power, retrofit=retrofit, year=year
-        ) * self.nmb_trip(speed=speed, acc=True)
+        ) * self.nmb_trip(speed=speed, acc=acc)
 
         if pr:
             print(
@@ -154,13 +154,13 @@ class Settlement:
 
         return res
 
-    def plot_profit_year(self, retrofit, power, year, pr=False):
+    def plot_profit_year(self, retrofit, power, year, acc, pr=False):
         vs = np.arange(7, 24, 0.01)
         profits = (
             np.array(
                 [
                     self.profit_year(
-                        speed=vs[j], power=power, retrofit=retrofit, year=year
+                        speed=vs[j], power=power, retrofit=retrofit, acc=acc, year=year
                     )
                     for j in range(len(vs))
                 ]
@@ -175,6 +175,7 @@ class Settlement:
                     if retrofit
                     else 0.0,
                     power=power,
+                    acc=acc,
                 )
                 for j in range(len(vs))
             ]
@@ -199,7 +200,7 @@ class Settlement:
             print("\tDistance:\t", self.route.distance, "knots")
             print(
                 "\tFreight Rate:\t",
-                self.route.freight_rates,
+                self.route.freight_rates[year],
                 f"$/{self.vessel.unit}",
             )
             # print(
@@ -207,7 +208,7 @@ class Settlement:
             #     self.global_env.fuel_price(self.vessel.main_engine_fuel_type),
             #     "$/ton",
             # )
-            print("\tCarbon Tax:\t", self.global_env.carbon_tax_rates, "$/ton")
+            print("\tCarbon Tax:\t", self.global_env.carbon_tax_rates[year], "$/ton")
             print("\tUtilization:\t", self.route.utilization_rate * 100, "%")
             print("\tRetrofit:\t", retrofit)
             print()
@@ -240,7 +241,7 @@ class Settlement:
             )
             print(
                 "\tEmission Variation:\t",
-                f"{(emissions[np.argmax(profits)]-self.emission_year(speed=self.vessel.speed_2021,saving=0.0, power=power))/self.emission_year(speed=self.vessel.speed_2021, saving=0.0, power=power)*100:+.2f} %",
+                f"{(emissions[np.argmax(profits)]-self.emission_year(speed=self.vessel.speed_2021,saving=0.0, power=power, acc=acc))/self.emission_year(speed=self.vessel.speed_2021, saving=0.0, power=power, acc=acc)*100:+.2f} %",
             )
             print(
                 "\t2021 CII class:\t\t",
@@ -311,32 +312,7 @@ class Settlement:
             np.argmax(total_profit, axis=None), total_profit.shape
         ), np.max(total_profit)
 
-    # def cii_profits2(self, profits, cii_class):
-    #     m = profits.shape[1]
-    #     total_profit = np.zeros((m, m, m, m))
-
-    #     for i0 in tqdm(range(m)):
-    #         for i1 in range(m):
-    #             for i2 in range(m):
-    #                 for i3 in range(m):
-    #                     if (
-    #                         (cii_class[0, i0] == "D" or cii_class[0, i0] == "E")
-    #                         and (cii_class[1, i1] == "D" or cii_class[1, i1] == "E")
-    #                         and (cii_class[2, i2] == "D" or cii_class[2, i2] == "E")
-    #                     ):
-    #                         p3 = 0.0
-    #                     else:
-    #                         p3 = profits[3, i3]
-
-    #                     total_profit[i0, i1, i2, i3] = (
-    #                         profits[0, i0] + profits[1, i1] + profits[2, i2] + p3
-    #                     )
-
-    #     return np.unravel_index(
-    #         np.argmax(total_profit, axis=None), total_profit.shape
-    #     ), np.max(total_profit)
-
-    def optimization(self, retrofit, power, years, pr=False):
+    def optimization(self, retrofit, power, years, acc, cii_limit=True, pr=False):
         n = len(years)
         m = 61
         speed_ini = self.vessel.speed_2021
@@ -348,39 +324,59 @@ class Settlement:
         for i in years:
             for j in range(m):
                 profits[i, j] = self.profit_year(
-                    speed=vs[j], power=power, retrofit=retrofit, year=i
+                    speed=vs[j], power=power, retrofit=retrofit, year=i, acc=acc
                 )
                 cii_class[i, j] = self.cii_class(speed=vs[j], power=power, year=i)
 
-        profits = profits / 1e6
-        best, profit_max = self.cii_profits(profits=profits, cii_class=cii_class)
-        print("Max profit:", profit_max)
-        print("True max profit:", sum([profits[i, best[i]] for i in years]))
+        profits = profits
+        if cii_limit:
+            best, profit_max = self.cii_profits(profits=profits, cii_class=cii_class)
+        else:
+            best = [np.argmax(profits[i]) for i in years]
+            profit_max = np.sum([profits[i, best[i]] for i in years])
 
         v_best = np.array([vs[best[i]] for i in years])
+        savings = [
+            self.cost_retrofit(speed=v_best[i], power=power, year=i)[1] for i in years
+        ]
+        emissions_best = [
+            self.emission_year(
+                v_best[i],
+                saving=(savings[i] if retrofit else 0.0),
+                power=power,
+                acc=acc,
+            )
+            for i in years
+        ]
+
         profits_best = np.array([profits[i, best[i]] for i in years])
         if np.sum(profits_best[:-1]) == profit_max:
             profits_best[3] = 0.0
 
-        print("Optimal Speed:", v_best)
-        print("CII Class:", [cii_class[i, best[i]] for i in years])
+        cii_best = [cii_class[i, best[i]] for i in years]
+        if pr:
+            print("Max profit:", profit_max / 1e6)
+            print("Optimal Speed:", v_best)
+            print("Optimal Profit:", profits_best)
+            print("Emission:", emissions_best)
+            print("CII Class:", cii_best)
 
-        fig, ax = plt.subplots()
-        ax.plot(2023 + np.array(years), v_best, c="blue")
-        ax.set_xlabel("Year")
-        ax.set_xticks(2023 + np.array(years))
-        ax.set_ylabel("Speed (knot)", color="blue")
-        # ax.legend()
+            fig, ax = plt.subplots()
+            ax.plot(2023 + np.array(years), v_best, c="blue")
+            ax.set_xlabel("Year")
+            ax.set_xticks(2023 + np.array(years))
+            ax.set_ylabel("Speed (knot)", color="blue")
+            # ax.legend()
 
-        ax1 = ax.twinx()
-        ax1.plot(2023 + np.array(years), profits_best, c="green")
-        ax1.set_ylabel("Profit (M$)", color="green")
-        # ax1.legend()
-        plt.show()
-        return best
+            ax1 = ax.twinx()
+            ax1.plot(2023 + np.array(years), profits_best, c="green")
+            ax1.set_ylabel("Profit (M$)", color="green")
+            # ax1.legend()
+            plt.show()
+        return (v_best, profits_best, emissions_best, cii_best)
 
 
-def settle(i, data_vessels, env, route, power, retrofit, year, pr):
+def settle(i, data_vessels, env, route, power, retrofit, year, pr, acc=True):
     # Creating a list of Vessel objects
     vessels = [Vessel(row) for _, row in data_vessels.iterrows()]
 
@@ -390,5 +386,5 @@ def settle(i, data_vessels, env, route, power, retrofit, year, pr):
         global_env=env,
     )
     if pr:
-        stm.plot_profit_year(retrofit=retrofit, power=power, year=year, pr=pr)
+        stm.plot_profit_year(retrofit=retrofit, power=power, year=year, pr=pr, acc=acc)
     return stm

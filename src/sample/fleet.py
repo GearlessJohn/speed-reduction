@@ -104,6 +104,7 @@ class Fleet:
                 )
 
             print("Profits of vessels by type (M $):")
+            # The result could still be negative because of the cost of construction
             for j in range(nmb_vessels):
                 print(
                     f"\t{self.vessels[j].name}:\t",
@@ -155,7 +156,7 @@ class Fleet:
 
         return
 
-    def freight_estimator(self, capacity_by_type_ini, elas):
+    def freight_estimator(self, capacity_by_type_ini, freight_rates_ini, elas):
         capacity_by_type = {}
         for j in range(len(self.vessels)):
             vessel = self.vessels[j]
@@ -170,7 +171,7 @@ class Fleet:
             )
 
         for j in range(len(self.routes)):
-            self.routes[j].freight_rates = self.routes[j].freight_rates * (
+            self.routes[j].freight_rates = freight_rates_ini[j] * (
                 elas
                 + 1
                 - elas
@@ -180,7 +181,14 @@ class Fleet:
         return
 
     def one_step(
-        self, capacity_by_type_ini, elas, retrofit, acc, cii_limit, construction
+        self,
+        capacity_by_type_ini,
+        freight_rates_ini,
+        elas,
+        retrofit,
+        acc,
+        cii_limit,
+        construction,
     ):
         self.global_optimization(
             retrofit=retrofit,
@@ -189,12 +197,16 @@ class Fleet:
             construction=construction,
             pr=False,
         )
-        self.freight_estimator(capacity_by_type_ini=capacity_by_type_ini, elas=elas)
+        self.freight_estimator(
+            capacity_by_type_ini=capacity_by_type_ini,
+            freight_rates_ini=freight_rates_ini,
+            elas=elas,
+        )
         return
 
     def mean_field(
         self,
-        tol=1e-1,
+        tol=1e-2,
         max_iter=20,
         elas=1.9321,
         retrofit=False,
@@ -203,6 +215,9 @@ class Fleet:
         construction=True,
     ):
         capacity_by_type_ini = {}
+        freight_rates_ini = np.array(
+            [self.routes[j].freight_rates for j in range(len(self.routes))]
+        )
         for j in range(len(self.vessels)):
             vessel = self.vessels[j]
             if vessel.vessel_type not in capacity_by_type_ini:
@@ -217,6 +232,7 @@ class Fleet:
             print(f"iteration {i}:")
             self.one_step(
                 capacity_by_type_ini=capacity_by_type_ini,
+                freight_rates_ini=freight_rates_ini,
                 elas=elas,
                 retrofit=retrofit,
                 acc=acc,
@@ -259,4 +275,5 @@ class Fleet:
                     self.routes[j].freight_rates,
                 )
                 routes.add(self.routes[j].name)
+
         return

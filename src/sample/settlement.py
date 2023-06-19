@@ -335,6 +335,8 @@ class Settlement:
             best = [np.argmax(profits[i]) for i in years]
             profit_max = np.sum([profits[i, best[i]] for i in years])
 
+        profits_best = np.array([profits[i, best[i]] for i in years])
+
         v_best = np.array([vs[best[i]] for i in years])
         savings = [
             self.cost_retrofit(speed=v_best[i], power=power, year=i)[1] for i in years
@@ -349,12 +351,17 @@ class Settlement:
             for i in years
         ]
 
-        profits_best = np.array([profits[i, best[i]] for i in years])
         if np.sum(profits_best[:-1]) == profit_max:
             profits_best[3] = 0.0
-
         cii_best = [cii_class[i, best[i]] for i in years]
+
+        # profits_best = np.where(profits_best <= 0, 0, profits_best)
+        # v_best = np.where(profits_best <= 0, 0, v_best)
+        # emissions_best = np.where(profits_best <= 0, 0, emissions_best)
+        # cii_best = np.where(profits_best <= 0, "A", cii_best)
+
         if pr:
+            print(self.vessel.name)
             print("Max profit:", profit_max / 1e6)
             print("Optimal Speed:", v_best)
             print("Optimal Profit:", profits_best)

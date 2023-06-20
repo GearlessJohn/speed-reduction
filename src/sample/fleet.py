@@ -19,13 +19,13 @@ class Fleet:
             for j in range(len(vessels))
         ]
 
-    def construction(self, i, j, stm, speed):
+    def construction(self, i, j, stm, speed, acc):
         """
         This function estimates the excess demand of maritime transport due to speed reduction and returns the cost and ghg emission of construction of new vessel.
         """
         diff = 1 - (
             speed
-            * stm.hours_voyage(speed=speed, acc=True)
+            * stm.hours_voyage(speed=speed, acc=acc)
             * (self.nmb[j][i + 1] if i + 1 <= self.years[-1] else self.nmb[j][i])
             / (stm.vessel.speed_2021 * stm.vessel.hours_2021)
         )
@@ -55,6 +55,7 @@ class Fleet:
         pr=False,
     ):
         self.speeds = []
+        self.nmb = np.ones((len(self.vessels), len(self.years)))
         profits = []
         emissions = []
         ciis = []
@@ -75,7 +76,7 @@ class Fleet:
             if construction:
                 for i in self.years:
                     diff, cost_construction, emission_construction = self.construction(
-                        i=i, j=j, stm=stm, speed=v_best[i]
+                        i=i, j=j, stm=stm, speed=v_best[i], acc=acc
                     )
                     emissions_best[i] *= self.nmb[j, i]
                     profits_best[i] *= self.nmb[j, i]
@@ -156,7 +157,7 @@ class Fleet:
 
         return
 
-    def freight_estimator(self, capacity_by_type_ini, freight_rates_ini, elas):
+    def freight_estimator(self, capacity_by_type_ini, freight_rates_ini, elas, acc):
         capacity_by_type = {}
         for j in range(len(self.vessels)):
             vessel = self.vessels[j]
@@ -167,7 +168,7 @@ class Fleet:
                 vessel.capacity
                 * self.nmb[j]
                 * self.speeds[j]
-                * self.stms[j].hours_voyage(speed=self.speeds[j], acc=True)
+                * self.stms[j].hours_voyage(speed=self.speeds[j], acc=acc)
             )
 
         for j in range(len(self.routes)):
@@ -201,12 +202,13 @@ class Fleet:
             capacity_by_type_ini=capacity_by_type_ini,
             freight_rates_ini=freight_rates_ini,
             elas=elas,
+            acc=acc,
         )
         return
 
     def mean_field(
         self,
-        tol=1e-2,
+        tol=25e-3,
         max_iter=20,
         elas=1.9321,
         retrofit=False,

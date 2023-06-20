@@ -97,7 +97,7 @@ def main(regime):
         )
     elif regime == 4:
         return settle(
-            i=7,
+            i=5,
             data_vessels=df_vessels,
             env=env,
             route=route_bulker_0,

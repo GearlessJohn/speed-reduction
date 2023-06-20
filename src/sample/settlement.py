@@ -295,22 +295,33 @@ class Settlement:
         # Create a grid of all combinations of indices
         I0, I1, I2, I3 = np.meshgrid(indices, indices, indices, indices, indexing="ij")
 
-        # Create a condition mask for cii_class values
-        mask = (cii_class[0, I0] == "D") | (cii_class[0, I0] == "E")
-        mask &= (cii_class[1, I1] == "D") | (cii_class[1, I1] == "E")
-        mask &= (cii_class[2, I2] == "D") | (cii_class[2, I2] == "E")
+        # Create a condition mask for cii_class values where all first three indices are "D"
+        mask_D = (
+            (cii_class[0, I0] == "D")
+            & (cii_class[1, I1] == "D")
+            & (cii_class[2, I2] == "D")
+        )
+
+        # Create masks for cii_class values where any index is "E"
+        mask_E0 = cii_class[0, I0] == "E"
+        mask_E1 = cii_class[1, I1] == "E"
+        mask_E2 = cii_class[2, I2] == "E"
+        mask_E3 = cii_class[3, I3] == "E"
+
+        # Set the profits to zero where the cii_class is "E"
+        profits_E0 = np.where(mask_E0, 0.0, profits[0, I0])
+        profits_E1 = np.where(mask_E0 | mask_E1, 0.0, profits[1, I1])
+        profits_E2 = np.where(mask_E0 | mask_E1 | mask_E2, 0.0, profits[2, I2])
+        profits_E3 = np.where(
+            mask_E0 | mask_E1 | mask_E2 | mask_E3, 0.0, profits[3, I3]
+        )
 
         # Calculate total profits using the indices and the condition mask
         total_profit = (
-            profits[0, I0]
-            + profits[1, I1]
-            + profits[2, I2]
-            + np.where(mask, 0.0, profits[3, I3])
+            profits_E0 + profits_E1 + profits_E2 + np.where(mask_D, 0.0, profits_E3)
         )
-
-        return np.unravel_index(
-            np.argmax(total_profit, axis=None), total_profit.shape
-        ), np.max(total_profit)
+        res = np.unravel_index(np.argmax(total_profit, axis=None), total_profit.shape)
+        return res, total_profit[res]
 
     def optimization(self, retrofit, power, years, acc, cii_limit=True, pr=False):
         n = len(years)

@@ -301,10 +301,10 @@ TSWLatexianTemp*
 #*Notes.bib
 
 
-polytechnique-armes.pdf
-polytechnique-filetcourt.pdf
-polytechnique-filetlongrouge.pdf
-polytechnique-logohori.pdf
-polytechnique-logovert.pdf
-typographix.pdf
-polytechnique.sty
+./report/polytechnique-armes.pdf
+./report/polytechnique-filetcourt.pdf
+./report/polytechnique-filetlongrouge.pdf
+./report/polytechnique-logohori.pdf
+./report/polytechnique-logovert.pdf
+./report/typographix.pdf
+./report/polytechnique.sty

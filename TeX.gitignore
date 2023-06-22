@@ -300,11 +300,4 @@ TSWLatexianTemp*
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
 
-
-./report/polytechnique-armes.pdf
-./report/polytechnique-filetcourt.pdf
-./report/polytechnique-filetlongrouge.pdf
-./report/polytechnique-logohori.pdf
-./report/polytechnique-logovert.pdf
-./report/typographix.pdf
-./report/polytechnique.sty
+*.pdf

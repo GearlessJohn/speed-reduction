@@ -1,0 +1,129 @@
+% il existe plusieures classes de documents
+% pour des documents plus longs, vous pouvez utiliser
+% book ou report
+\documentclass[a4paper,12pt]{article} 
+
+
+
+% vous pouvez changer les paramètres : voici les options dispoinibles :
+% - a4paper
+% - fancysections
+% - notitlepage ou titlepage
+% - onside ou twoside selon si vous voulez l'imprimer en recto-verso ou en recto
+% - sectionmark
+% - chaptermark (pour les 
+% - pagenumber
+% - enmanquedinspiration
+% en cas de doutes, pas de doutes, la documentation est sur :
+%  https://gitlab.binets.fr/typographix/polytechnique/-/blob/master/source/polytechnique.pdf
+\usepackage[a4paper,  fancysections,  titlepage]{polytechnique}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{blindtext}
+\usepackage[hidelinks]{hyperref}
+\usepackage{amsmath, amssymb}
+\usepackage{subfigure}
+\usepackage{graphicx}
+\usepackage{tabularx,ragged2e,booktabs,caption}
+
+
+\author{Xuan WANG}
+\date{\today}
+\title{Decarbonisation of the maritime industry through deceleration}
+\subtitle{Site Web du projet: \url{https://github.com/GearlessJohn/speed-reduction}}%
+% pour changer de logo, ajoutez l'image dans un fomat PDF
+% ou image en la glissant à droite et remplacez typographix
+% par le nom de l'image, si vous ne voulez pas de logo, 
+% supprimze la ligne. 
+\logo{typographix}
+
+
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+
+
+
+\renewcommand{\thepage}{\arabic{page}}
+
+
+\newpage
+\setcounter{page}{1}
+\section{Introduction}
+
+Motivate and abstractly describe the problem you are addressing and how you are
+addressing it. What is the problem? Why is it important? What is your basic approach? A
+short discussion of how it fits into related work in the area is also desirable. Summarize the
+basic results and conclusions that you will present
+\subsection{Background}
+
+\subsection{Example}
+
+
+% INCLUDE: results and conclusions
+
+\section{Theory}
+
+\subsection{Definition of the problem}
+Precisely define the problem you are addressing. Elaborate on why this is an interesting and
+important problem.
+
+The \textit{Global Emission Control} model aims to quantitatively evaluate the impact of CII and carbon tax on ships' navigation speeds, and consequently on GHG emissions. There are four primary stages:
+\begin{itemize}
+	\item Annual profit optimization for one single vessel
+	\item 4-year profit optimization for one single vessel
+	\item 4-year profit optimization for the fleet with construction of new vessel
+	\item Grouped profit optimization with a common price determined by speed distribution (Mean-Field) \\
+\end{itemize}
+
+
+In the stage of annual profit analysis, the optimal speed of a maritime vessel will be determined under the given conditions such as fuel prices, freight rates, carbon tax rates, and operation costs.
+The investigation will initiate with the reconciliation of a singular voyage.
+However, it should be noted that the duration of a vessel's journey is significantly affected by its velocity.
+Indeed, an increase in speed will facilitate a greater number of journeys within a given time frame for the same voyage duration, thereby increasing the time required for loading and unloading at ports.
+This, in turn, will consequently reduce the time allocated for the actual voyage.\\
+
+Upon acquiring the annual profit-speed curve, the constraints posed by the Carbon Intensity Indicator (CII) limits can be incorporated into the analysis.
+The International Maritime Organization (IMO) stipulates that all vessels maintaining a CII rating of Class D for a duration exceeding or equal to three years, or a Class E for more than or equal to one year, are required to withdraw from the market.
+Subsequently, these vessels must formulate and implement necessary remedial action plans, encompassing initiatives such as engine modifications and the utilization of low-carbon emission fuel, among others.
+These measures are designed to demonstrate their capacity to comply with the Class C requirements and successfully undergo verification procedures, thereby facilitating their re-entry into the maritime market.
+
+
+
+
+\subsection{Presentation of the Method}
+Describe in reasonable detail the methods the paper considers. A pseudocode description of
+the algorithm you are using is frequently useful. Trace through a concrete example, showing
+how the method processes this example. The example should be complex enough to
+illustrate all of the important aspects of the problem but simple enough to be easily
+understood. If possible, an intuitively meaningful example is better than one with
+meaningless symbols.
+
+\subsection{Theoretical justification and guarantees}
+Provide here some formal theory justifying the correctness of the method. If it applies, state theoretical guarantees and provide a brief overview of the analysis.
+
+\section{Experimental Evaluation}
+\subsection{Methodology}
+What are the criteria you are using to evaluate your method? What specific hypotheses does
+your experiment test? Describe the experimental methodology that you used. What are the
+dependent and independent variables? What is the training/test data that was used, and why
+is it realistic or interesting? Exactly what performance data did you collect and how are you
+presenting and analyzing it? Comparisons to competing methods that address the same
+problem are particularly useful.
+
+\subsection{Results}
+Present the quantitative results of your experiments. Graphical data presentation such as graphs and histograms are frequently better than tables.
+
+\subsection{Discussion}
+Is your hypothesis supported? What conclusions do the results support about the strengths and weaknesses of your method compared to other methods? How can the results be explained in terms of the underlying properties of the algorithm.
+
+
+\section{Conclusion}
+\end{document}
+
+

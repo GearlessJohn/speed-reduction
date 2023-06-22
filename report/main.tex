@@ -232,12 +232,31 @@ i.e.
 	N(v) = \dfrac{(0.9YT+0.1VT_0)}{(0.9(\frac{YT}{VT}-1)\frac{D}{v_0}+\frac{D}{v})}
 \end{equation}
 
-Assuming limited speed variation does not affect the freight revenue ($FR$) from a voyage (e.g. a bulk carrier contract from Houston to Shanghai would typically have the same freight rate for a 40-55 day voyage). Then finally we can get that the relationship between annual profit $AP$ and speed of a ship for a fixed route is:
+Assuming limited speed variation does not affect the freight revenue ($FR$) from a voyage (e.g. a bulk carrier contract from Houston to Shanghai would typically have the same freight rate for a 40-55 day voyage).
+Then finally we can get that the relationship between annual profit $AP$ and speed of a ship for a fixed route is:
 
 \begin{equation}
 	\label{eq:annual_profit}
 	AP(v) = (FR+FC(v)+CT(v)+OC) \cdot N(v)
 \end{equation}
+\subsubsection*{4-year Profit Optimization (one vessel)}
+The 4-year period refers to the 4 years from 2023 to 2026. The official implementation of the IMO CII restrictions will be in 2023. 
+Meanwhile, the CII restriction policy (reduction factor) after 2026 is not yet available.
+So we only consider this time period for now.\\
+
+The difference between 4 years and 1 year of profit optimization for a ship is the IMO limit for CII.
+IMO states that if a ship receives a D rating for 3 consecutive years or an E rating in a given year, then the ship needs to be taken off the market.
+In this model, we do not consider the ship's plans for refit and fuel replacement to return to the market.
+That is, once a ship does not comply with CII regulations, it needs to be permanently withdrawn from the market.\\
+
+The formula for CII is:
+\begin{equation}
+	CII_{atteined} = \frac{CO_2(g)}{Capacity(ton) \cdot Distance(nm)}
+\end{equation}
+
+$Capacity$ refers to the deadweight tonnage, which is the maximum cargo weight of the ship (not the actual cargo capacity); 
+$Distance$ is the distance travelled throughout the year; 
+and $CO2$ is the annual CO2 emission, which is obtained by multiplying the consumption of different fuels by their emission factors and summing them up.
 
 \subsection{Theoretical justification and guarantees}
 % Provide here some formal theory justifying the correctness of the method. If it applies, state theoretical guarantees and provide a brief overview of the analysis.

@@ -56,10 +56,10 @@
 \setcounter{page}{1}
 \section{Introduction}
 
-Motivate and abstractly describe the problem you are addressing and how you are
-addressing it. What is the problem? Why is it important? What is your basic approach? A
-short discussion of how it fits into related work in the area is also desirable. Summarize the
-basic results and conclusions that you will present
+% Motivate and abstractly describe the problem you are addressing and how you are
+% addressing it. What is the problem? Why is it important? What is your basic approach? A
+% short discussion of how it fits into related work in the area is also desirable. Summarize the
+% basic results and conclusions that you will present
 \subsection{Background}
 
 \subsection{Example}
@@ -73,14 +73,25 @@ basic results and conclusions that you will present
 % Precisely define the problem you are addressing. Elaborate on why this is an interesting and
 % important problem.
 
-The \textit{Global Emission Control} model aims to quantitatively evaluate the impact of CII and carbon tax on ships' navigation speeds, and consequently on GHG emissions. There are four primary stages:
+The \textit{Global Emission Control} model aims to quantitatively evaluate the impact of CII and carbon tax on ships' navigation speeds, and consequently on GHG emissions. 
+The imposition of CII limits and carbon tax policies is expected to compel the majority of maritime vessels to reduce their operational speed in an effort to optimize profit margins.
+Simultaneosly, fleet operators will likely need to comission new vessels from shipyards to cempensate for dimished transport capacity. 
+Inevitably, the construction of theses new vessels will contribute to greenhouse gas (GHG) emissions. \\ 
+
+Furthermore, the maritime transport market will face a substaintial supply reduction due to a gloabl decelartion of vessels and the fact that the construction of new vessels averages as two-year timeline. 
+Consequently, we can anticipate an extended period of increasing freight rates. 
+This translated into greater profit per voyage, which, in turn, allows vessels initially categorized with superior CII classifications (A) to incrementally increase their speed up to the regulatory limit (C or D) to maximize thier profitabliliy through incresed trip frequency.
+However, this acceleration will also result in an uptick in GHG emissions.\\
+
+Thus, the ultimate question to be adressed is: \textbf{Will GHG emission decrease in the era of global maritime transport deceleration, and if so, to what extend?}\\
+
+There are four primary stages:
 \begin{itemize}
 	\item Annual profit optimization for one single vessel
-	\item 4-year profit optimization for one single vessel
+	\item 4-year profit optimization for one single vessel with CII limits
 	\item 4-year profit optimization for the fleet with construction of new vessel
 	\item Grouped profit optimization with a common price determined by speed distribution (Mean-Field) \\
 \end{itemize}
-
 
 In the stage of annual profit analysis, the optimal speed of a maritime vessel will be determined under the given conditions such as fuel prices, freight rates, carbon tax rates, and operation costs.
 The investigation will initiate with the reconciliation of a singular voyage.
@@ -92,36 +103,49 @@ Upon acquiring the annual profit-speed curve, the constraints posed by the Carbo
 The International Maritime Organization (IMO) stipulates that all vessels maintaining a CII rating of Class D for a duration exceeding or equal to three years, or a Class E for more than or equal to one year, are required to withdraw from the market.
 Subsequently, these vessels must formulate and implement necessary remedial action plans, encompassing initiatives such as engine modifications and the utilization of low-carbon emission fuel, among others.
 These measures are designed to demonstrate their capacity to comply with the Class C requirements and successfully undergo verification procedures, thereby facilitating their re-entry into the maritime market.
-In reality, the cost of low-carbon emission fuels such as LNG and ammonia is too expensive to be affordable for most fleets. Therefore, in this model, we assume that if a vessel is foreced to withdraw from the market, it cannot return.
+In reality, the cost of low-carbon emission fuels such as LNG and ammonia is too expensive to be affordable for most fleets.
+Additionnally, engine modifications has limited impact on improving a vessel's CII score.
+Therefore, in this model, we assume that if a vessel is foreced to withdraw from the market, it cannot return.\\
 
+Now, the fleet can optimize the speed of all vessels in compliance with CII regulations.
+To meet demand after the speed reduction due to the carbon tax and CII limits, the fleet needs to commision new vessels. 
+The main principle is this: if a fleet of 50 container ships loses, for example, 10\% of transport capacity due to speed reduction, it will order 10\% of 50, which equals 5, new container ships. 
+However, if the optimal choice is to accelerate, the fleet will now sell or destroy any vessel.\\
 
+Finally, it is essential to consider the impact of the equilibrium between supply and demand on freight rates.
+One fundamental premise in our analysis of the maritime transport market is the relative stablility of demand.
+Consequently, the key variable to be considered is the supply, which is directly proportional to the speed of the vessels. We will conduct this equilibrium analysis independently, implying that the speed alterations of a paricular vessel categoty have no bearing on the markets of other vessel categories. 
+The primary objectives of this stage is to ascertain the elasticity of freight rates with respect to supply under the assumption of a fixed demand.\\
 
 
 \subsection{Presentation of the Method}
-Describe in reasonable detail the methods the paper considers. A pseudocode description of
-the algorithm you are using is frequently useful. Trace through a concrete example, showing
-how the method processes this example. The example should be complex enough to
-illustrate all of the important aspects of the problem but simple enough to be easily
-understood. If possible, an intuitively meaningful example is better than one with
-meaningless symbols.
+% Describe in reasonable detail the methods the paper considers. A pseudocode description of
+% the algorithm you are using is frequently useful. Trace through a concrete example, showing
+% how the method processes this example. The example should be complex enough to
+% illustrate all of the important aspects of the problem but simple enough to be easily
+% understood. If possible, an intuitively meaningful example is better than one with
+% meaningless symbols.
+\subsubsection*{Annual Profit Optimization (one vessel)}
+
+The process of annual profit optimization will be segmented into two components: first, the calculation of profit per voyage as a function of speed, and second, the calculation of the number of voyages as a function of speed. The ultimate annual profit will the derived as the product of these two elements.\\
 
 \subsection{Theoretical justification and guarantees}
-Provide here some formal theory justifying the correctness of the method. If it applies, state theoretical guarantees and provide a brief overview of the analysis.
+% Provide here some formal theory justifying the correctness of the method. If it applies, state theoretical guarantees and provide a brief overview of the analysis.
 
 \section{Experimental Evaluation}
 \subsection{Methodology}
-What are the criteria you are using to evaluate your method? What specific hypotheses does
-your experiment test? Describe the experimental methodology that you used. What are the
-dependent and independent variables? What is the training/test data that was used, and why
-is it realistic or interesting? Exactly what performance data did you collect and how are you
-presenting and analyzing it? Comparisons to competing methods that address the same
-problem are particularly useful.
+% What are the criteria you are using to evaluate your method? What specific hypotheses does
+% your experiment test? Describe the experimental methodology that you used. What are the
+% dependent and independent variables? What is the training/test data that was used, and why
+% is it realistic or interesting? Exactly what performance data did you collect and how are you
+% presenting and analyzing it? Comparisons to competing methods that address the same
+% problem are particularly useful.
 
 \subsection{Results}
-Present the quantitative results of your experiments. Graphical data presentation such as graphs and histograms are frequently better than tables.
+% Present the quantitative results of your experiments. Graphical data presentation such as graphs and histograms are frequently better than tables.
 
 \subsection{Discussion}
-Is your hypothesis supported? What conclusions do the results support about the strengths and weaknesses of your method compared to other methods? How can the results be explained in terms of the underlying properties of the algorithm.
+% Is your hypothesis supported? What conclusions do the results support about the strengths and weaknesses of your method compared to other methods? How can the results be explained in terms of the underlying properties of the algorithm.
 
 
 \section{Conclusion}

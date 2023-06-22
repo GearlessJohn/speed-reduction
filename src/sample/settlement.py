@@ -113,7 +113,7 @@ class Settlement:
     def hours_voyage(self, speed, acc):
         if acc:
             h0 = self.vessel.hours_2021
-            p0 = (365 * 24 - h0) * 0.5
+            p0 = (365 * 24 - h0) * 0.9
             return (h0 + p0) / (1 + p0 * speed / (h0 * self.vessel.speed_2021))
         else:
             return self.vessel.hours_2021

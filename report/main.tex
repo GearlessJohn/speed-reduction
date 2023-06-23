@@ -311,8 +311,84 @@ In this model, each vessel can choose its speed based on the 2021 speed, plus or
 The interval is 0.1 knots, yielding a total of 61 choices.
 Ultimately we can obtain the optimal combination of speeds $V^\ast$ for a ship under the CII limit by using the following formula:
 \begin{equation}
+	\label{eq:vast}
 	V^\ast = \operatorname*{argmax}_{V\in \{v_0-3.0, v_0-2.9, ..., v_0,...,v_0+3.0 \}^4} P(V, FP, FR, CT)
 \end{equation}
+
+\subsubsection*{Construction of new vessel}
+The construction principle is very simple: compensate for the decrease in transport capacity caused by a reduction in speed.
+We define annual transport capacity $AC$ of a vessel as the carrying $Capacity$ (unit of deadweight tonnage (DWT) or twenty-foot equivalent unit (TEU)) multiplied by the average speed $v$ and the annual voyage time $VT(v)$ at that speed.:
+\begin{equation}
+	\label{eq:AC}
+	AC(v) = VT(v)  \cdot v \cdot Capacity \cdot N
+\end{equation}
+
+The sample vessels provided by CA-CIB include 8 vessels of different categories (container ship, bulk carriers, tanker, gas carrier) and different sizes (Handysize, Panamax, etc.) under each category.
+It is assumed that each ship is built independently of the other, since the purpose of each search is different and thus not interchangeable.
+After obtaining the optimal speed for each year in the previous step, we can calculate the transport capacity gap $GAP$ for each year $i$ based on this speed:
+
+\begin{equation}
+	\label{eq:gap}
+	GAP_{i} = max(1 - \frac{AC(v_i) \cdot N(i)}{AC(v_0) \cdot N_{ini}}, 0)
+\end{equation}
+where N(i) is the number of this kind of vessel in year i and $N_{ini}$ is its initial number in 2021.\\
+
+The $GAP$ will not be less than 0.
+This is because the fleet will not destroy vessels when the acceleration of vessels in a given year results in a higher transportation capacity than the initial value of 2021.
+The principles of construction are:
+\begin{enumerate}
+	\item Initial number of all types of ships is 1.
+	\item The fleet will not destroy vessels.
+	\item It takes 2 years for a ship to be delivered from the time the order is placed.
+	\item For year $i$, if in $i+1$ year the fleet is about to receive $x$ new vessels, the new orders for that year are $max(GAP_i - x, 0)$.
+	\item The cost of construction and GHG emissions are immediately credited to the year in which the order is placed.
+\end{enumerate}
+
+
+For example, if the gap of a ship is calculated to be [10\%, 12\%, 3\%, 5\%], then the number of such ships will be [1.00, 1.00, 1.10, 1.12].
+The number of vessels in the first two of these years is unchanged, as it takes at least two years to build new vessels.
+And although the gap in the second year is 12\%, the number of new orders in the second year is not 0.12, but $0.12-0.10=0.02$.
+Since the fleet knew it was about to receive 0.10 new ships in the following year, there was no need to place an additional order for 0.12.
+
+\subsubsection*{Volatile freight rates}
+In the previous section we considered the change in the number of ships under the fleet.
+Now we need to consider the impact of the supply-demand balance on freight rates.
+The model assumes that the supply of the ship market in 2021 is equal to the demand.
+In order to evaluate the relationship between price and supply when demand remains constant, we collected global freight rate data from the Clarkson Index and China's export value for the years 2008-2023.
+We consider China's export value to represent market demand and assume that market supply capacity remains unchanged in the short term (as the construction of new vessels requires time).
+By conducting a linear regression on the two sequences formed from the annual percentage changes relative to the previous year for both variables, we determined that the elasticity of freight rates with respect to demand is 1.93.
+We thus assume that the elasticity of freight rates with respect to supply is also 1.93.
+This means that from the equilibrium point, for every 1\% reduction in supply with constant demand, freight rates rise by 1.93\%.\\
+
+In addition to this, we assume that the markets for different categories of ships do not affect each other.
+But different sizes of ships under the same category share the same freight price.
+For a particular type of ships such as container ships, in year $i$, it has a freight price as:
+
+\begin{equation}
+	\label{eq:fr_mf}
+	FR(i) = FR_{ini} \cdot(2.93 - 1.93 \cdot \frac{\sum_{j \in Container} AC_j(v_i) \cdot N_j(i)}{\sum_{j \in Container} AC_j(v_0) \cdot N_{j,ini}})
+\end{equation}
+
+
+In the process of ensuring stable freight rate calculations, we employ the widely-recognized Expectation-Maximization (EM) algorithm, structured as follows:
+
+\begin{enumerate}
+	\item Initialization of all parameters is carried out, where the initial freight rate values for the period of 2023-2026 are set equal to the market price of 2023.
+	\item \textbf{M}: Based on these initial prices, the fleet then makes decisions (equation (\ref{eq:vast})) concerning each ship's speed and the number of ships to be built, all in pursuit of total profit maximization.
+	\item \textbf{E}: Subsequent to these decisions, freight rates for each type of vessel and for each year are recalculated based on equation (\ref{eq:fr_mf}).
+	\item Repeat steps M and E until either a specified convergence condition is achieved, such as the average absolute change in speed being less than 0.1, or the maximum predetermined number of iterations has been reached.
+\end{enumerate}
+
+\textcolor{red}{
+	There are two key issues:
+	\begin{enumerate}
+		\item In this model, each ship is not symmetric with respect to its price impact. Because a larger ship has a larger carrying tonnage, its acceleration and deceleration have a greater impact on price. Is it possible to continue using the mean-field model in this case? Is there a unique combination of price and speed that becomes the fixed point of the algorithm?
+		\item If the conclusion in 1 holds, then set tolerance=0, and when the algorithm converges, it must converge to a fixed point. But does the algorithm necessarily converge?
+	\end{enumerate}}
+
+
+
+
 
 \subsection{Theoretical justification and guarantees}
 % Provide here some formal theory justifying the correctness of the method. If it applies, state theoretical guarantees and provide a brief overview of the analysis.

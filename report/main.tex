@@ -9,7 +9,7 @@
 \usepackage{graphicx}
 \usepackage{tabularx,ragged2e,booktabs,caption}
 \usepackage{hyperref}
-
+\usepackage{dsfont}
 
 \author{Xuan WANG}
 \date{\today}
@@ -53,13 +53,13 @@
 % Precisely define the problem you are addressing. Elaborate on why this is an interesting and
 % important problem.
 
-The \textit{Global Emission Control} model aims to quantitatively evaluate the impact of CII and carbon tax on vessels' navigation speeds, and consequently on GHG emissions. 
+The \textit{Global Emission Control} model aims to quantitatively evaluate the impact of CII and carbon tax on vessels' navigation speeds, and consequently on GHG emissions.
 The imposition of CII limits and carbon tax policies is expected to compel the majority of maritime vessels to reduce their operational speed in an effort to optimize profit margins.
-On the same time, fleet operators will likely need to order new vessels from shipyards to compensate for diminished transport capacity. 
-Inevitably, the construction of theses new vessels will contribute to greenhouse gas (GHG) emissions.\\ 
+On the same time, fleet operators will likely need to order new vessels from shipyards to compensate for diminished transport capacity.
+Inevitably, the construction of theses new vessels will contribute to greenhouse gas (GHG) emissions.\\
 
-Furthermore, the maritime transport market will face a substaintial supply reduction due to a gloabl decelartion of vessels and the fact that the construction of new vessels averages as two-year timeline. 
-Consequently, we can anticipate an extended period of increasing freight rates. 
+Furthermore, the maritime transport market will face a substaintial supply reduction due to a gloabl decelartion of vessels and the fact that the construction of new vessels averages as two-year timeline.
+Consequently, we can anticipate an extended period of increasing freight rates.
 This translated into greater profit per voyage, which, in turn, allows vessels initially categorized with superior CII classifications (A) to incrementally increase their speed up to the regulatory limit (C or D) to maximize their profitability through increased trip frequency.
 However, this acceleration will also result in an uptick in GHG emissions.\\
 
@@ -88,13 +88,13 @@ Additionnally, engine modifications has limited impact on improving a vessel's C
 Therefore, in this model, we assume that if a vessel is forced to withdraw from the market, it cannot return.\\
 
 Now, the fleet can optimize the speed of all vessels in compliance with CII regulations.
-To meet demand after the speed reduction due to the carbon tax and CII limits, the fleet needs to order new vessels. 
-The main principle is this: if a fleet of 50 container ships loses, for example, 10\% of transport capacity due to speed reduction, it will order 10\% of 50, which equals 5, new container ships. 
+To meet demand after the speed reduction due to the carbon tax and CII limits, the fleet needs to order new vessels.
+The main principle is this: if a fleet of 50 container ships loses, for example, 10\% of transport capacity due to speed reduction, it will order 10\% of 50, which equals 5, new container ships.
 However, if the optimal choice is to accelerate, the fleet will now sell or destroy any vessel.\\
 
 Finally, it is essential to consider the impact of the equilibrium between supply and demand on freight rates.
 One fundamental premise in our analysis of the maritime transport market is the relative stability of demand.
-Consequently, the key variable to be considered is the supply, which is directly proportional to the speed of the vessels. We will conduct this equilibrium analysis independently, implying that the speed alterations of a particular vessel category have no bearing on the markets of other vessel categories. 
+Consequently, the key variable to be considered is the supply, which is directly proportional to the speed of the vessels. We will conduct this equilibrium analysis independently, implying that the speed alterations of a particular vessel category have no bearing on the markets of other vessel categories.
 The primary objectives of this stage is to ascertain the elasticity of freight rates with respect to supply under the assumption of a fixed demand.\\
 
 
@@ -107,7 +107,7 @@ The primary objectives of this stage is to ascertain the elasticity of freight r
 % meaningless symbols.
 \subsubsection*{Annual Profit Optimization (one vessel)}
 
-The process of annual profit optimization will be segmented into two components: first, the calculation of profit per voyage as a function of speed, and second, the calculation of the number of voyages as a function of speed. 
+The process of annual profit optimization will be segmented into two components: first, the calculation of profit per voyage as a function of speed, and second, the calculation of the number of voyages as a function of speed.
 The ultimate annual profit will the derived as the product of these two elements.\\
 
 In this model, we assign a fixed route to each vessel. The route information includes voyage distance $D$, loading rate $LR$, and freight revenue $FR$ (USD/unit delivered).
@@ -120,13 +120,13 @@ The revenue and expenses of a route mainly include:
 	\item Freight revenue
 \end{enumerate}
 
-According to physical calculations and actual vessel data, the fuel cost per unit distance, or fuel consumption, is cubically related to the speed of the vessel. 
+According to physical calculations and actual vessel data, the fuel cost per unit distance, or fuel consumption, is cubically related to the speed of the vessel.
 However, this relationship only holds when the speed is greater than about 13 knots, and when the speed is lower than 13 knots, we can approximate that the fuel consumption is proportional to the quadratic side of the speed.
 
 \begin{equation}
 	\label{eq:fuel_consumption}
 	Fc^i(v) =
-	\left\{ 
+	\left\{
 	\begin{aligned}
 		\frac{Fc^i_0}{D_0} \cdot D \cdot (\frac{v}{v_0})^3, \quad if \, v_0 > 13 \\
 		\frac{Fc^i_0}{D_0} \cdot D \cdot (\frac{v}{v_0})^2 \quad if \, v_0 \leq 13
@@ -134,7 +134,7 @@ However, this relationship only holds when the speed is greater than about 13 kn
 	\right.
 \end{equation}
 
-$Fc^i_0$, $D_0$ and $v_0$ are the annual fuel consumption, annual voyage distance and annual average speed for 2021, respectively, provided by Credit Agricole CIB. 
+$Fc^i_0$, $D_0$ and $v_0$ are the annual fuel consumption, annual voyage distance and annual average speed for 2021, respectively, provided by Credit Agricole CIB.
 And $i$ represents different types of fuels, including Heavy Fuel Oil (HFO), light fuel oil (LFO), Diesel and Liquefied natural gas (LNG). D is the distance of a certain route, and v is the actual voyage speed.
 In reality, most container ships have an average annual speed between 15-17 knots, while bulk carriers have an annual average speed between 10-12.5 knots.
 Thus, the above formula can be well applied to different situations.\\
@@ -154,7 +154,7 @@ Similar to equation (\ref{eq:fuel_consumption}), we can obtain the carbon tax fo
 \begin{equation}
 	\label{eq:emission}
 	CT(v) =
-	\left\{ 
+	\left\{
 	\begin{aligned}
 		\frac{EM_0}{D_0} \cdot D \cdot (\frac{v}{v_0})^3 \cdot CR, \quad if \, v_0 > 13 \\
 		\frac{EM_0}{D_0} \cdot D \cdot (\frac{v}{v_0})^2 \cdot CR, \quad if \, v_0 \leq 13
@@ -165,13 +165,13 @@ Similar to equation (\ref{eq:fuel_consumption}), we can obtain the carbon tax fo
 $CT(v)$ is the carbon tax cost of the route at speed $v$, $EM_0$ is the annual $CO_2$ emissions of the vessel in 2021, and $CR$ is the carbon tax rate (reference value of \$94 per ton of $CO_2$ emissions in 2023).\\
 
 For operating cost OC, the fleet did not provide specific data due to confidentiality reasons.
-But according to various \href{https://transportgeography.org/contents/chapter5/maritime-transportation/containerships-operating-costs-panamax-post-panamax/}{reports}, we can know that in the absence of carbon tax, the fuel cost of a ship generally accounts for 45\%-50\% of its total cost. 
+But according to various \href{https://transportgeography.org/contents/chapter5/maritime-transportation/containerships-operating-costs-panamax-post-panamax/}{reports}, we can know that in the absence of carbon tax, the fuel cost of a ship generally accounts for 45\%-50\% of its total cost.
 In this model, we assume that the operating cost of a single voyage is independent of speed.
 In 2021 the carbon tax does not cover the shipping sector, and we assume that freight costs are 50\% of total costs in 2021, then for selected routes:
 
 \begin{equation}
 	\label{eq:operation_cost}
-	OC = FC(v_0)	
+	OC = FC(v_0)
 \end{equation}
 
 For a vessel, it has four main types of time:
@@ -182,8 +182,8 @@ For a vessel, it has four main types of time:
 	\item IDLE time (10-60 days)
 \end{enumerate}
 
-Among them, voyage time is the time the ship sails; waiting time is the time the ship waits to enter the port; port time is the time the ship loads and unloads cargo in the port; idle time is the time the ship is inactive for various reasons. 
-The waiting time $WT$ and port time $PT$ are positively correlated with the number of voyages $N$. 
+Among them, voyage time is the time the ship sails; waiting time is the time the ship waits to enter the port; port time is the time the ship loads and unloads cargo in the port; idle time is the time the ship is inactive for various reasons.
+The waiting time $WT$ and port time $PT$ are positively correlated with the number of voyages $N$.
 Note that the voyage time is $VT$, and the time of year is $YT$ (365 * 24h). \\
 
 The number of route sailing $N$ is the total sailing time $VT$ (hours) multiplied by the speed $v$ (knots = nautical miles / hours) divided by the distance of the route $D$ (nautical miles):
@@ -198,7 +198,7 @@ For most vessels:
 	WT_0+PT_0 = 0.9 \cdot (YT-VT_0)
 \end{equation}
 
-$WT_0$, $PT_0$ and $VT_0$ are the waiting time, port time and voyage time in 2021, respectively. 
+$WT_0$, $PT_0$ and $VT_0$ are the waiting time, port time and voyage time in 2021, respectively.
 When the speed changes, the waiting time $WT$ and port time $PT$ are positively correlated with the number of voyages $N$, we have:
 \begin{equation}
 	\label{eq:ptwtv}
@@ -232,15 +232,26 @@ i.e.
 	N(v) = \dfrac{(0.9YT+0.1VT_0)}{(0.9(\frac{YT}{VT}-1)\frac{D}{v_0}+\frac{D}{v})}
 \end{equation}
 
-Assuming limited speed variation does not affect the freight revenue ($FR$) from a voyage (e.g. a bulk carrier contract from Houston to Shanghai would typically have the same freight rate for a 40-55 day voyage).
-Then finally we can get that the relationship between annual profit $AP$ and speed of a ship for a fixed route is:
+Assuming limited speed variation does not affect the freight income ($FI$) from a voyage (e.g. a bulk carrier contract from Houston to Shanghai would typically have the same freight rate for a 40-55 day voyage). Then for one trip:
+
+\begin{equation}
+	\label{eq:FI}
+	FI =  Capacity \cdot 95\% \cdot FR \
+\end{equation}
+where $FR$ is freight rate and 95\% is the average loading rate.\\
+
+Finally we can get that the relationship between annual profit $AP$ and speed of a ship for a fixed route is:
 
 \begin{equation}
 	\label{eq:annual_profit}
-	AP(v) = (FR+FC(v)+CT(v)+OC) \cdot N(v)
+	AP(v, FP, FR, CT) = (FI+FC(v)+CT(v)+OC) \cdot N(v)
 \end{equation}
+
+where $FP$ is fuel price, and $CT$ is the carbon tax rate.
+
+
 \subsubsection*{4-year Profit Optimization (one vessel)}
-The 4-year period refers to the 4 years from 2023 to 2026. The official implementation of the IMO CII restrictions will be in 2023. 
+The 4-year period refers to the 4 years from 2023 to 2026. The official implementation of the IMO CII restrictions will be in 2023.
 Meanwhile, the CII restriction policy (reduction factor) after 2026 is not yet available.
 So we only consider this time period for now.\\
 
@@ -254,9 +265,54 @@ The formula for CII is:
 	CII_{atteined} = \frac{CO_2(g)}{Capacity(ton) \cdot Distance(nm)}
 \end{equation}
 
-$Capacity$ refers to the deadweight tonnage, which is the maximum cargo weight of the ship (not the actual cargo capacity); 
-$Distance$ is the distance travelled throughout the year; 
-and $CO2$ is the annual CO2 emission, which is obtained by multiplying the consumption of different fuels by their emission factors and summing them up.
+$Capacity$ refers to the deadweight tonnage, which is the maximum cargo weight of the ship (not the actual cargo capacity);
+$Distance$ is the distance travelled throughout the year;
+and $CO2$ is the annual CO2 emission, which is obtained by multiplying the consumption of different fuels by their emission factors and summing them up.\\
+
+In addition, in order to calculate the optimal speed for 2023-2024, we need to estimate the fuel and freight prices for this period.
+In this model, \textbf{we use a range of \href{https://www.cmegroup.com/markets/energy/refined-products/singapore-380cst-fuel-oil-platts-swap-futures.html}{fuel futures prices} and average them on an annual basis}.
+Beyond that, \textbf{we assume that freight prices in 2024-2026 are consistent with 2023 when supply and demand balances are not considered}.\\
+
+
+In the absence of CII restrictions, if we want to calculate the 2023-2026 optimal speed combination.
+Then we only need to calculate the optimal velocity for each year separately.
+This is because the speed selection and profit of the previous year have no effect on the later year.
+Assume that the original optional speed space for a ship is 13-19 knots.
+We take a point every 0.1 knots of speed, and we have $\{13.0, 13.1 ... 19.0\}$ for a total of 61 points.
+Then the domain of optimization without CII limits is $61 \cdot 4 = 244$ points.
+But in the case of CII limits, the profit in a given year depends not only on the choice of speed in that year, but also on the choices of speed before.
+For example, if a ship receives a three-year D rating in 2023-2025, it must withdraw from the market in 2026, regardless of the ship's originally planned 2026 speed.
+If we take the classical greedy algorithm, i.e., we first calculate the optimal speed in 2023 to maximize the profit in 2023, and then use this as a basis to calculate the profit in 2024.
+Then it is likely that one year will be accelerated to obtain an E rating in order to maximize this year's profit, thus forgoing profits for the following years.
+Therefore, the greedy algorithm cannot produce an optimal solution.
+In order to optimize the total profit, we must take into account the choices of speed of the 4 years jointly.
+In this case, the domain of optimization becomes $\{13.0, 13.1, ..., 19.0\}^4$ containing $61^4 = 13 \,845 \,841$ points.\\
+
+
+
+Denote $V = (v_0, v_1, v_2, v_3)$ as the choice of velocity for 2023-2026.
+Also, for 2023-2026, note $FP=(FP_0, FP_1,FP_2,FP_3)$ as the fuel price, $FR=(FR_0,FR_1,FR_2,FR_3)$ as the freight rate, and $CT=(CT_0, CT_1, CT_2, CT_3)$ as the carbon tax rate.
+In summary, the profits for 2023-2026 $P=P_0+P_1+P_2+P_3$ are:
+
+\begin{align}
+	\label{eq:P}
+	P_0(V, FP, FR, CT ) & = AP_0                                                                                   \\
+	P_1(V, FP, FR, CT ) & = AP_1 \mathds{1} _{CII_0 \neq E}                                                        \\
+	P_2(V, FP, FR, CT ) & = AP_2 \mathds{1} _{E \notin {CII_0, CII_1}}                                             \\
+	P_2(V, FP, FR, CT ) & = AP_3 \mathds{1} _{E \notin {CII_0, CII_1, CII_2}\,\&\, (CII_0, CII_1, CII_2)!=(D,D,D)}
+\end{align}
+
+where $AP$ is the annual profit function established in previous section:
+\begin{equation}
+	AP_i = AP(v_i, FP_i, FR_i, CT_i)
+\end{equation}
+
+In this model, each vessel can choose its speed based on the 2021 speed, plus or minus 3.0 knots.
+The interval is 0.1 knots, yielding a total of 61 choices.
+Ultimately we can obtain the optimal combination of speeds $V^\ast$ for a ship under the CII limit by using the following formula:
+\begin{equation}
+	V^\ast = \operatorname*{argmax}_{V\in \{v_0-3.0, v_0-2.9, ..., v_0,...,v_0+3.0 \}^4} P(V, FP, FR, CT)
+\end{equation}
 
 \subsection{Theoretical justification and guarantees}
 % Provide here some formal theory justifying the correctness of the method. If it applies, state theoretical guarantees and provide a brief overview of the analysis.

@@ -58,7 +58,7 @@ The imposition of CII limits and carbon tax policies is expected to compel the m
 On the same time, fleet operators will likely need to order new vessels from shipyards to compensate for diminished transport capacity.
 Inevitably, the construction of theses new vessels will contribute to greenhouse gas (GHG) emissions.\\
 
-Furthermore, the maritime transport market will face a substaintial supply reduction due to a gloabl decelartion of vessels and the fact that the construction of new vessels averages as two-year timeline.
+Furthermore, the maritime transport market will face a substantial supply reduction due to a global declartion of vessels and the fact that the construction of new vessels averages as two-year timeline.
 Consequently, we can anticipate an extended period of increasing freight rates.
 This translated into greater profit per voyage, which, in turn, allows vessels initially categorized with superior CII classifications (A) to incrementally increase their speed up to the regulatory limit (C or D) to maximize their profitability through increased trip frequency.
 However, this acceleration will also result in an uptick in GHG emissions.\\
@@ -67,17 +67,20 @@ Thus, the ultimate question to be addressed is: \textbf{Will GHG emission decrea
 
 There are four primary stages:
 \begin{itemize}
-	\item Annual profit optimization for one single vessel
-	\item 4-year profit optimization for one single vessel with CII limits
-	\item 4-year profit optimization for the fleet with construction of new vessel
-	\item Grouped profit optimization with a common price determined by speed distribution (Mean-Field) \\
+	\item Step 1: Annual profit optimization for one single vessel
+	\item Step 2: 4-year profit optimization for one single vessel with CII limits
+	\item Step 3: 4-year profit optimization for the fleet with construction of new vessel
+	\item Step 4: Grouped profit optimization with a common price determined by speed distribution (Mean-Field) \\
 \end{itemize}
 
 In the stage of annual profit analysis, the optimal speed of a maritime vessel will be determined under the given conditions such as fuel prices, freight rates, carbon tax rates, and operation costs.
 The investigation will initiate with the reconciliation of a singular voyage.
 However, it should be noted that the duration of a vessel's journey is significantly affected by its velocity.
-Indeed, an increase in speed will facilitate a greater number of journeys within a given time frame for the same voyage duration, thereby increasing the time required for loading and unloading at ports.
-This, in turn, will consequently reduce the time allocated for the actual voyage.\\
+If a ship's total voyage time in a year doesn't change, say 300 days, the increase in speed will allow a greater number of voyages to be made. 
+However, the reality is that as the number of voyages increases, more time will be spent loading and unloading at ports, which will ultimately reduce total voyage time in this year. 
+Last year, for example, a container ship spent 300 days (10 trips) at sea, 30 days loading and unloading in ports, 30 days waiting to enter ports and 5 days on maintenance.
+If this container ship decides to speed up by 50\%, it won't be able to make 15 trips. 
+Because more time will be spent in ports and waiting, and the voyage time will be less than 300 days. \\
 
 Upon acquiring the annual profit-speed curve, the constraints posed by the Carbon Intensity Indicator (CII) limits can be incorporated into the analysis.
 The International Maritime Organization (IMO) stipulates that all vessels maintaining a CII rating of Class D for a duration exceeding or equal to three years, or a Class E for more than or equal to one year, are required to withdraw from the market.
@@ -90,7 +93,7 @@ Therefore, in this model, we assume that if a vessel is forced to withdraw from 
 Now, the fleet can optimize the speed of all vessels in compliance with CII regulations.
 To meet demand after the speed reduction due to the carbon tax and CII limits, the fleet needs to order new vessels.
 The main principle is this: if a fleet of 50 container ships loses, for example, 10\% of transport capacity due to speed reduction, it will order 10\% of 50, which equals 5, new container ships.
-However, if the optimal choice is to accelerate, the fleet will now sell or destroy any vessel.\\
+However, if the optimal choice is to accelerate, the fleet will not sell or destroy any vessel.\\
 
 Finally, it is essential to consider the impact of the equilibrium between supply and demand on freight rates.
 One fundamental premise in our analysis of the maritime transport market is the relative stability of demand.
@@ -105,7 +108,7 @@ The primary objectives of this stage is to ascertain the elasticity of freight r
 % illustrate all of the important aspects of the problem but simple enough to be easily
 % understood. If possible, an intuitively meaningful example is better than one with
 % meaningless symbols.
-\subsubsection*{Annual Profit Optimization (one vessel)}
+\subsubsection*{Step 1: Annual Profit Optimization (one vessel)}
 
 The process of annual profit optimization will be segmented into two components: first, the calculation of profit per voyage as a function of speed, and second, the calculation of the number of voyages as a function of speed.
 The ultimate annual profit will the derived as the product of these two elements.\\
@@ -135,7 +138,7 @@ However, this relationship only holds when the speed is greater than about 13 kn
 \end{equation}
 
 $Fc^i_0$, $D_0$ and $v_0$ are the annual fuel consumption, annual voyage distance and annual average speed for 2021, respectively, provided by Credit Agricole CIB.
-And $i$ represents different types of fuels, including Heavy Fuel Oil (HFO), light fuel oil (LFO), Diesel and Liquefied natural gas (LNG). D is the distance of a certain route, and v is the actual voyage speed.
+And $i$ represents different types of fuels, including Heavy Fuel Oil (HFO), Light Fuel Oil (LFO), Diesel and Liquefied Natural Gas (LNG). D is the distance of a certain route, and v is the actual voyage speed.
 In reality, most container ships have an average annual speed between 15-17 knots, while bulk carriers have an annual average speed between 10-12.5 knots.
 Thus, the above formula can be well applied to different situations.\\
 
@@ -143,10 +146,10 @@ The final fuel cost is the fuel consumption of each category multiplied by the f
 
 \begin{equation}
 	\label{eq:fuel_cost}
-	FC(v) = \sum_i PF_i \cdot Fc^i(v)
+	FC(v, FP) = \sum_i FP_i \cdot Fc^i(v)
 \end{equation}
 
-where $FC(v)$ is the fuel cost of a vessel for a given route at speed v and $PF_i$ is the market price of fuel type $i$.\\
+where $FC(v)$ is the fuel cost of a vessel for a given route at speed v and $FP_i$ is the market price of fuel type $i$. Unlike cars, ships usually have a choice of fuels. For example, most LNG carriers can run on both LNG and LFO.\\
 
 Emissions of GHG are directly proportional to fuel consumption.
 Similar to equation (\ref{eq:fuel_consumption}), we can obtain the carbon tax for a voyage as:
@@ -244,15 +247,15 @@ Finally we can get that the relationship between annual profit $AP$ and speed of
 
 \begin{equation}
 	\label{eq:annual_profit}
-	AP(v, FP, FR, CT) = (FI+FC(v)+CT(v)+OC) \cdot N(v)
+	AP(v, FP, FR, CT) = (FI-FC(v, FP)-CT(v)-OC) \cdot N(v)
 \end{equation}
 
 where $FP$ is fuel price, and $CT$ is the carbon tax rate.
 
 
-\subsubsection*{4-year Profit Optimization (one vessel)}
+\subsubsection*{Step 2: 4-year Profit Optimization (one vessel)}
 The 4-year period refers to the 4 years from 2023 to 2026. The official implementation of the IMO CII restrictions will be in 2023.
-Meanwhile, the CII restriction policy (reduction factor) after 2026 is not yet available.
+Besides, the CII restriction policy (reduction factor) after 2026 is not yet available.
 So we only consider this time period for now.\\
 
 The difference between 4 years and 1 year of profit optimization for a ship is the IMO limit for CII.
@@ -271,11 +274,10 @@ and $CO2$ is the annual CO2 emission, which is obtained by multiplying the consu
 
 In addition, in order to calculate the optimal speed for 2023-2024, we need to estimate the fuel and freight prices for this period.
 In this model, \textbf{we use a range of \href{https://www.cmegroup.com/markets/energy/refined-products/singapore-380cst-fuel-oil-platts-swap-futures.html}{fuel futures prices} and average them on an annual basis}.
-Beyond that, \textbf{we assume that freight prices in 2024-2026 are consistent with 2023 when supply and demand balances are not considered}.\\
+Beyond that, \textbf{for calculations up to step 3, we assume that freight rates remain constant in 2023-2026}.\\
 
 
-In the absence of CII restrictions, if we want to calculate the 2023-2026 optimal speed combination.
-Then we only need to calculate the optimal velocity for each year separately.
+In the absence of CII restrictions, if we want to calculate the 2023-2026 optimal speed combination, we only need to calculate the optimal velocity for each year separately.
 This is because the speed selection and profit of the previous year have no effect on the later year.
 Assume that the original optional speed space for a ship is 13-19 knots.
 We take a point every 0.1 knots of speed, and we have $\{13.0, 13.1 ... 19.0\}$ for a total of 61 points.
@@ -299,7 +301,7 @@ In summary, the profits for 2023-2026 $P=P_0+P_1+P_2+P_3$ are:
 	P_0(V, FP, FR, CT ) & = AP_0                                                                                   \\
 	P_1(V, FP, FR, CT ) & = AP_1 \mathds{1} _{CII_0 \neq E}                                                        \\
 	P_2(V, FP, FR, CT ) & = AP_2 \mathds{1} _{E \notin {CII_0, CII_1}}                                             \\
-	P_2(V, FP, FR, CT ) & = AP_3 \mathds{1} _{E \notin {CII_0, CII_1, CII_2}\,\&\, (CII_0, CII_1, CII_2)!=(D,D,D)}
+	P_3(V, FP, FR, CT ) & = AP_3 \mathds{1} _{E \notin {CII_0, CII_1, CII_2}\,\&\, (CII_0, CII_1, CII_2)!=(D,D,D)}
 \end{align}
 
 where $AP$ is the annual profit function established in previous section:
@@ -315,12 +317,12 @@ Ultimately we can obtain the optimal combination of speeds $V^\ast$ for a ship u
 	V^\ast = \operatorname*{argmax}_{V\in \{v_0-3.0, v_0-2.9, ..., v_0,...,v_0+3.0 \}^4} P(V, FP, FR, CT)
 \end{equation}
 
-\subsubsection*{Construction of new vessel}
+\subsubsection*{Step 3: Construction of new vessel}
 The construction principle is very simple: compensate for the decrease in transport capacity caused by a reduction in speed.
 We define annual transport capacity $AC$ of a vessel as the carrying $Capacity$ (unit of deadweight tonnage (DWT) or twenty-foot equivalent unit (TEU)) multiplied by the average speed $v$ and the annual voyage time $VT(v)$ at that speed.:
 \begin{equation}
 	\label{eq:AC}
-	AC(v) = VT(v)  \cdot v \cdot Capacity \cdot N
+	AC(v) = VT(v)  \cdot v \cdot Capacity
 \end{equation}
 
 The sample vessels provided by CA-CIB include 8 vessels of different categories (container ship, bulk carriers, tanker, gas carrier) and different sizes (Handysize, Panamax, etc.) under each category.
@@ -329,9 +331,10 @@ After obtaining the optimal speed for each year in the previous step, we can cal
 
 \begin{equation}
 	\label{eq:gap}
-	GAP_{i} = max(1 - \frac{AC(v_i) \cdot N(i)}{AC(v_0) \cdot N_{ini}}, 0)
+	GAP_{i} = max(1 - \frac{AC(v_i) \cdot Nmb(i)}{AC(v_0) \cdot Nmb_{ini}}, 0) 
 \end{equation}
-where N(i) is the number of this kind of vessel in year i and $N_{ini}$ is its initial number in 2021.\\
+
+where $Nmb(i)$ is the number of this kind of vessel in year i and $Nmb_{ini}$ is its initial number in 2021.\\
 
 The $GAP$ will not be less than 0.
 This is because the fleet will not destroy vessels when the acceleration of vessels in a given year results in a higher transportation capacity than the initial value of 2021.
@@ -350,14 +353,16 @@ The number of vessels in the first two of these years is unchanged, as it takes 
 And although the gap in the second year is 12\%, the number of new orders in the second year is not 0.12, but $0.12-0.10=0.02$.
 Since the fleet knew it was about to receive 0.10 new ships in the following year, there was no need to place an additional order for 0.12.
 
-\subsubsection*{Volatile freight rates}
+\subsubsection*{Step 4: Volatile freight rates}
 In the previous section we considered the change in the number of ships under the fleet.
 Now we need to consider the impact of the supply-demand balance on freight rates.
 The model assumes that the supply of the ship market in 2021 is equal to the demand.
 In order to evaluate the relationship between price and supply when demand remains constant, we collected global freight rate data from the Clarkson Index and China's export value for the years 2008-2023.
 We consider China's export value to represent market demand and assume that market supply capacity remains unchanged in the short term (as the construction of new vessels requires time).
 By conducting a linear regression on the two sequences formed from the annual percentage changes relative to the previous year for both variables, we determined that the elasticity of freight rates with respect to demand is 1.93.
-We thus assume that the elasticity of freight rates with respect to supply is also 1.93.
+We assume that from the equilibrium point where demand is equal to supply (say 10 and 10), the increase in demand (11 demand and 10 supply) has the same effect on the freight price as the decrease in the same quantity of supply (10 demand and 11 supply).  
+It is the difference between the two that matters.
+Under this assumption, the elasticity of freight rates with respect to supply is -1.93.
 This means that from the equilibrium point, for every 1\% reduction in supply with constant demand, freight rates rise by 1.93\%.\\
 
 In addition to this, we assume that the markets for different categories of ships do not affect each other.
@@ -366,7 +371,7 @@ For a particular type of ships such as container ships, in year $i$, it has a fr
 
 \begin{equation}
 	\label{eq:fr_mf}
-	FR(i) = FR_{ini} \cdot(2.93 - 1.93 \cdot \frac{\sum_{j \in Container} AC_j(v_i) \cdot N_j(i)}{\sum_{j \in Container} AC_j(v_0) \cdot N_{j,ini}})
+	FR(i) = FR_{ini} \cdot \left (2.93 - 1.93 \cdot \frac{\sum_{j \in Container} AC_j(v_i) \cdot N_j(i)}{\sum_{j \in Container} AC_j(v_0) \cdot N_{j,ini}}\right )
 \end{equation}
 
 
@@ -383,7 +388,7 @@ In the process of ensuring stable freight rate calculations, we employ the widel
 	There are two key issues:
 	\begin{enumerate}
 		\item In this model, each ship is not symmetric with respect to its price impact. Because a larger ship has a larger carrying tonnage, its acceleration and deceleration have a greater impact on price. Is it possible to continue using the mean-field model in this case? Is there a unique combination of price and speed that becomes the fixed point of the algorithm?
-		\item If the conclusion in 1 holds, then set tolerance=0, and when the algorithm converges, it must converge to a fixed point. But does the algorithm necessarily converge?
+		\item If the conclusion in question 1 holds, then set tolerance=0, and when the algorithm converges, it must converge to a fixed point. But does the algorithm necessarily converge?
 	\end{enumerate}}
 
 

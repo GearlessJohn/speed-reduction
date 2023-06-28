@@ -155,7 +155,7 @@ class Fleet:
             plt.subplots_adjust(hspace=0.584)
             plt.show()
 
-        return
+        return profits
 
     def freight_estimator(self, capacity_by_type_ini, freight_rates_ini, elas, acc):
         capacity_by_type = {}
@@ -191,7 +191,7 @@ class Fleet:
         cii_limit,
         construction,
     ):
-        self.global_optimization(
+        profits_best = self.global_optimization(
             retrofit=retrofit,
             acc=acc,
             cii_limit=cii_limit,
@@ -204,7 +204,7 @@ class Fleet:
             elas=elas,
             acc=acc,
         )
-        return
+        return profits_best
 
     def mean_field(
         self,
@@ -220,6 +220,10 @@ class Fleet:
         freight_rates_ini = np.array(
             [self.routes[j].freight_rates for j in range(len(self.routes))]
         )
+        
+        speeds_plot = []
+        profits_plot = []
+        
         for j in range(len(self.vessels)):
             vessel = self.vessels[j]
             if vessel.vessel_type not in capacity_by_type_ini:
@@ -232,7 +236,7 @@ class Fleet:
         for i in range(1, max_iter + 1):
             speeds_previous = self.speeds
             print(f"iteration {i}:")
-            self.one_step(
+            profits_best = self.one_step(
                 capacity_by_type_ini=capacity_by_type_ini,
                 freight_rates_ini=freight_rates_ini,
                 elas=elas,
@@ -241,13 +245,15 @@ class Fleet:
                 cii_limit=cii_limit,
                 construction=construction,
             )
+            speeds_plot.append(self.speeds[2,2])
+            profits_plot.append(profits_best[2,2])
+            
             print("Speed of vessels by type:")
             for j in range(len(self.vessels)):
                 print(
                     f"\t{self.vessels[j].name}:\t",
                     self.speeds[j] - speeds_previous[j],
                 )
-
             print("Freight rates:")
             routes = set()
             for j in range(len(self.vessels)):
@@ -277,5 +283,34 @@ class Fleet:
                     self.routes[j].freight_rates,
                 )
                 routes.add(self.routes[j].name)
+
+        fig, ax = plt.subplots()
+        ax.plot(np.arange(len(speeds_plot)), speeds_plot, label="speed", color="blue")
+        ax.set_xlabel("year")
+        ax.set_ylabel("Speed (knot)", color="blue")
+        # ax.axvline(x=v_best, ymax=profit_best, c="red", linestyle="--")
+        # ax.axvline(
+        #     x=self.vessel.speed_2021,
+        #     ymax=profit_best,
+        #     c="grey",
+        #     linestyle="-.",
+        # )
+        # ax.annotate(
+        #     f"Optimal Speed={v_best:0.2f} knots",
+        #     xy=(v_best, profit_best),
+        #     xytext=(v_best, profit_best * 0.95),
+        #     arrowprops=dict(facecolor="red"),
+        # )
+        ax.legend(loc="upper left")
+
+        ax1 = ax.twinx()
+        ax1.plot(np.arange(len(speeds_plot)), np.array(profits_plot)/1e6, label="profit", color="green")
+        ax1.set_ylabel("Profit (M$)", color="green")
+        ax1.legend(loc="upper right")
+
+        fig.suptitle(
+            f"Iteration Trace of Bukler 01 in 2025"
+        )
+        plt.show()
 
         return

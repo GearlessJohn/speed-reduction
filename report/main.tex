@@ -35,7 +35,7 @@ I would like to extend my sincere thanks to Ms.~Kristelle PILOT, my internship t
 I am also grateful to Mr.~Pascal GIBART, the project manager, and Mr.~René AÏD, professor of economics at the University of Paris-Dauphine and lecturer at Ecole Polytechnique.
 Their empathy, professionalism and extensive knowledge have consistently made the course of this training enjoyable.\\
 
-I wish to express my thanks to Ms.~Emilie SANCHEZ, the COO Global Ship Finance, Mr.~Eric PETIT, the maritime engagement support front who have patiently provided my with technical support and information in the field of maritime transport.
+I wish to express my thanks to Mr.~Thibaud ESCOFFIER, Ms.~Emilie SANCHEZ, Mr.~Eric PETIT, the shipping team of Crédit Agricole who have patiently provided me with technical support and information in the field of maritime transport.
 To Ms.~Alix MATHIEU, my second tutor, and Mr.~Antoine CURTY, quantitative analyst, I want to say thank you for the material support and IT assistance.\\
 
 Finally, I wish to express my gratitude to Mr.~Samy KARA MOSLI, the research internship supervisor, and Mr.~Nizar TOUZI, professor of mathematics at Ecole Polytechnique.
@@ -64,14 +64,22 @@ Maritime shipping, which facilitates approximately 90\% of global commercial tra
 Regrettably, the industry is a major emitter of pollutants, with significant impacts seen in high-traffic areas like ports and dense shipping routes.
 Research by the International Maritime Organization (IMO) shows an increase in the industry's contribution to global greenhouse gas emissions (GHG), from 2.76\% to 2.89\% between 2012 and 2018.\\
 
-Additionnal, forecasts from the IMO (2020) project an alarming 50\% increase in cabon dioxide (CO2) emissions from the shipping industry by 2050 when compared to the 2018 baseline. These sobering figures underscore the urgency of addressing the environmental foorprint oft the maritime sector and have galvanized scholarly inquiry into the realm of green maritime transportation.\\
+Additionnal, forecasts from the IMO (2020) estimate an alarming 50\% increase in cabon dioxide (CO2) emissions from the shipping industry by 2050 when compared to the 2018 baseline if no measures are taken.
+These sobering figures underline the urgency of the need to improve the maritime sector's environmental footprint and have been a catalyst for scientific research into the field of green shipping. Also, parteners involved in the maritime field are seeking supporting the maritime sector to achieve the blue economy concept.\\
 
-Parteners involved in the maritime field are seeking supporting the maritime sector to achieve the blue economy concept. Crédit Agricole Corporate and Investment Bank (CA-CIB) is a subsidiary of Crédit Agricole, one of the largest banking groups in the world.
+I am currently working on the MQP (Quantitative Portfolio Models) in the Risk \& Permanent Control (RPC) department at Crédit Agricole.
+Crédit Agricole Corporate and Investment Bank (CA-CIB) is a subsidiary of Crédit Agricole, one of the largest banking groups in the world.
 Headquartered in France, Crédit Agricole CIB specializes in corporate and investment banking.
-It offers an array of services, including structured finance, commercial banking, and international trade and transaction banking, catering to a diverse range of clients including corporates, financial institutions, sovereigns, and large multinationals.
-In pariticular, Crédit Agricole was one of the funding signatories of the Poseidon Principles, a framework for integrating climate considerations into lending decisions to promote the decarbonization of the international shipping. 
-This aligns with the bank's broader commitment to environmental sustainability and responsible business practices. By adhering to the Poseidon Principles, Crédit Agricole CIB is committed to financing maritime projects that align with necessary climate goals. 
-This involves assessing the climate alignment of shipping portfolios, with an aim to enhance methodologies and strategies that drive decarbonization and sustainability in the shipping sector.\\
+It offers an array of services, including structured finance, commercial banking, and international trade and transaction banking, catering to a diverse range of clients including corporates, financial institutions, sovereigns, and large multinationals.\\
+
+In pariticular, Crédit Agricole was one of the funding signatories of the Poseidon Principles.
+The Poseidon Principles are a framework established in 2019 to assess and disclose the climate alignment of ship finance portfolios.
+Their main function is to align ship financing with the International Maritime Organization's greenhouse gas reduction targets, promoting a transition to a more sustainable maritime industry.
+The principles require financial institutions to annually measure and disclose the carbon intensity of their shipping portfolios, collaborate with clients to develop decarbonization strategies, and transparently report their climate alignment scores and progress.
+The Poseidon Principles have gained traction within the industry, with major signatories including leading international banks such as Citi, Societe Generale, ABN AMRO, BNP Paribas, DNB, and Crédit Agricole, and maritime lenders committed to driving decarbonization efforts in the shipping sector.
+This aligns with the bank's broader commitment to environmental sustainability and responsible business practices. By adhering to the Poseidon Principles, Crédit Agricole CIB is committed to financing maritime projects that align with necessary climate goals.
+This involves assessing the climate alignment of shipping portfolios, with an aim to enhance methodologies and strategies that drive decarbonization and sustainability in the shipping sector.
+Therefore, \textbf{the main objective of my internship} is to build a model capable of calculating the expected speed of different vessels and the corresponding environmental impact, based on available market information, key data on ship navigation (annual range, fuel consumption, CO2 emissions, etc.) provided by Poseidon Principle and internal financial data from Credit Agricole CIB, as well as future forecasts.\\
 
 On the other hand, in 2018, IMO published several strategies for the reduction of GHG emissions with the goal of reducing them by at least 40\% by 2030 compared to 2008 levels.
 These include, but are not limited to, improving ship design, utilizing cleaner fuels, adopting energy-efficient equipment, and implementing voyage optimization.\\
@@ -108,19 +116,20 @@ For instance, in conditions of bad weather or when higher speeds are required fo
 The main focus of this report will be on estimating the extent of speed reduction due to the CII policy and a potential carbon tax.
 While speed reduction is a simple and effective means to reduce emissions, it also decreases the transport capacity of the global fleet, leading to an increased demand for new, more efficient ships.
 It is essential to take into account the GHG emissions produced in the construction of these new vessels.
-These 'embodied' emissions can be significant and must be factored into a full lifecycle assessment of emissions from the shipping industry.\\
+These emissions in construction phase can be significant and must be factored into a full lifecycle assessment of emissions from the shipping industry.\\
 
-Ultimately, the most effective strategy will involve a combination of speed reduction, fleet renewal, and other measures, taking into account both operational and embodied emissions.
-This report aims to shed light on these complex interactions and inform more effective policy making for the decarbonization of the shipping industry.
+Ultimately, the most effective strategy will involve a combination of speed reduction, fleet renewal, and other measures, taking into account both operational and shipbuilding emissions.
+This report aims to shed light on these complex interactions and provide more effective policy making for the decarbonization of the shipping industry.
 
 % INCLUDE: results and conclusions
 
+\newpage
 \section{Theory}
 
 \subsection{Definition of the problem}
 % Precisely define the problem you are addressing. Elaborate on why this is an interesting and
 % important problem.
-
+\subsubsection{Current Policies}
 The \textit{Global Emission Control} model aims to quantitatively evaluate the impact of CII and carbon tax on vessels' navigation speeds, and consequently on GHG emissions.
 The imposition of CII limits and carbon tax policies is expected to compel the majority of maritime vessels to reduce their operational speed in an effort to optimize profit margins.
 On the same time, fleet operators will likely need to order new vessels from shipyards to compensate for diminished transport capacity.
@@ -138,16 +147,16 @@ There are four primary stages:
 	\item Step 1: Annual profit optimization for one single vessel
 	\item Step 2: 4-year profit optimization for one single vessel with CII limits
 	\item Step 3: 4-year profit optimization for the fleet with construction of new vessel
-	\item Step 4: Grouped profit optimization with a common price determined by speed distribution (Mean-Field) \\
+	\item Step 4: Grouped profit optimization with a common price determined by speed distribution \\
 \end{itemize}
 
 In the stage of annual profit analysis, the optimal speed of a maritime vessel will be determined under the given conditions such as fuel prices, freight rates, carbon tax rates, and operation costs.
 The investigation will initiate with the reconciliation of a singular voyage.
 However, it should be noted that the duration of a vessel's journey is significantly affected by its velocity.
-If a ship's total voyage time in a year doesn't change, say 300 days, the increase in speed will allow a greater number of voyages to be made. 
-However, the reality is that as the number of voyages increases, more time will be spent loading and unloading at ports, which will ultimately reduce total voyage time in this year. 
+If a ship's total voyage time in a year doesn't change, say 300 days, the increase in speed will allow a greater number of voyages to be made.
+However, the reality is that as the number of voyages increases, more time will be spent loading and unloading at ports, which will ultimately reduce total voyage time in this year.
 Last year, for example, a container ship spent 300 days (10 trips) at sea, 30 days loading and unloading in ports, 30 days waiting to enter ports and 5 days on maintenance.
-If this container ship decides to speed up by 50\%, it won't be able to make 15 trips. 
+If this container ship decides to speed up by 50\%, it won't be able to make 15 trips.
 Because more time will be spent in ports and waiting, and the voyage time will be less than 300 days. \\
 
 Upon acquiring the annual profit-speed curve, the constraints posed by the Carbon Intensity Indicator (CII) limits can be incorporated into the analysis.
@@ -168,8 +177,18 @@ One fundamental premise in our analysis of the maritime transport market is the 
 Consequently, the key variable to be considered is the supply, which is directly proportional to the speed of the vessels. We will conduct this equilibrium analysis independently, implying that the speed alterations of a particular vessel category have no bearing on the markets of other vessel categories.
 The primary objectives of this stage is to ascertain the elasticity of freight rates with respect to supply under the assumption of a fixed demand.\\
 
+\subsubsection{Future projection}
+The Global Emission Control model above is a model designed to investigate the impact of current policies (CII and carbon tax) on ship speed and carbon emissions.
+However, the current CII policy will only be in place until 2026.
+Under the current policy, for each category of vessel, its scoring criteria for 2023-2026 can be calculated in advance.
+It is as if for a student, he would know in 2023 that the A standard for that year is 16/20, the next year is 16.2/20, and so on.\\
 
-\subsection{Presentation of the Method}
+For new policies in 2027 and beyond, IMO will need to consider further in light of the effect of emissions reductions in the global fleet in 2023-2026.
+As part of the task of this internship is to inform policy decisions, we consider a new possibility: to phase out vessels based on a proportion rather than a fixed score, for example the top 5\% of CII scores each year.
+This would be like a school eliminating the 5\% of the lowest achievers each year.
+To investigate the speed strategy of vessels in this case, Mr.~René AÏD and Mr.~Nizar TOUZI jointly propose a new model based on Mean-field. In this paper, it is referred to as \textit{Competiton} model in order to distinguish it from the Global Emission Control model.
+
+\subsection{Global Emission Control Model}
 % Describe in reasonable detail the methods the paper considers. A pseudocode description of
 % the algorithm you are using is frequently useful. Trace through a concrete example, showing
 % how the method processes this example. The example should be complex enough to
@@ -400,37 +419,37 @@ Ultimately we can obtain the optimal combination of speeds $V^\ast$ for a ship u
 \end{equation}
 
 
-The final domain of optimization will be a set of $61^4$ points. 
+The final domain of optimization will be a set of $61^4$ points.
 And we cannot compute the optimal solution directly in reverse order.
-Let's consider the optimization of profits in a reverse chronological order. 
+Let's consider the optimization of profits in a reverse chronological order.
 The sequence can be described as follows:
 
 \begin{align*}
-v_3^\ast &= \operatorname*{argmax}_{v_3} (AP(v_3, FP_3, FR_3, CT_3))\\
-v_2^\ast &= \operatorname*{argmax}_{v_2}  (AP(v_2, FP_2, FR_2, CT_2)+AP_3^\ast \mathds{1} _{CII_2 \neq E} ) \\
-v_1^\ast &= \operatorname*{argmax}_{v_1}  (AP(v_1, FP_2, FR_2, CT_2)+(AP_3^\ast \mathds{1} _{CII_2 \neq E}+ AP_2^\ast )\mathds{1} _{CII_1 \neq E} ) \\
-v_0^\ast &= \operatorname*{argmax}_{v_1}  (AP(v_1, FP_2, FR_2, CT_2)+((AP_3^\ast \mathds{1} _{CII_2 \neq E \& (CII_{0,1,2}) \neq (D,D,D)}+ AP_2^\ast)\mathds{1} _{CII_1 \neq E} +AP_1^\ast )\mathds{1} _{CII_0 \neq E}) \\
+	v_3^\ast & = \operatorname*{argmax}_{v_3} (AP(v_3, FP_3, FR_3, CT_3))                                                                                                                                                    \\
+	v_2^\ast & = \operatorname*{argmax}_{v_2}  (AP(v_2, FP_2, FR_2, CT_2)+AP_3^\ast \mathds{1} _{CII_2 \neq E} )                                                                                                             \\
+	v_1^\ast & = \operatorname*{argmax}_{v_1}  (AP(v_1, FP_2, FR_2, CT_2)+(AP_3^\ast \mathds{1} _{CII_2 \neq E}+ AP_2^\ast )\mathds{1} _{CII_1 \neq E} )                                                                     \\
+	v_0^\ast & = \operatorname*{argmax}_{v_1}  (AP(v_1, FP_2, FR_2, CT_2)+((AP_3^\ast \mathds{1} _{CII_2 \neq E \& (CII_{0,1,2}) \neq (D,D,D)}+ AP_2^\ast)\mathds{1} _{CII_1 \neq E} +AP_1^\ast )\mathds{1} _{CII_0 \neq E}) \\
 \end{align*}
 
 where $AP_i^\ast = AP(v_i^\ast, FP_i, FR_i, CT_i)$ and $CII_i$ is a function of $v_i$ as showed in equation (\ref{eq:cii_model}).\\
 
 \begin{table}[h!]
-\centering
-\begin{tabular}{|c|c|c|c|}
-	\hline
-	& C & D & E \\
-	\hline
-	$P_4$ & 1 & 0.9 & 0.8 \\
-	\hline
-	$P_3$ & 1.1 & 1.5 & 1.3 \\
-	\hline
-	$P_2$ & 1.2 & 1.5 & 1.6 \\
-	\hline
-	$P_1$ & 2.5 & 3 & 3.2 \\
-	\hline
-\end{tabular}
-\caption{Sample Profit Table}
-\label{tb:sample_profit}
+	\centering
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		      & C   & D   & E   \\
+		\hline
+		$P_4$ & 1   & 0.9 & 0.8 \\
+		\hline
+		$P_3$ & 1.1 & 1.5 & 1.3 \\
+		\hline
+		$P_2$ & 1.2 & 1.5 & 1.6 \\
+		\hline
+		$P_1$ & 2.5 & 3   & 3.2 \\
+		\hline
+	\end{tabular}
+	\caption{Sample Profit Table}
+	\label{tb:sample_profit}
 \end{table}
 
 The table (\ref{tb:sample_profit}) is a tabular representation of the profit margins based on different conditions.
@@ -451,7 +470,7 @@ After obtaining the optimal speed for each year in the previous step, we can cal
 
 \begin{equation}
 	\label{eq:gap}
-	GAP_{i} = max(1 - \frac{AC(v_i) \cdot Nmb(i)}{AC(v_0) \cdot Nmb_{ini}}, 0) 
+	GAP_{i} = max(1 - \frac{AC(v_i) \cdot Nmb(i)}{AC(v_0) \cdot Nmb_{ini}}, 0)
 \end{equation}
 
 where $Nmb(i)$ is the number of this kind of vessel in year i and $Nmb_{ini}$ is its initial number in 2021.\\
@@ -471,7 +490,14 @@ The principles of construction are:
 For example, if the gap of a ship is calculated to be [10\%, 12\%, 3\%, 5\%], then the number of such ships will be [1.00, 1.00, 1.10, 1.12].
 The number of vessels in the first two of these years is unchanged, as it takes at least two years to build new vessels.
 And although the gap in the second year is 12\%, the number of new orders in the second year is not 0.12, but $0.12-0.10=0.02$.
-Since the fleet knew it was about to receive 0.10 new ships in the following year, there was no need to place an additional order for 0.12.
+Since the fleet knew it was about to receive 0.10 new ships in the following year, there was no need to place an additional order for 0.12.\\
+
+In particular, newly manufactured ships do not affect the calculations in step2.
+This is because in this model the newly built ships are not assumed to be more energy efficient or otherwise changed than the old ships.
+Construction simply increases the number of vessels of a particular type in the fleet, and the whole calculation in step 2 depends only on vessel characteristics (load capacity, fuel consumption, type of vessel, fuel type, etc.) and market conditions.
+Therefore, without taking into account the change in the number of vessels, i.e. the change in supply, for the change in the market price, the same strategy is simply used for the same type of vessel once the new one has entered the market.
+Therefore, the calculations in step 2 do not need to be repeated.
+
 
 \subsubsection{Step 4: Volatile freight rates}
 In the previous section we considered the change in the number of ships under the fleet.
@@ -480,7 +506,7 @@ The model assumes that the supply of the ship market in 2021 is equal to the dem
 In order to evaluate the relationship between price and supply when demand remains constant, we collected global freight rate data from the Clarkson Index and China's export value for the years 2008-2023.
 We consider China's export value to represent market demand and assume that market supply capacity remains unchanged in the short term (as the construction of new vessels requires time).
 By conducting a linear regression on the two sequences formed from the annual percentage changes relative to the previous year for both variables, we determined that the elasticity of freight rates with respect to demand is 1.93.
-We assume that from the equilibrium point where demand is equal to supply (say 10 and 10), the increase in demand (11 demand and 10 supply) has the same effect on the freight price as the decrease in the same quantity of supply (10 demand and 11 supply).  
+We assume that from the equilibrium point where demand is equal to supply (say 10 and 10), the increase in demand (11 demand and 10 supply) has the same effect on the freight price as the decrease in the same quantity of supply (10 demand and 11 supply).
 It is the difference between the two that matters.
 Under this assumption, the elasticity of freight rates with respect to supply is -1.93.
 This means that from the equilibrium point, for every 1\% reduction in supply with constant demand, freight rates rise by 1.93\%.\\
@@ -501,24 +527,297 @@ In the process of ensuring stable freight rate calculations, we employ the widel
 	\item Initialization of all parameters is carried out, where the initial freight rate values for the period of 2023-2026 are set equal to the market price of 2023.
 	\item \textbf{M}: Based on these initial prices, the fleet then makes decisions (equation (\ref{eq:vast})) concerning each ship's speed and the number of ships to be built, all in pursuit of total profit maximization.
 	\item \textbf{E}: Subsequent to these decisions, freight rates for each type of vessel and for each year are recalculated based on equation (\ref{eq:fr_mf}).
-	\item Repeat steps M and E until either a specified convergence condition is achieved, such as the average absolute change in speed being less than 0.1, or the maximum predetermined number of iterations has been reached.
+	\item Repeat steps M and E until either a specified convergence condition is achieved, such as the average absolute change in speed being less than 0.1, or the maximum predetermined number of iterations has been reached.\\
 \end{enumerate}
 
-\textcolor{red}{
-	There are two key issues:
-	\begin{enumerate}
-		\item In this model, each ship is not symmetric with respect to its price impact. Because a larger ship has a larger carrying tonnage, its acceleration and deceleration have a greater impact on price. Is it possible to continue using the mean-field model in this case? Is there a unique combination of price and speed that becomes the fixed point of the algorithm?
-		\item If the conclusion in question 1 holds, then set tolerance=0, and when the algorithm converges, it must converge to a fixed point. But does the algorithm necessarily converge?
-	\end{enumerate}}
 
-
-
-
-
-\subsection{Theoretical justification and guarantees}
+\subsubsection{Theoretical justification and guarantees}
 % Provide here some formal theory justifying the correctness of the method. If it applies, state theoretical guarantees and provide a brief overview of the analysis.
 
+\subsubsection*{Deterministic Solution up to Step 3}
+
+In the context of our model for calculating the optimal speed of global ships under policies such as CII and carbon taxes, it is important to highlight the deterministic nature of the calculations up to step 3.
+Deterministic calculations refer to computations that produce the same results given the same inputs and conditions, without any element of randomness or uncertainty.\\
+
+In our case, the calculations up to step 3 involve the determination of the optimal speed choice under the CII policy for 4 consecutive years with construction of new vessels.
+These calculations are performed using discrete choices of speed, with a granularity of 61 values raised to the power of 4, resulting in a finite and discrete set of possible speed combinations.
+Thus, the determination of the maximum profit and the corresponding optimal speed can be calculated with certainty.
+By exhaustively evaluating all possible speed combinations within the defined range, the maximum profit and the corresponding optimal speed can be determined precisely.\\
+
+\subsubsection*{Choice of EM Algorithm in Step 4}
+
+There are two key issues about EM algorithm:
+\begin{itemize}
+	\item In this model, each ship is not symmetric with respect to its price impact. Because a larger ship has a larger carrying tonnage, its acceleration and deceleration have a greater impact on price. As a result, the Mean-field model cannot be applied as it supposes that every player should be perfectly symmetric. While in the standard Mean-field model where we have a definite unique solution which is a fixed point, in this report, we cannot make directly use of these convergence properties.
+	\item The EM procedure does not necessarily converge in this model. In other words, the maximum profit per ship will not have only an increasing trend. It is usually constantly fluctuating. For this reason, we need to limit the maximum number of iterations.
+\end{itemize}
+
+For the first problem, since the optimization space in this model is discrete and finite, for example, a market consisting of three container ships, all possible speed choices to maximize the total profit of the three ships are $61^{4*3} = 61^{12}$.
+However, the computational overload makes it impossible to calculate all possibilities and find the optimal solution using a method similar to the one used in step 3.
+We must therefore adopt certain heuristic algorithms.
+In this model we have used the EM algorithm, not only because the principles of this algorithm are clear and relatively reliable, but also because it is the closest to real market changes compared to other algorithms such as neural networks.
+That is, the market price changes and subsequently, after a delay, the major fleets adjust their supply capacity.
+After a further delay, the market price adjusts to the previous change in supply to start the next cycle.\\
+
+The fundamental reason for the second problem is that the entire shipping market is a negative feedback system.
+That is, when fleets generally accelerate to increase supply, freight prices fall, which in turn causes fleets to slow down to reduce fuel costs and increase profits.
+Conversely, when fleets generally slow down, demand outstrips supply in the market, freight rates rise and fleets choose to increase speed to increase the number of trips per year in order to maximize profits.
+In fact, under some extreme initial conditions, the EM program can even go into oscillation. That is, the speed of the fleet keeps cycling between two modes, V1-V2-V1-V2, etc.
+Also to solve this problem, the algorithm sets the maximum number of iterations.
+
+
+\subsection{Competition Model}
+In the Competition model, we focus on a two time-step model that pertains to the reduction of carbon emissions in the shipping industry.
+The model revolves around a single decision variable, namely the speed of the vessel $u$.
+In this model, the number of ships will no longer be based on a fleet, but on the whole shipping market, as it is needed to inform IMO decisions.
+A number of simplifications and approximations are therefore required to reduce the computational effort and to make appropriate corrections to use the mean-field model.\\
+
+In the beginning, we formulate the model within an N-player setting, and subsequently, we develop the Mean-field version. The model considers two distinct time points: $t = 0$ and $t = T$, where vessels are required to make decisions at $t = 0$.\\
+
+Firstly, we assume that the relationship between the speed of the ship and the fuel consumption for one trip is essentially linear after successive decelerations starting in 2026. Ultimately, the cost for one year is:
+
+\begin{equation}
+	\label{eq:cost}
+	c(u_i) = l u_i + \frac{1}{2 \gamma} u_i^2
+\end{equation}
+
+where the primary items are costs related to the number of voyages only (port charges, etc.) and the secondary items are those related to fuel consumption (e.g. fuel consumption, carbon tax).\\
+
+And the freight price in the market is influenced by the speed of all ships.
+Since we only consider the market for a particular ship type in this model (e.g. POST-PANAMAX type container ships), we can approximately ignore the difference in carrying capacity between different specific ship types (DWT 90000-110000t). In fact, there is no difference between all the vessels in this model, except for their carbon emission performance. Assuming that the speed of each ship has a symmetric effect on the market price, we have:
+
+\begin{equation}
+	\label{eq:price}
+	p(u) = a - b \frac{1}{N}\sum_{i=1}^N u_i
+\end{equation}
+
+Then a ship's goal is to maximize its profit $\pi$ defined as:
+\begin{equation}
+	\label{eq:profit}
+	\pi_i=u_ip(u)-c(u_i)
+\end{equation}
+
+In the absence of carbon emission constraints, the shipping market exists in a state of equilibrium. The Mean-field counterpart of this simple Cournot-Nash equilibrium is given by:
+
+\begin{equation}
+	\label{eq:Cournot-Nash}
+	\operatorname*{sup}_{u} \pi(u) = u(a-b\mathbb{E}[u])-c(u)
+\end{equation}
+
+First-order condition provides:
+\begin{equation}
+	\label{eq:equilibrium1}
+	u = \gamma(a-l-b\mathbb{E}[u])
+\end{equation}
+
+And the equilibrium condition states that
+\begin{equation}
+	\label{eq:condition1}
+	\mathbb{E}[u]= \gamma (a-l-b\mathbb{E}[u])
+\end{equation}
+
+which leads to
+\begin{equation}
+	\mathbb{E}[u] = \dfrac{\gamma (a-l)}{1+\gamma b}
+\end{equation}
+
+As a result, without CII policy, all vessels will choose the same speed $u_0$ given by:
+\begin{equation}
+	\label{eq:u0}
+	u_0 = \gamma \left(a-l-b \dfrac{\gamma (a-l)}{1+\gamma b}\right)=dfrac{\gamma (a-l)}{1+\gamma b}
+\end{equation}
+
+Now, we consider the competitive CII policy. The emission rate of vessel i at time $t=0$ is given by $x_i$.
+The $x_i$ represents the difference between different vessels with different emission capacities. And the total emissions of a ship in a year are:
+\begin{equation}
+	\label{eq:y}
+	y_i = x_i + \lambda(u_i-u_0)
+\end{equation}
+
+where $\lambda$ is the correlation coefficient between emissions and speed.\\
+
+The competitive CII policy means that IMO stipulates that vessels emitting among the top $q\%$ in terms of GHG emissions will be prohibited from operating in international waters, with $q$ representing a specific percentage (e.g., $q = 5\%$).
+Consequently, the profitability of a vessel at the terminal time is contingent upon its operational status (whether or not stay in the market).
+If the vessel exits the international transportation market, it will receive an exit value denoted as $v$.
+The only decision to be made by the vessel pertains to the adjustment $\delta_i=u_i-u_0$ it should make to its optimal speed $u_0$.\\
+
+Thus, the profit of the vessel $i$ is given by
+\begin{equation}
+	\pi_i = -c(u_0+\delta_i) +
+	\left\{
+	\begin{alignedat}{2}
+		&p(u_0+\bar{\delta})(u_0+\delta_i) \quad && y_i \leq \theta \\
+		&v \quad && y_i  > \theta
+	\end{alignedat}
+	\right.
+\end{equation}
+
+where $\theta$ satisfies $\theta = \tilde{F}^{-1}(1 - q)$, where $\tilde{F}(x)$ is the cumulative distribution function of the random variable $Y$ representing the emission rates of the vessels at terminal time.\\
+
+The criteria of each firm is given by
+
+\begin{equation}
+	\label{eq:criteria1}
+	J_i(u_i;u_{-i})=\mathbb{E}[\pi_i(u_i;u_{-i})]
+\end{equation}
+
+We look for a Nash equilibrium of this game.
+Now, we express the model in a mean-field setting.
+The input is the initial distribution of emission rates $X$ of vessels characterized by the cumulative distribution function $F_0$.
+We denote $\delta$ as the deviation from the optimal speed of operation and express the problem in terms of the controllable parts of the vessels' profit.\\
+
+In this problem, $X$ is a random variable with cumulative distribution function (CDF) $F$ (and density $f$), and $\delta$ is a decision variable that is viewed as a function of $x$. For a fixed exit threshold value $\theta$ and a given expectation $\bar{\delta} = E[\delta]$, a representative vessel with an initial emission rate $x$ can solve her optimization problem, namely:
+
+\begin{equation}
+	\label{eq:sup}
+	\operatorname*{sup}_{u}-c(u_0+\delta)+p(u_0+\bar{\delta})(u_0+\delta)\mathds{1}_{y\leq \theta}+v\mathds{1}_{y>\theta}, \quad y=x+\lambda \delta
+\end{equation}
+
+Solving this problem yields a solution $\hat{\delta}(x; \theta, \bar{\delta})$.
+Knowing the function $\hat{\delta}(x; \theta, \bar{\delta})$, one can solve the problem of finding a $\hat{\theta}$ such that
+\begin{equation}
+	\operatorname*{inf}_{\hat{\theta}} \mathbb{P}(X+\lambda \delta(X;\theta)\leq \hat{\theta}) =1-q
+\end{equation}
+
+Solving this problem defines a function $\hat{\theta}(\theta)$.
+A threshold equilibrium $\theta^*$ has to satisfy $\hat{\theta}(\theta^*) = \theta^*$.
+Moreover, a price equilibrium has to satisfy $E[\delta(X; \theta^*, \bar{\delta})] = \bar{\delta}$.\\
+
+Rewrite and solve equation (\ref{eq:sup}), we have:
+\begin{equation}
+	J(\delta) = -l(u_0 + \delta) - \frac{1}{2\gamma}(u_0 + \delta)^2 + (p_0 - bE[\delta])(u_0 + \delta) \mathds{1}_{\{y \leq \theta\}} + v\mathds{1}_{\{y > \theta \}}
+\end{equation}
+with $p_0=a-bu_0$.\\
+
+We assume in that follows that the price $p_0-b\mathbb{E}[\delta]$ remains positive.\\
+
+Consider first $x < \theta$.
+The vessel has no interest in reducing her speed, as it would result in a decreased profit.
+However, it might be optimal for the vessel to increase her speed as long as $x + \lambda\delta < \theta$, i.e., $\delta \leq \frac{\theta - x}{\lambda}$.
+Assuming the preceding inequality holds, the first-order optimal condition provides the interior optimum $\delta$ satisfying
+\begin{equation}
+	-c(u_0 + \delta) - \frac{1}{\gamma}(u_0 + \delta) + p_0 - bE[\delta] = 0
+\end{equation}
+\begin{equation}
+	-\gamma bE[\delta] = \delta
+\end{equation}
+
+Hence,
+\begin{equation}
+	\delta = min \left\{ \dfrac{\delta-x}{\lambda}, -\gamma b \mathbb{E}[\delta]  \right\}
+\end{equation}
+
+Note that if on average vessels reduce their speed ($E[\delta] < 0$) as one regulator would expect, high-quality vessels will increase their speed.\\
+
+Consider now $\theta \leq x$. The vessel either does nothing or reduces her speed by $\delta = -\frac{x - \theta}{\lambda}$ if it holds that
+\begin{equation}
+	-l\left(u_0 - \frac{x - \theta}{\lambda}\right) - \frac{1}{2\gamma}\left(u_0 - \frac{x - \theta}{\lambda}\right)^2 + (p_0 - b\mathbb{E}[\delta])\left(u_0 - \frac{x - \theta}{\lambda}\right) > v
+\end{equation}
+
+Indeed, $h(x) := -l\left(u_0 - \frac{x - \theta}{\lambda}\right) - \frac{1}{2\gamma}\left(u_0 - \frac{x - \theta}{\lambda}\right)^2 + (p_0 - b\mathbb{E}[\delta])\left(u_0 - \frac{x - \theta}{\lambda}\right)$ is such that $h(0)=-c(u_0)+(p_0-b\mathbb{E})u_0>v, \, lim_{x\to\infty} h(x)= -\infty$ and h is continuous.
+Hence, there is a $\hat{x}(\theta, \mathbb{E}[\delta])$ such that $h(\hat{x}(\theta, \mathbb{E}[\delta])) = v$, and for $x \in (\theta, \hat{x})$, $h(x) > v$, and for $x > \hat{x}(\theta, \mathbb{E}[\delta])$, $h(x) \leq v$.\\
+
+Denote $z:=u_0-\dfrac{x-\theta}{\lambda}$. Solving
+
+\begin{equation}
+	z^2-2\gamma(p_0-b\mathbb{E}[\delta]-l)z+2\gamma v=0
+\end{equation}
+we get
+\begin{equation}
+	\hat{x}(\theta, E[\delta]) = \theta + \lambda \left[u_0 - \gamma(p_0 - b\mathbb{E}[\delta] - l)+ \sqrt{\gamma^2(p_0 - b\mathbb{E}[\delta] -l)^2 - 2\gamma v}\right]
+\end{equation}
+
+Thus, the solution of the problem (\ref{eq:sup}) is given by:
+\begin{equation}
+	\hat{\delta}(x; \theta, E[\delta]) =
+	\begin{cases}
+		\min \left(\frac{\theta - x}{\lambda}, -\gamma bE[\delta]\right) & x \leq \theta                                       \\
+		-\frac{x - \theta}{\lambda}                                      & \theta < x \leq \hat{x}(\theta, \mathbb{E}[\delta]) \\
+		0                                                                & x > \hat{x}(\theta, \mathbb{E}[\delta])
+	\end{cases}
+\end{equation}
+
+Given the function $\hat{\delta}$ above, we seek a pair $(\theta^*, \bar{\delta}^*)$ such that:
+\begin{equation}
+	\mathbb{P}(X+\lambda \delta (X;\theta^*,\bar{\delta}^*)\leq \theta^*) = 1-q, \quad \mathbb{E}[\hat{\delta}(X;\theta^*,\bar{\delta}^*)]=\bar{\delta}^*
+\end{equation}
+
+
+In order to calculate the optimal solution, similarly to section 2.2.4, we can also use the EM algorithm.
+The main difference being that the E stage has an additional calculation of $\theta$.
+However, there are numerous parameters such as $\gamma$ et $\lambda$ in this model that cannot be obtained directly from the data, and their estimation methods are described here.
+We will cover the method of estimation in the next section.
+
+
 \section{Experimental Evaluation}
+
+\subsection{Algorithms and Estimation}
+
+\subsubsection{Optimal choice to maximize 4-year profit}
+In the report, two main parts involve intensive calculations.
+The first part focuses on finding the optimal solution for a vessel between the years 2023-2026, taking into account CII (Carbon Intensity Indicator) limits as described in section 2.2.2, equation ({\ref{eq:vast}}).
+To solve this problem, the calculations were performed using the NumPy library in Python.
+By utilizing \texttt{numpy.argmax}, the best choice among all possible combinations of speeds could be determined.\\
+
+The NumPy library in Python is well-suited for such calculations as it provides efficient numerical operations on arrays and matrices.
+Its extensive range of mathematical functions and operations allows for the optimization of vessel speeds and the evaluation of profitability.
+By systematically evaluating all speed combinations, the configuration that maximizes profit while adhering to the specified CII limits can be identified.
+More precisely, the \texttt{numpy.argmax} function does not aim to find an optimal solution in the traditional algorithmic sense. Instead, it is a simple utility function designed to efficiently retrieve the index of the maximum value(s) in a NumPy array.
+The algorithm used by \texttt{numpy.argmax} is straightforward and can be summarized as follows:
+
+\begin{enumerate}
+	\item The function initializes the maximum value (\texttt{max\_value}) to a very small value (e.g., negative infinity) and the index of the maximum value (\texttt{max\_index}) to zero.
+	\item It iterates over each element in the array, comparing it with the current \texttt{max\_value}. If the element is greater than the current \texttt{max\_value}, it updates \texttt{max\_value} to the new maximum and \texttt{max\_index} to the index of the element.
+	\item After iterating over all the elements, it returns \texttt{max\_index} as the index of the maximum value in the array.
+\end{enumerate}
+
+It's important to note that the purpose of \texttt{numpy.argmax} is not to find the optimal solution in terms of algorithmic complexity or performance optimization.
+Instead, it provides a convenient way to obtain the indices of maximum values in an array using highly optimized NumPy routines, which leverage low-level optimizations for efficient array manipulation and element-wise comparisons.\\
+
+
+
+There could be 'smarter' solutions like reverse order calculation.
+Indeed, the main problem with the reverse order algorithm in section 2.2.2 lies in the emergence of the DDD situation. This problem can probably be improved by specialized treatment of the DDD case.
+For example, when the optimal option for 2023-2025 is CDD and the maximum profit rate for 2023 leads to an CII of D, different combinations of C and D can be tried, e.g. DCD, DCC. However, the validity of this improved algorithm has yet to be tested and proved mathematically.
+For the moment, using the full calculation to find the maximum value takes two seconds per ship and is therefore not the most urgent part to improve.\\
+
+
+\subsubsection{EM Algorithm}
+The second part of intensive calculations of the report involves calculating an equilibrium point for flexible prices, as outlined in section 2.2.4.
+To address this problem, the classic EM (Expectation-Maximization) algorithm was employed.
+The EM algorithm is an iterative optimization technique commonly used in statistics and machine learning to estimate parameters in probabilistic models with latent variables.\\
+
+% The EM algorithm offers several advantages. Firstly, it facilitates the handling of cases where certain variables or data points are unobserved or missing (in this model, we don't have a very precise prevision for future freight rates).
+% By iteratively estimating the hidden or latent variables, the EM algorithm provides a principled approach to dealing with incomplete data.
+% Secondly, the algorithm usually guarantees convergence to a local optimum, ensuring that a stable solution is obtained even when starting from an initial guess.
+% This property proves useful in finding equilibrium points in economic models, as in this case.\\
+
+% However, the EM algorithm also has certain limitations. One limitation is its sensitivity to the choice of initial parameters or starting points.
+% Depending on the initial conditions, the EM algorithm may converge to different local optima, potentially leading to different results.
+% It is important to be aware of this and consider running the algorithm multiple times with different initialization conditions to mitigate this issue.
+% But in our case it is difficult because the initial market condition are prefixed by forward contracts and futures.\\
+
+However, the EM algorithm can be computationally demanding.
+The iterative nature of the algorithm requires repeating certain steps until convergence, which can be time-consuming for complex problems.
+Therefore, it is crucial to optimize the implementation and take into account the available computational resources.
+In our case, the main job is to choose a balanced tolerance, so that we can get close to the optimal solution within reasonable time.
+For a given market, such as the container ship market, we set the condition that the set of four-year velocities for all $n$ container ships has an average absolute error of less than $0.025$ relative to the previous iteration.
+This condition can be expressed as:
+\begin{equation}
+	\frac{1}{n}\sum_{i=1}^{n} \frac{1}{4} \sum_{t=1}^{4} \left| \text{velocity}_{i,t} - \text{previous\_velocity}_{i,t} \right| < 0.025
+\end{equation}
+
+In this formula, the variables and terms represent the following:
+\begin{itemize}
+	\item $n$ is the total number of container ships in the market.
+	\item $\text{velocity}_{i,t}$ represents the velocity of container ship $i$ in year $t$.
+	\item $\text{previous\_velocity}_{i,t}$ represents the velocity of the same container ship $i$ in the previous iteration.
+\end{itemize}
+
+In summary, the NumPy library in Python was used to efficiently calculate the profitability of different vessel speeds while considering CII limits.
+For the calculation of equilibrium points with flexible prices, the EM algorithm was employed, which offers advantages such as handling missing data and converging to local optima.
+However, it is important to consider the sensitivity to initial conditions and the computational demands of the EM algorithm.\\
+
 \subsection{Methodology}
 % What are the criteria you are using to evaluate your method? What specific hypotheses does
 % your experiment test? Describe the experimental methodology that you used. What are the
@@ -527,19 +826,6 @@ In the process of ensuring stable freight rate calculations, we employ the widel
 % presenting and analyzing it? Comparisons to competing methods that address the same
 % problem are particularly useful.
 
-In the report, two main parts involve intensive calculations. The first part focuses on finding the optimal solution for a vessel between the years 2023-2026, taking into account CII (Carbon Intensity Indicator) limits as described in section 2.2.2. To solve this problem, the calculations were performed using the numpy library in Python. By utilizing numpy, the profitability of each possible combination of speeds could be determined.\\
-
-The numpy library in Python is well-suited for such calculations as it provides efficient numerical operations on arrays and matrices. Its extensive range of mathematical functions and operations allows for the optimization of vessel speeds and the evaluation of profitability. By systematically evaluating various speed combinations, the configuration that maximizes profit while adhering to the specified CII limits can be identified. There could be more 'smart' solutions like reverse order calculation. Indeed, the main problem with the reverse order algorithm in section 2.2.2 lies in the emergence of the DDD situation. This problem can probably be improved by specialized treatment of the DDD case. For example, when the optimal option for 2023-2024 is CDD and the maximum profit rate for 2023 leads to an CII of D, different combinations of C and D can be tried, e.g. DCD, DCC, but the validity of this improved algorithm has yet to be tested and proved mathematically. For the moment, using the full calculation to find the maximum value takes two seconds per ship and is therefore not the most urgent part to improve.\\
-
-The second part of the report involves calculating an equilibrium point for flexible prices, as outlined in section 2.2.4. To address this problem, the classic EM (Expectation-Maximization) algorithm was employed. The EM algorithm is an iterative optimization technique commonly used in statistics and machine learning to estimate parameters in probabilistic models with latent variables.\\
-
-The EM algorithm offers several advantages. Firstly, it facilitates the handling of cases where certain variables or data points are unobserved or missing (in this model, we don't have a very precise prevision for future freight rates). By iteratively estimating the hidden or latent variables, the EM algorithm provides a principled approach to dealing with incomplete data. Secondly, the algorithm guarantees convergence to a local optimum, ensuring that a stable solution is obtained even when starting from an initial guess. This property proves useful in finding equilibrium points in economic models, as in this case.\\
-
-However, the EM algorithm also has certain limitations. One limitation is its sensitivity to the choice of initial parameters or starting points. Depending on the initial conditions, the EM algorithm may converge to different local optima, potentially leading to different results. It is important to be aware of this and consider running the algorithm multiple times with different initializations to mitigate this issue. But in our case it is difficult because the initial market condition are prefixed by foward contracts and futures.\\
-
-Additionally, the EM algorithm can be computationally demanding. The iterative nature of the algorithm requires repeating certain steps until convergence, which can be time-consuming for complex problems. Therefore, it is crucial to optimize the implementation and take into account the available computational resources. In our case, the main job is to choose a balanced tolerance, so that we can get close to the optimal solution within reasonable time.\\
-
-In summary, the numpy library in Python was used to efficiently calculate the profitability of different vessel speeds while considering CII limits. For the calculation of equilibrium points with flexible prices, the EM algorithm was employed, which offers advantages such as handling missing data and converging to local optima. However, it is important to consider the sensitivity to initial conditions and the computational demands of the EM algorithm.\\
 
 
 

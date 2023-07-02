@@ -527,6 +527,23 @@ In the process of ensuring stable freight rate calculations, we employ the widel
 % presenting and analyzing it? Comparisons to competing methods that address the same
 % problem are particularly useful.
 
+In the report, two main parts involve intensive calculations. The first part focuses on finding the optimal solution for a vessel between the years 2023-2026, taking into account CII (Carbon Intensity Indicator) limits as described in section 2.2.2. To solve this problem, the calculations were performed using the numpy library in Python. By utilizing numpy, the profitability of each possible combination of speeds could be determined.\\
+
+The numpy library in Python is well-suited for such calculations as it provides efficient numerical operations on arrays and matrices. Its extensive range of mathematical functions and operations allows for the optimization of vessel speeds and the evaluation of profitability. By systematically evaluating various speed combinations, the configuration that maximizes profit while adhering to the specified CII limits can be identified. There could be more 'smart' solutions like reverse order calculation. Indeed, the main problem with the reverse order algorithm in section 2.2.2 lies in the emergence of the DDD situation. This problem can probably be improved by specialized treatment of the DDD case. For example, when the optimal option for 2023-2024 is CDD and the maximum profit rate for 2023 leads to an CII of D, different combinations of C and D can be tried, e.g. DCD, DCC, but the validity of this improved algorithm has yet to be tested and proved mathematically. For the moment, using the full calculation to find the maximum value takes two seconds per ship and is therefore not the most urgent part to improve.\\
+
+The second part of the report involves calculating an equilibrium point for flexible prices, as outlined in section 2.2.4. To address this problem, the classic EM (Expectation-Maximization) algorithm was employed. The EM algorithm is an iterative optimization technique commonly used in statistics and machine learning to estimate parameters in probabilistic models with latent variables.\\
+
+The EM algorithm offers several advantages. Firstly, it facilitates the handling of cases where certain variables or data points are unobserved or missing (in this model, we don't have a very precise prevision for future freight rates). By iteratively estimating the hidden or latent variables, the EM algorithm provides a principled approach to dealing with incomplete data. Secondly, the algorithm guarantees convergence to a local optimum, ensuring that a stable solution is obtained even when starting from an initial guess. This property proves useful in finding equilibrium points in economic models, as in this case.\\
+
+However, the EM algorithm also has certain limitations. One limitation is its sensitivity to the choice of initial parameters or starting points. Depending on the initial conditions, the EM algorithm may converge to different local optima, potentially leading to different results. It is important to be aware of this and consider running the algorithm multiple times with different initializations to mitigate this issue. But in our case it is difficult because the initial market condition are prefixed by foward contracts and futures.\\
+
+Additionally, the EM algorithm can be computationally demanding. The iterative nature of the algorithm requires repeating certain steps until convergence, which can be time-consuming for complex problems. Therefore, it is crucial to optimize the implementation and take into account the available computational resources. In our case, the main job is to choose a balanced tolerance, so that we can get close to the optimal solution within reasonable time.\\
+
+In summary, the numpy library in Python was used to efficiently calculate the profitability of different vessel speeds while considering CII limits. For the calculation of equilibrium points with flexible prices, the EM algorithm was employed, which offers advantages such as handling missing data and converging to local optima. However, it is important to consider the sensitivity to initial conditions and the computational demands of the EM algorithm.\\
+
+
+
+
 \subsection{Results}
 % Present the quantitative results of your experiments. Graphical data presentation such as graphs and histograms are frequently better than tables.
 

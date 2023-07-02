@@ -255,7 +255,7 @@ Similar to equation (\ref{eq:fuel_consumption}), we can obtain the carbon tax fo
 $CT(v)$ is the carbon tax cost of the route at speed $v$, $EM_{ini}$ is the annual $CO_2$ emissions of the vessel in 2021, and $CR$ is the carbon tax rate (reference value of \$94 per ton of $CO_2$ emissions in 2023).\\
 
 For operating cost OC, the fleet did not provide specific data due to confidentiality reasons.
-But according to various \href{https://transportgeography.org/contents/chapter5/maritime-transportation/containerships-operating-costs-panamax-post-panamax/}{reports}, we can know that in the absence of carbon tax, the fuel cost of a ship generally accounts for 45\%-50\% of its total cost.
+But according to various \href{https://transportgeography.org/contents/chapter5/maritime-transportation/containerships-operating-costs-panamax-post-panamax/}{[reports]}, we can know that in the absence of carbon tax, the fuel cost of a ship generally accounts for 45\%-50\% of its total cost.
 In this model, we assume that the operating cost of a single voyage is independent of speed.
 In 2021 the carbon tax does not cover the shipping sector, and we assume that freight costs are 50\% of total costs in 2021, then for selected routes:
 
@@ -374,7 +374,7 @@ So, according to equation 1, we have:
 \end{equation}
 
 In addition, in order to calculate the optimal speed for 2023-2024, we need to estimate the fuel and freight prices for this period.
-In this model, \textbf{we use a range of \href{https://www.cmegroup.com/markets/energy/refined-products/singapore-380cst-fuel-oil-platts-swap-futures.html}{fuel futures prices} and average them on an annual basis}.
+In this model, \textbf{we use a range of \href{https://www.cmegroup.com/markets/energy/refined-products/singapore-380cst-fuel-oil-platts-swap-futures.html}{[fuel futures prices]} and average them on an annual basis}.
 Beyond that, \textbf{for calculations up to step 3, we assume that freight rates remain constant in 2023-2026}.\\
 
 
@@ -534,7 +534,7 @@ In the process of ensuring stable freight rate calculations, we employ the widel
 \subsubsection{Theoretical justification and guarantees}
 % Provide here some formal theory justifying the correctness of the method. If it applies, state theoretical guarantees and provide a brief overview of the analysis.
 
-\subsubsection*{Deterministic Solution up to Step 3}
+\paragraph{Deterministic Solution up to Step 3:}
 
 In the context of our model for calculating the optimal speed of global ships under policies such as CII and carbon taxes, it is important to highlight the deterministic nature of the calculations up to step 3.
 Deterministic calculations refer to computations that produce the same results given the same inputs and conditions, without any element of randomness or uncertainty.\\
@@ -544,7 +544,7 @@ These calculations are performed using discrete choices of speed, with a granula
 Thus, the determination of the maximum profit and the corresponding optimal speed can be calculated with certainty.
 By exhaustively evaluating all possible speed combinations within the defined range, the maximum profit and the corresponding optimal speed can be determined precisely.\\
 
-\subsubsection*{Choice of EM Algorithm in Step 4}
+\paragraph{Choice of EM Algorithm in Step 4:}
 
 There are two key issues about EM algorithm:
 \begin{itemize}
@@ -677,6 +677,7 @@ Solving this problem yields a solution $\hat{\delta}(x; \theta, \bar{\delta})$.
 Knowing the function $\hat{\delta}(x; \theta, \bar{\delta})$, one can solve the problem of finding a $\hat{\theta}$ such that
 \begin{equation}
 	\operatorname*{inf}_{\hat{\theta}} \mathbb{P}(X+\lambda \delta(X;\theta)\leq \hat{\theta}) =1-q
+	\label{eq:theta}
 \end{equation}
 
 Solving this problem defines a function $\hat{\theta}(\theta)$.
@@ -735,6 +736,7 @@ Thus, the solution of the problem (\ref{eq:sup}) is given by:
 		-\frac{x - \theta}{\lambda}                                      & \theta < x \leq \hat{x}(\theta, \mathbb{E}[\delta]) \\
 		0                                                                & x > \hat{x}(\theta, \mathbb{E}[\delta])
 	\end{cases}
+	\label{eq:delta}
 \end{equation}
 
 Given the function $\hat{\delta}$ above, we seek a pair $(\theta^*, \bar{\delta}^*)$ such that:
@@ -744,17 +746,34 @@ Given the function $\hat{\delta}$ above, we seek a pair $(\theta^*, \bar{\delta}
 
 
 In order to calculate the optimal solution, similarly to section 2.2.4, we can also use the EM algorithm.
-The main difference being that the E stage has an additional calculation of $\theta$.
+The main difference being that the E stage has an additional calculation of $\theta$ (equation \ref{eq:theta}) besides the calculation of freight rate $p$ (equation \ref{eq:price}). And the M stage should follow the equation (\ref{eq:delta}).
 However, there are numerous parameters such as $\gamma$ et $\lambda$ in this model that cannot be obtained directly from the data, and their estimation methods are described here.
 We will cover the method of estimation in the next section.
 
 
 \section{Experimental Evaluation}
 
-\subsection{Algorithms and Estimation}
+\subsection{Data and Algorithms}
+
+\subsubsection{Data Source}
+In this report, the ship data involved is sourced from Credit Agricole CIB. This includes basic information about the ships (length, beam, carrying capacity, category) and navigation data (navigation time, navigation distance, fuel consumption, CO2 emissions, CII score).
+This navigation data cannot be made available or displayed directly due to the bank's confidentiality requirements.
+At the same time all ship names must be omitted and indicated only by category plus number (e.g. Container Ship 01).\\
+
+
+And the data for the market comes from a variety of publicly available sources:
+\begin{itemize}
+	\item Current and historical fuel prices are obtained from \href{https://shipandbunker.com/prices}{[Ship \& Bunker]}
+	\item Futures (forward contracts) of different fuel prices are obtained from \href{https://www.cmegroup.com/markets/energy/refined-products/mini-european-fob-rdam-marine-fuel-05-barges-platts.html}{[CME Group]}
+	\item Freight data for the routes are mainly from \href{https://www.statista.com/statistics/1313360/container-freight-index-shanghai-rotterdam}{[Statista]} and \href{https://www.handybulk.com/ship-charter-rates/}{[HandyBulk]}
+\end{itemize}
+
+\subsubsection{Estimation of essential parameters}
+
+% \paragraph{Elasticity between freight and supply}
 
 \subsubsection{Optimal choice to maximize 4-year profit}
-In the report, two main parts involve intensive calculations.
+In Global Emission Control model, two main parts involve intensive calculations.
 The first part focuses on finding the optimal solution for a vessel between the years 2023-2026, taking into account CII (Carbon Intensity Indicator) limits as described in section 2.2.2, equation ({\ref{eq:vast}}).
 To solve this problem, the calculations were performed using the NumPy library in Python.
 By utilizing \texttt{numpy.argmax}, the best choice among all possible combinations of speeds could be determined.\\

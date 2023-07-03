@@ -15,7 +15,14 @@
 \author{Xuan WANG}
 \date{\today}
 \title{Decarbonization of the maritime industry through deceleration}
-\subtitle{Site Web of the project: \url{https://github.com/GearlessJohn/speed-reduction}}%
+% \subtitle{Site Web of the project: \url{https://github.com/GearlessJohn/speed-reduction}}%
+\subtitle{
+% \linespread{1}
+\normalsize
+Date : 3 April 2023 - 31 August 2023 \\[8pt]
+Company : Crédit Agricole Corporate and Investment Bank  \\[8pt]
+Location : 12 Pl. DES ÉTAS-UNIS, 92120 MONTROUGE
+}
 \logo{typographix}
 
 
@@ -63,7 +70,7 @@ It is thanks to your attention and assistance that this work could be realized.
 \subsection{Background}
 Maritime shipping, which facilitates approximately 90\% of global commercial trade due to its robust capacity, cost-effectiveness, and notable safety record, has been placed in the spotlight amid global focus on sustainable development and environmental conservation.
 Regrettably, the industry is a major emitter of pollutants, with significant impacts seen in high-traffic areas like ports and dense shipping routes.
-Research by the International Maritime Organization (IMO) shows an increase in the industry's contribution to global greenhouse gas emissions (GHG), from 2.76\% to 2.89\% between 2012 and 2018.\\
+Research by the International Maritime Organization (IMO) shows an increase in the industry's contribution to global greenhouse gas emissions (GHG), from 2.76\% to 2.89\% between 2012 and 2018 \cite{han2023green}.\\
 
 Additionnal, forecasts from the IMO (2020) estimate an alarming 50\% increase in cabon dioxide (CO2) emissions from the shipping industry by 2050 when compared to the 2018 baseline if no measures are taken.
 These sobering figures underline the urgency of the need to improve the maritime sector's environmental footprint and have been a catalyst for scientific research into the field of green shipping. Also, parteners involved in the maritime field are seeking supporting the maritime sector to achieve the blue economy concept.\\
@@ -91,7 +98,7 @@ However, the effectiveness of these methods can be quite variable and depends he
 Also, such changes primarily affect new ships, leaving a large existing fleet unaffected.\\
 
 \textbf{Cleaner Fuels}: The transition to cleaner fuels, such as Liquefied Natural Gas (LNG), biofuels, or hydrogen, can also reduce GHG emissions
-However, these fuel sources are not without their problems. For example, the use of LNG can lead to methane slip, a potent greenhouse gas.
+However, these fuel sources are not without their problems. For example, the use of LNG can lead to methane slip, a potent greenhouse gas \cite{gore2022cost}.
 Biofuels can have sustainability issues, and hydrogen, while promising, requires significant infrastructure development and poses storage and safety challenges.\\
 
 \textbf{Energy-efficient Equipment}: The use of energy-efficient equipment, such as more efficient engines or waste heat recovery systems, can contribute to lower emissions. However, this requires substantial capital investments and does not always guarantee consistent results due to the variability in operational conditions.
@@ -187,7 +194,7 @@ It is as if for a student, he would know in 2023 that the A standard for that ye
 For new policies in 2027 and beyond, IMO will need to consider further in light of the effect of emissions reductions in the global fleet in 2023-2026.
 As part of the task of this internship is to inform policy decisions, we consider a new possibility: to phase out vessels based on a proportion rather than a fixed score, for example the top 5\% of CII scores each year.
 This would be like a school eliminating the 5\% of the lowest achievers each year.
-To investigate the speed strategy of vessels in this case, Mr.~René AÏD and Mr.~Nizar TOUZI jointly propose a new model based on Mean-field. In this paper, it is referred to as \textit{Competiton} model in order to distinguish it from the Global Emission Control model.
+To investigate the speed strategy of vessels in this case, Mr.~René AÏD and Mr.~Nizar TOUZI jointly propose a new model based on Mean-field \cite{cardaliaguet2018short}. In this paper, it is referred to as \textit{Competiton} model in order to distinguish it from the Global Emission Control model.
 
 \subsection{Global Emission Control Model}
 % Describe in reasonable detail the methods the paper considers. A pseudocode description of
@@ -211,7 +218,7 @@ The revenue and expenses of a route mainly include:
 	\item Freight revenue
 \end{enumerate}
 
-According to physical calculations and actual vessel data, the fuel cost per unit distance, or fuel consumption, is cubically related to the speed of the vessel.
+According to physical calculations and actual vessel data, the fuel cost per unit distance, or fuel consumption, is cubically related to the speed of the vessel \cite{elkafas2023environmental}.
 However, this relationship only holds when the speed is greater than about 13 knots, and when the speed is lower than 13 knots, we can approximate that the fuel consumption is proportional to the quadratic side of the speed.
 The figure \ref{fig:resistance} shows the resistance received by a ship in a real environment, including viscous resistance, wave making resistance and air resistance in relation to the ship's speed.
 
@@ -331,7 +338,7 @@ i.e.
 	N(v) = \dfrac{(0.9YT+0.1VT_{ini})}{(0.9(\frac{YT}{VT}-1)\frac{D}{v_{ini}}+\frac{D}{v})}
 \end{equation}
 
-Assuming limited speed variation does not affect the freight income ($FI$) from a voyage (e.g. a bulk carrier contract from Houston to Shanghai would typically have the same freight rate for a 40-55 day voyage). Then for one trip:
+Assuming limited speed variation does not affect the freight income ($FI$) from a voyage (e.g. a bulk carrier contract from Houston to Shanghai would typically have the same freight rate for a 40-55 day voyage) \cite{tavasszy2012incorporating}. Then for one trip:
 
 \begin{equation}
 	\label{eq:FI}
@@ -579,7 +586,8 @@ Also to solve this problem, the algorithm sets the maximum number of iterations.
 In the Competition model, we focus on a two time-step model that pertains to the reduction of carbon emissions in the shipping industry.
 The model revolves around a single decision variable, namely the speed of the vessel $u$.
 In this model, the number of ships will no longer be based on a fleet, but on the whole shipping market, as it is needed to inform IMO decisions.
-A number of simplifications and approximations are therefore required to reduce the computational effort and to make appropriate corrections to use the mean-field model.\\
+A number of simplifications and approximations are therefore required to reduce the computational effort and to make appropriate corrections to use the mean-field model.
+The formulas and proofs in this subsection are provided by Mr.~René AÏD and Mr.~Nizar TOUZI.\\
 
 In the beginning, we formulate the model within an N-player setting, and subsequently, we develop the Mean-field version. The model considers two distinct time points: $t = 0$ and $t = T$, where vessels are required to make decisions at $t = 0$.\\
 
@@ -633,7 +641,7 @@ which leads to
 As a result, without CII policy, all vessels will choose the same speed $u_0$ given by:
 \begin{equation}
 	\label{eq:u0}
-	u_0 = \gamma \left(a-l-b \dfrac{\gamma (a-l)}{1+\gamma b}\right)=dfrac{\gamma (a-l)}{1+\gamma b}
+	u_0 = \gamma \left(a-l-b \dfrac{\gamma (a-l)}{1+\gamma b} \right)=\dfrac{\gamma (a-l)}{1+\gamma b}
 \end{equation}
 
 Now, we consider the competitive CII policy. The emission rate of vessel i at time $t=0$ is given by $x_i$.
@@ -645,7 +653,7 @@ The $x_i$ represents the difference between different vessels with different emi
 
 where $\lambda$ is the correlation coefficient between emissions and speed.\\
 
-The competitive CII policy means that IMO stipulates that vessels emitting among the top $q\%$ in terms of GHG emissions will be prohibited from operating in international waters, with $q$ representing a specific percentage (e.g., $q = 5\%$).
+The competitive CII policy means that IMO stipulates that vessels emitting among the top $q\%$ in terms of GHG emissions will be prohibited from operating in international waters, with $q$ representing a specific percentage (e.g., $q = 15\%$).
 Consequently, the profitability of a vessel at the terminal time is contingent upon its operational status (whether or not stay in the market).
 If the vessel exits the international transportation market, it will receive an exit value denoted as $v$.
 The only decision to be made by the vessel pertains to the adjustment $\delta_i=u_i-u_0$ it should make to its optimal speed $u_0$.\\
@@ -762,7 +770,7 @@ We will cover the method of estimation in the next section.
 
 \section{Experimental Evaluation}
 
-\subsection{Data and Algorithm}
+\subsection{Data and Estimation of parameters}
 
 \subsubsection{Data Source}
 In this report, the ship data involved is sourced from Credit Agricole CIB. This includes basic information about the ships (length, beam, carrying capacity, category) and navigation data (navigation time, navigation distance, fuel consumption, CO2 emissions, CII score).
@@ -783,7 +791,7 @@ And the data for the market comes from a variety of publicly available sources:
 
 The precise cost and GHG emission of shipbuilding is difficult to estimate because they depend on not only the category of vessels but also their size.  We get data of shipbuilding cost from public resources like \href{https://theloadstar.com/fleet-building-hmm-set-to-order-nine-methanol-powered-8000-teu-ships/}{TheLoadStar}.\\
 
-Besides, we have a detailed calculation for a tanker of  74926 DWT from a report \href{https://www.researchgate.net/publication/280313533_Applications_of_Life_Cycle_Assessment_in_Shipping}{[Life Cycle Assessment in Shipping]} as shown in figure \ref{fig:shipbuilding_pie} and figure \ref{fig:shipbuilding_table}.
+Besides, we have a detailed calculation for a tanker of  74926 DWT from Life Cycle Assessment in Shipping \cite{chatzinikolaou2014applications} as shown in figure \ref{fig:shipbuilding_pie} and figure \ref{fig:shipbuilding_table}.
 We assume that manufacturing emissions are linearly related to DWT and do not depend on vessel type.
 This assumption is acceptable because in practice the carbon emissions during the construction of a vessel are mainly related to the manufacture of the hull material and welding, and less to the internal equipment.
 Therefore, there is little difference in carbon emissions between different categories of ships of the same size.
@@ -887,6 +895,7 @@ But $x$ in equation (\ref{eq:y}) is a different departure point. In order to tra
 	x_i = \theta_0 - \delta_{max,i}
 \end{equation}
 
+\subsection{Essential Algorithms}
 \subsubsection{Optimal choice to maximize 4-year profit}
 
 In Global Emission Control model, two main parts involve intensive calculations.
@@ -962,7 +971,7 @@ However, it is important to consider the sensitivity to initial conditions and t
 
 
 
-\subsection{Results}
+\subsection{Results and Discussions}
 % Present the quantitative results of your experiments. Graphical data presentation such as graphs and histograms are frequently better than tables.
 \subsubsection{Results of Global Emission Control Model}
 \paragraph{Annual Profit Maximization (Step 1):}
@@ -1075,6 +1084,19 @@ In turn, the profit margin per voyage expands and ships will choose to slow down
 \end{figure}
 
 \subsubsection{Results of Competition Model}
+Finally, let's look at the effect of the last-place CII policy. The figure \ref{fig:meanfield} is a result based on Container Ship 01 in 2023.\\
+
+First, it is important to note that the CII distribution used in the analysis is derived from a sample of 100 ships generated by Container Ship 01.
+All samples in the dataset are identical except for the initial CII value.
+The distribution of CII values is randomly sampled based on the data published by the International Maritime Organization (IMO) in 2019, which consists of the following proportions: 15\% for category A, 20\% for category B, 30\% for category C, 20\% for category D, and 15\% for category E, as shown in figure \ref{fig:cii_class}.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.5\linewidth]{report-fig/cii_class.png}
+	\caption{Distribution of CII scores in 2019}
+	\label{fig:cii_class}
+\end{figure}
+
 
 \begin{figure}[H]
 	\centering
@@ -1083,10 +1105,74 @@ In turn, the profit margin per voyage expands and ships will choose to slow down
 	\label{fig:meanfield}
 \end{figure}
 
+In this way, we get a sample that is as close as possible to the real market.
+Secondly, we assume that the CII provision is changed to eliminate the top 15\% of vessels with CII each year.
+From the second line Proportion of vessels with y>$\theta$ we can see that when the EM algorithm converges, vessels with emissions that just meet 15\% receive an E rating and exit the market.
+Then, from the next two rows we can see the velocity and profit trajectories of the first ship, chosen at random, as they first fluctuate over several generations and then converge.
+The last row shows the distribution of emissions $y$ for each of the one hundred ships, with the red reference line showing the emissions of the 85th place, i.e. the E boundary for exiting the market.\\
 
-\subsection{Discussion}
-% Is your hypothesis supported? What conclusions do the results support about the strengths and weaknesses of your method compared to other methods? How can the results be explained in terms of the underlying properties of the algorithm.
+In particular, we can see that the policy of competitive CII has not worked very well, for example the first ship did not choose to slow down in the end, but to speed up.
+This is because the boundaries of the E ratings are now floating, and the focus is only on not being the last 86-100.
+And there are a number of ships that must be withdrawn from the market anyway because their initial CII is too high.
+Therefore, in order to maximize profits, they will choose to ignore CII regulations before exiting the market and increase their speed to maximize profits.
+In turn, the E rating cut-off for becoming 86-100th is drawn up. This leads to the fact that ultimately for some ships with already low initial CII scores, they can choose to accelerate appropriately.
+This increases the total profit without exiting the market.\\
 
+This is a very interesting result, as competitive strategy is often thought of as a very "harsh" measure.
+Because under such regulations, certain number of ships would be withdrawn from the market in any case.
+But from the point of view of carbon emission control, such a policy would instead lead to both greener and more polluting ships increasing their carbon emissions, contrary to the aims of the IMO.
 
+\newpage
 \section{Conclusion}
+
+In this report, we initially developed a model to represent the current policy.
+However, it is crucial to acknowledge that certain assumptions were made and parameters were estimated due to data limitations.
+These assumptions and estimations encompass various aspects, including the relationship between sailing time and speed, operational costs, and freight rate elasticity.\\
+
+The modeling results indicate that the CII policy and carbon tax policy do have an effect in reducing greenhouse gas (GHG) emissions for all types of ships.
+However, this effect is heavily dependent on market conditions and the individual characteristics of each ship.
+It is important to note that the impact is not consistent across the board.
+This inconsistency poses challenges for a global policy.
+The International Maritime Organization (IMO) aims for a steady reduction in carbon emissions for all types of ships at a consistent pace.
+An imbalanced policy could impose excessive restrictions on certain industries, such as the container shipping industry, while allowing other sectors, like bulk shipping, to largely evade the restrictions.
+This would concentrate the overall burden of emissions reduction on a subset of companies, which is neither fair nor conducive to achieving the IMO's long-term emission reduction goals.\\
+
+To explore alternative strategies that are feasible beyond 2026, we modeled and analyzed the effects of a competitive Carbon Intensity Indicator (CII) strategy using a mean-field model.
+Surprisingly, the simulation results showed that competitive strategies, due to the floating boundary settings, led to the least energy-efficient vessels surpassing the imposed limits in an attempt to maximize short-term profits.
+This led to an increase in the boundary, enabling other vessels to accelerate, ultimately resulting in the failure of GHG emission controls.\\
+
+While progress has been made in the models presented in this paper, there are still areas that require improvement. These include:
+\begin{enumerate}
+	\item \textbf{Improvements to the EM algorithm:} The EM algorithm currently used in this report is poor in terms of both convergence and accuracy. The stochastic EM algorithm can probably be used as an effective replacement.
+	\item \textbf{More precise estimation of operating costs:} Our current estimate of operating costs is based on a rough estimate of 50\% of total costs in 2021. More detailed calculations will require more accurate fleet billing data, which would need to be supported by a fleet of vessels.
+	\item  \textbf{An accurate understanding of the impact of speed on navigation time:} The relationship between a ship's speed and running time is very complex as it contains a certain element of randomness, while the relationship between waiting time and sailing speed is not linear. By comparing this with the speed-sailing times of the vessels provided by the bank for different years, the equation 11 used in this report still has an error of over 10\%, although some correction has been made. Further machine learning methods need to be considered to fit a true function.
+	\item \textbf{A more accurate relationship between speed and fuel consumption:} So far we have only made a general distinction between the two cases below and above 13 knots. The real relationship is much more complex.
+\end{enumerate}
+
+Addressing these areas of improvement will enhance the accuracy and reliability of the models used in this study.
+
+
+\newpage
+\section{Appendix}
+
+\subsection*{Information du logiciel et de l'ordinateur utilisés}
+The sections of this report dealing with time and performance comparisons were conducted on a desktop computer. The computer specifications are as follows:
+
+\begin{itemize}
+	\item Processor: 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz 3.00 GHz
+	\item Installed RAM: 16.0 GB (15.7 GB usable)
+	\item System type: 64-bit operating system, x64-based processor
+\end{itemize}
+
+\begin{thebibliography}{2}
+	\bibitem{han2023green}Han, Y., Ma, W. \& Ma, D. Green maritime: An improved quantum genetic algorithm-based ship speed optimization method considering various emission reduction regulations and strategies. {\em Journal Of Cleaner Production}. \textbf{385} pp. 135814 (2023)
+	\bibitem{gore2022cost}Gore, K., Rigot-Müller, P. \& Coughlan, J. Cost assessment of alternative fuels for maritime transportation in Ireland. {\em Transportation Research Part D: Transport And Environment}. \textbf{110} pp. 103416 (2022)
+	\bibitem{cardaliaguet2018short}Cardaliaguet, P. A short course on mean field games. {\em Unpublished Lecture Notes}. (2018)
+	\bibitem{elkafas2023environmental}Elkafas, A., Rivarolo, M. \& Massardo, A. Environmental economic analysis of speed reduction measure onboard container ships. {\em Environmental Science And Pollution Research}. \textbf{30}, 59645-59659 (2023)
+	\bibitem{tavasszy2012incorporating}Tavasszy, L., Ruijgrok, K. \& Davydenko, I. Incorporating logistics in freight transport demand models: state-of-the-art and research opportunities. {\em Transport Reviews}. \textbf{32}, 203-219 (2012)
+	\bibitem{chatzinikolaou2014applications}Chatzinikolaou, S. \& Ventikos, N. Applications of life cycle assessment in shipping. {\em 2nd International Symposium On Naval Architecture And Maritime, Istanbul, Turkey}. (2014)
+
+\end{thebibliography}
+
+
 \end{document}

@@ -73,7 +73,7 @@ def main(regime):
             num=100,
             data_vessels=df_vessels,
             env=env,
-            route=route_container_0,
+            route=route_bulker_0,
             value_exit=0.5,
             q=0.15,
             binary=False,

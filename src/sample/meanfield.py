@@ -221,7 +221,7 @@ def mf(num, data_vessels, env, route, q=0.15, value_exit=0.5, binary=False, year
     # Create a virual sample of vessels with same information
 
     vessels_virtual, ciis, fronts = vessels_sampling(
-        row=data_vessels.iloc[1], global_env=env, num=num
+        row=data_vessels.iloc[5], global_env=env, num=num
     )
 
     mf = MeanField(vessels_virtual, route, env, q=q, value_exit=value_exit, year=year)

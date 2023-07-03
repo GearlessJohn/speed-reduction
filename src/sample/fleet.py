@@ -245,8 +245,8 @@ class Fleet:
                 cii_limit=cii_limit,
                 construction=construction,
             )
-            speeds_plot.append(self.speeds[2,2])
-            profits_plot.append(profits_best[2,2])
+            speeds_plot.append(self.speeds[1,2])
+            profits_plot.append(profits_best[1,2])
             
             print("Speed of vessels by type:")
             for j in range(len(self.vessels)):

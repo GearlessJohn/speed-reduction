@@ -47,7 +47,8 @@ class MeanField:
 
             cii = vessel.cii_score_2021
             cii_e = 7.65
-            delta_max = (np.sqrt(cii_e / cii) - 1) * u0
+            #delta_max = (np.sqrt(cii_e / cii) - 1) * u0
+            delta_max = (cii_e / cii - 1) * u0
 
             x = self.theta_ - delta_max
             lam = 1

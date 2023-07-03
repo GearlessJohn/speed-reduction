@@ -105,7 +105,7 @@ Therefore, speed reduction is often considered one of the most effective and rel
 
 \subsection{Reduction of speed}
 As a more intelligent and effective way of controlling the speed of different ships, the IMO has introduced the Carbon Intensity Indicator (CII) policy.
-The CII calculates a ship's carbon intensity by dividing its annual CO2 emissions (measured in tonnes) by the vessel's transport capacity (deadweight tonnage) and the distance travelled. Therefore, the CII is directly influenced by a ship's speed - slower speeds mean lower fuel consumption and fewer CO2 emissions.\\
+The CII calculates a ship's carbon intensity by dividing its annual CO2 emissions (measured in tonnes) by the vessel's transport capacity (deadweight tonnage, DWT) and the distance travelled. Therefore, the CII is directly influenced by a ship's speed - slower speeds mean lower fuel consumption and fewer CO2 emissions.\\
 
 Each year, a ship's CII rating is compared to scheme set by the IMO, and the ship is rated from A to E, with A being the best performance and E the worst.
 Ships rated D for three consecutive years or E for one year are subject to a review and may need to submit a corrective action plan and wait for the validation.\\
@@ -356,7 +356,7 @@ The formula for CII is:
 	CII_{atteined} = \frac{CO_2(g)}{Capacity(ton) \cdot Distance(nm)}
 \end{equation}
 
-$Capacity$ refers to the deadweight tonnage, which is the maximum cargo weight of the ship (not the actual cargo capacity);
+$Capacity$ refers to the deadweight tonnage (DWT), which is the maximum cargo weight of the ship (not the actual cargo capacity);
 $Distance$ is the distance travelled throughout the year;
 and $CO2$ is the annual CO2 emission, which is obtained by multiplying the consumption of different fuels by their emission factors and summing them up.\\
 
@@ -492,7 +492,7 @@ The number of vessels in the first two of these years is unchanged, as it takes 
 And although the gap in the second year is 12\%, the number of new orders in the second year is not 0.12, but $0.12-0.10=0.02$.
 Since the fleet knew it was about to receive 0.10 new ships in the following year, there was no need to place an additional order for 0.12.\\
 
-In particular, newly manufactured ships do not affect the calculations in step2.
+In particular, newly manufactured ships do not affect the calculations in step 2.
 This is because in this model the newly built ships are not assumed to be more energy efficient or otherwise changed than the old ships.
 Construction simply increases the number of vessels of a particular type in the fleet, and the whole calculation in step 2 depends only on vessel characteristics (load capacity, fuel consumption, type of vessel, fuel type, etc.) and market conditions.
 Therefore, without taking into account the change in the number of vessels, i.e. the change in supply, for the change in the market price, the same strategy is simply used for the same type of vessel once the new one has entered the market.
@@ -753,7 +753,7 @@ We will cover the method of estimation in the next section.
 
 \section{Experimental Evaluation}
 
-\subsection{Data and Algorithms}
+\subsection{Data and Algorithm}
 
 \subsubsection{Data Source}
 In this report, the ship data involved is sourced from Credit Agricole CIB. This includes basic information about the ships (length, beam, carrying capacity, category) and navigation data (navigation time, navigation distance, fuel consumption, CO2 emissions, CII score).
@@ -770,9 +770,116 @@ And the data for the market comes from a variety of publicly available sources:
 
 \subsubsection{Estimation of essential parameters}
 
-% \paragraph{Elasticity between freight and supply}
+\paragraph{Cost and GHG emission of shipbuilding:}
+
+The precise cost and GHG emission of shipbuilding is difficult to estimate because they depend on not only the category of vessels but also their size.  We get data of shipbuilding cost from public resources like \href{https://theloadstar.com/fleet-building-hmm-set-to-order-nine-methanol-powered-8000-teu-ships/}{TheLoadStar}.\\
+
+Besides, we have a detailed calculation for a tanker of  74926 DWT from a report \href{https://www.researchgate.net/publication/280313533_Applications_of_Life_Cycle_Assessment_in_Shipping}{[Life Cycle Assessment in Shipping]} as shown in figure \ref{fig:shipbuilding_pie} and figure \ref{fig:shipbuilding_table}.
+We assume that manufacturing emissions are linearly related to DWT and do not depend on vessel type.
+This assumption is acceptable because in practice the carbon emissions during the construction of a vessel are mainly related to the manufacture of the hull material and welding, and less to the internal equipment.
+Therefore, there is little difference in carbon emissions between different categories of ships of the same size.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}[t]{0.49\textwidth}
+		\centering
+		\includegraphics[width= \linewidth]{report-fig/shipbuilding_pie.png}
+		\caption{Full life cycle vessel GHG emissions analysis}
+		\label{fig:shipbuilding_pie}
+	\end{minipage}
+	\begin{minipage}[t]{0.49\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{report-fig/shipbuilding table.png}
+		\caption{Absolute GHG emission values}
+		\label{fig:shipbuilding_table}
+	\end{minipage}
+\end{figure}
+
+Finally, for ship i, its GHG emission in shipbuilding phase are given by:
+\begin{equation}
+	GHG_{building,i} = \dfrac{DWT_i}{74926} * 2290 \, \text{tons}
+	\label{eq:shipbuilding}
+\end{equation}
+
+\paragraph{Elasticity between freight rate and supply:}
+In figure \ref{fig:elasticity}, we give the specific calculation of the elasticity 1.93 in equation (\ref{eq:fr_mf}).\\
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.5\linewidth]{report-fig/Elasticity.png}
+	\caption{Linear relationship between the Clarkson Freight Index and Chinese exports}
+	\label{fig:elasticity}
+\end{figure}
+
+The Clarkson Index is provided by Crédit Agricole while the China exports data comes from \href{https://fred.stlouisfed.org/series/XTEXVA01CNM667S}{[FRED]}.
+All raw data are calculated by month.
+Before performing a linear regression, we first calculate an annual average of the data.
+This has two advantages, one of which is that it removes the effect of periodicity within each year.
+The second is that the overall fluctuations for a year (-10\% to +30\%) are greater than for a month (-5\% to +5\%) and the resulting elasticity can be applied more widely, therefore more reliable.
+
+\paragraph{Parameters in Competition Model:} In the Competition model, the main parameters we need to evaluate are $a, b, l, \gamma, x, \lambda$.
+
+$a,b$ are parameters in the price formula:
+
+\begin{equation*}
+	p(u) = a - b \frac{1}{N}\sum_{i=1}^N u_i
+\end{equation*}
+
+We can calculate $a,b$ by using the elasticity between price and supply:
+\begin{equation}
+	\label{eq:price_est}
+	p = p_0  - a \dfrac{u-u_0}{u_0} p_0 = 2.93 p_0 - 1.93 \dfrac{p_0}{u_0}u
+\end{equation}
+where $p_0 = FR \cdot 95\% \cdot Capacity \cdot T * u_0 / D$, $T = 365 \cdot 24 = 8760 h$, D is the voyage distance of route chosen and $u_0$ is the original equilibrium speed in equation (\ref{eq:u0}).
+
+By comparing equation (\ref{eq:price}) with (\ref{eq:price_est}), we can obtain:
+
+\begin{equation}
+	a = 5p_0, \quad b = 4 \dfrac{p_0}{u_0}
+\end{equation}
+
+And $l, \gamma$ are parameters in the price formula:
+\begin{equation*}
+	c(u_i) = l u_i + \frac{1}{2 \gamma} u_i^2
+\end{equation*}
+
+By definition, the above equation can be rewritten as the sum of operational cost and the fuel cost. By comparing with equations (\ref{eq:operation_cost}) and (\ref{eq:fuel_consumption}) we get
+\begin{equation}
+	l = OC \cdot \dfrac{T}{D}, \quad \gamma = \dfrac{u_0^2}{2\cdot FC(u_0)}
+\end{equation}
+
+Finally, we need to estimate the $x$ and $\lambda$ in equation (\ref{eq:y}):
+\begin{equation*}
+	y_i = x_i + \lambda(u_i-u_0)
+\end{equation*}
+
+To solve this problem, we need to translate the CII policy into a linear version under the assumption that the fuel cost per nautical mile is linearly related to speed.
+We start with a linear version formula of CII calculation:
+\begin{equation}
+	\label{eq:cii_linear}
+	CII(\delta) = CII_0\cdot (\dfrac{u_0+\delta}{u_0})=CII_0\cdot (1 + \dfrac{\delta}{u_0})
+\end{equation}
+
+Thus,
+
+\begin{equation}
+	\delta = \left( \dfrac{CII(\delta)}{CII_0} -1 \right) \cdot u_0
+\end{equation}
+
+Note the boundary of the CII E rating as $CII_E$.
+Then, different ships will have different maximum acceleration limits $\delta_{max}$, i.e. not exceeding the maximum speed available strictly under the E rating, because of the different $CII_0$ at the same initial speed $u_0$. The $\delta_{max}$ can be calculated by:
+\begin{equation}
+	\delta_{max,i} = \left( \dfrac{CII_E}{CII_{0,i}} -1 \right) \cdot u_0
+\end{equation}
+
+Here we get different ships from the same starting point $u_0$, with different acceleration limits.
+But $x$ in equation (\ref{eq:y}) is a different departure point. In order to translate different upper limits of acceleration at the same initial speed into different initial values of x at the same upper $\theta$, we can go to an abstract $\theta_0$ and define $x$ as:
+\begin{equation}
+	x_i = \theta_0 - \delta_{max,i}
+\end{equation}
 
 \subsubsection{Optimal choice to maximize 4-year profit}
+
 In Global Emission Control model, two main parts involve intensive calculations.
 The first part focuses on finding the optimal solution for a vessel between the years 2023-2026, taking into account CII (Carbon Intensity Indicator) limits as described in section 2.2.2, equation ({\ref{eq:vast}}).
 To solve this problem, the calculations were performed using the NumPy library in Python.
@@ -802,7 +909,8 @@ For the moment, using the full calculation to find the maximum value takes two s
 
 
 \subsubsection{EM Algorithm}
-The second part of intensive calculations of the report involves calculating an equilibrium point for flexible prices, as outlined in section 2.2.4.
+
+The second part of intensive calculations of the report involves calculating an equilibrium point for flexible prices, as outlined in section 2.2.4 and 2.3.
 To address this problem, the classic EM (Expectation-Maximization) algorithm was employed.
 The EM algorithm is an iterative optimization technique commonly used in statistics and machine learning to estimate parameters in probabilistic models with latent variables.\\
 
@@ -833,17 +941,13 @@ In this formula, the variables and terms represent the following:
 	\item $\text{previous\_velocity}_{i,t}$ represents the velocity of the same container ship $i$ in the previous iteration.
 \end{itemize}
 
+And for Competition model, the only change is that there is only one year.\\
+
 In summary, the NumPy library in Python was used to efficiently calculate the profitability of different vessel speeds while considering CII limits.
 For the calculation of equilibrium points with flexible prices, the EM algorithm was employed, which offers advantages such as handling missing data and converging to local optima.
 However, it is important to consider the sensitivity to initial conditions and the computational demands of the EM algorithm.\\
 
-\subsection{Methodology}
-% What are the criteria you are using to evaluate your method? What specific hypotheses does
-% your experiment test? Describe the experimental methodology that you used. What are the
-% dependent and independent variables? What is the training/test data that was used, and why
-% is it realistic or interesting? Exactly what performance data did you collect and how are you
-% presenting and analyzing it? Comparisons to competing methods that address the same
-% problem are particularly useful.
+
 
 
 
@@ -851,6 +955,60 @@ However, it is important to consider the sensitivity to initial conditions and t
 
 \subsection{Results}
 % Present the quantitative results of your experiments. Graphical data presentation such as graphs and histograms are frequently better than tables.
+\subsubsection{Results of Global Emission Control Model}
+\paragraph{Annual Profit Maximization}
+We start with Step 1, where the year chosen is 2023. Detailed information on the route and fuel consumption, speed etc. can be seen in table \ref{table:comparison}.
+
+
+\begin{table}[ht]
+	\caption{Comparison of Key Metrics for Container Ship 01 and Bulker 01}
+	\centering
+	\begin{tabular}{l|l|l}
+		\hline
+		\textbf{Metric}            & \textbf{Container Ships}  & \textbf{Bulkers} \\
+		\hline
+		Type                       & Post Panamax < 10 000 TEU & Capesize \& VLOC \\
+		Capacity                   & 9115 TEU                  & 181336 DWT       \\
+		Route                      & Shanghai-Rotterdam        & Houston-Shanghai \\
+		Distance (nm)              & 11999.0                   & 12324.0          \\
+		Freight Rate               & \$1000.0/TEU              & \$35.0/DWT       \\
+		Carbon Tax                 & \$0.0/ton                 & \$0.0/ton        \\
+		Utilization                & 95.0\%                    & 90.0\%           \\
+		Retrofit                   & False                     & False            \\
+		2021 Speed (knots)         & 16.45                     & 12.07            \\
+		Optimal Speed 2023 (knots) & 15.30                     & 12.76            \\
+		Fuel cost                  & \$-143.51/TEU             & \$-7.25/DWT      \\
+		Operation cost             & \$-178.46/TEU             & \$-6.49/DWT      \\
+		Profitability              & 65.80\%                   & 60.73\%          \\
+		Annual Profit (M\$)        & 39.94                     & 20.74            \\
+		Speed Variation            & -7.01\%                   & +5.69\%          \\
+		Emission Variation         & -23.16\%                  & +16.03\%         \\
+		2021 CII class             & D                         & C                \\
+		Current CII class          & B                         & D                \\
+		\hline
+	\end{tabular}
+	\label{table:comparison}
+\end{table}
+
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}[t]{0.49\textwidth}
+		\centering
+		\includegraphics[width= \linewidth]{report-fig/container01.png}
+		\caption{Annual Profit Maximization of Container Ship 01}
+		\label{fig:container01}
+	\end{minipage}
+	\begin{minipage}[t]{0.49\textwidth}
+		\centering
+		\includegraphics[width= \linewidth]{report-fig/bulker01.png}
+		\caption{Annual Profit Maximization of Bulker 01}
+		\label{fig:bulker01}
+	\end{minipage}
+\end{figure}
+
+
+\subsubsection{Results of Competition Model}
+
 
 \subsection{Discussion}
 % Is your hypothesis supported? What conclusions do the results support about the strengths and weaknesses of your method compared to other methods? How can the results be explained in terms of the underlying properties of the algorithm.

@@ -966,7 +966,7 @@ However, it is important to consider the sensitivity to initial conditions and t
 % Present the quantitative results of your experiments. Graphical data presentation such as graphs and histograms are frequently better than tables.
 \subsubsection{Results of Global Emission Control Model}
 \paragraph{Annual Profit Maximization (Step 1):}
-We start with Step 1, where the year chosen is 2023. Detailed information on the route and fuel consumption, speed etc. can be seen in table \ref{table:comparison}.
+We start with STEP 1, where the year chosen is 2023. Detailed information on the route and fuel consumption, speed etc. can be seen in table \ref{table:comparison}.
 Comparing the speed data between 2021 and 2023, the container ship reduced its speed by 7.01\%, resulting in a lower Carbon Intensity Indicator (CII) class, shifting from D to B.
 In contrast, the bulker increased its speed by 5.69\%, which led to a higher emission variation and a worsened CII class from C to D.\\
 
@@ -1030,7 +1030,7 @@ This makes a number of our assumptions in Global Emission Control model, includi
 	\end{minipage}
 \end{figure}
 
-\paragraph{4-year optimization considering CII and ship construction (Step 3):}
+\paragraph{4-year optimization considering CII and ship construction (Step 2 \& 3):}
 
 Figure 7 depicts the optimization results for the period of 2023-2026, taking into account the inclusion of CII emission limits, carbon tax, and shipbuilding, using the data obtained from STEP 1.
 The decay factors applied to the CII ratings during this period are 5\%, 7\%, 9\%, and 11\% respectively.
@@ -1048,8 +1048,40 @@ Ultimately in 2026, compared with the year 2021 (red line), GHG emissions from c
 	\label{fig:step3}
 \end{figure}
 
+\paragraph{Flexible Prices (Step 4):}
+Eventually we come to STEP 4, where market freight rates will fluctuate with the speed of all ships.
+In this step, we mainly consider a market consisting of the three most representative Bulkers of different sizes.
+The EM algorithm converges after 5 iterations according to the specified conditions, which is shown in figure \ref{fig:step4}.
+We can see no single trend of change in either speed or profit.
+As we explained before in 2.2.5, this is a negative feedback system.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{report-fig/iterationsGEC.png}
+	\caption{Iterative trajectory for optimal speed in 2025 of Bulker 01}
+	\label{fig:step4}
+\end{figure}
+
+Finally, we compared the 2023-2026 best speed scenario for Bulker 01 obtained in step 4 with the one in step 3 and the results are shown in Figure 9.
+We can see a general increase in sailing speed for Bulker 01 in 2023-2026 when freight prices are able to fluctuate.
+This is because when ships generally slow down, freight prices rise.
+In turn, the profit margin per voyage expands and ships will choose to slow down less to increase the number of voyages and thus gain a greater total profit.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{report-fig/Flexible.png}
+	\caption{Comparison of fixed and fluctuating freight prices}
+	\label{fig:flexible}
+\end{figure}
 
 \subsubsection{Results of Competition Model}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\linewidth]{report-fig/Meanfield.png}
+	\caption{Results of Competition Model}
+	\label{fig:meanfield}
+\end{figure}
 
 
 \subsection{Discussion}

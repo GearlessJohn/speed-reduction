@@ -10,6 +10,7 @@
 \usepackage{tabularx,ragged2e,booktabs,caption}
 \usepackage{hyperref}
 \usepackage{dsfont}
+\usepackage{float}
 
 \author{Xuan WANG}
 \date{\today}
@@ -67,7 +68,7 @@ Research by the International Maritime Organization (IMO) shows an increase in t
 Additionnal, forecasts from the IMO (2020) estimate an alarming 50\% increase in cabon dioxide (CO2) emissions from the shipping industry by 2050 when compared to the 2018 baseline if no measures are taken.
 These sobering figures underline the urgency of the need to improve the maritime sector's environmental footprint and have been a catalyst for scientific research into the field of green shipping. Also, parteners involved in the maritime field are seeking supporting the maritime sector to achieve the blue economy concept.\\
 
-I am currently working on the MQP (Quantitative Portfolio Models) in the Risk \& Permanent Control (RPC) department at Crédit Agricole.
+I am currently working on the Quantitative Portfolio Models team in the Risk \& Permanent Control (RPC) department at Crédit Agricole.
 Crédit Agricole Corporate and Investment Bank (CA-CIB) is a subsidiary of Crédit Agricole, one of the largest banking groups in the world.
 Headquartered in France, Crédit Agricole CIB specializes in corporate and investment banking.
 It offers an array of services, including structured finance, commercial banking, and international trade and transaction banking, catering to a diverse range of clients including corporates, financial institutions, sovereigns, and large multinationals.\\
@@ -212,6 +213,14 @@ The revenue and expenses of a route mainly include:
 
 According to physical calculations and actual vessel data, the fuel cost per unit distance, or fuel consumption, is cubically related to the speed of the vessel.
 However, this relationship only holds when the speed is greater than about 13 knots, and when the speed is lower than 13 knots, we can approximate that the fuel consumption is proportional to the quadratic side of the speed.
+The figure \ref{fig:resistance} shows the resistance received by a ship in a real environment, including viscous resistance, wave making resistance and air resistance in relation to the ship's speed.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{report-fig/resistance.png}
+	\caption{The relationship between a ship's resistance to travel and its speed}
+	\label{fig:resistance}
+\end{figure}
 
 \begin{equation}
 	\label{eq:fuel_consumption}
@@ -956,11 +965,24 @@ However, it is important to consider the sensitivity to initial conditions and t
 \subsection{Results}
 % Present the quantitative results of your experiments. Graphical data presentation such as graphs and histograms are frequently better than tables.
 \subsubsection{Results of Global Emission Control Model}
-\paragraph{Annual Profit Maximization}
+\paragraph{Annual Profit Maximization (Step 1):}
 We start with Step 1, where the year chosen is 2023. Detailed information on the route and fuel consumption, speed etc. can be seen in table \ref{table:comparison}.
+Comparing the speed data between 2021 and 2023, the container ship reduced its speed by 7.01\%, resulting in a lower Carbon Intensity Indicator (CII) class, shifting from D to B.
+In contrast, the bulker increased its speed by 5.69\%, which led to a higher emission variation and a worsened CII class from C to D.\\
 
+The container ship demonstrated higher profitability at 65.8\% with an annual profit of \$39.94 million, while the bulker reported a profitability of 60.73\% and an annual profit of \$20.74 million.
+This margin is relatively reasonable, with an average profit margin of 57\% for the containership industry in 2022, according to \href{https://www.statista.com/statistics/1263780/ebit-margins-of-container-carriers-by-quarter}{Statista}.
+Our margin here is only the line margin and does not take into account corporate tax payments etc., so it is reasonable to be slightly above 57\%.
+The comparison illuminates the impact of operational changes and speed adjustments on vessel performance, profitability, and environmental footprint, as measured by the CII.\\
 
-\begin{table}[ht]
+As we can see in figures \ref{fig:container01} and \ref{fig:bulker01}, it is a concave function of velocity for the profit of a single year.
+This is because, in general, when ship speeds are too high, fuel costs rise massively, resulting in lower total profits.
+But when ship speed is too low, the number of voyages falls excessively and profits are reduced just as much.
+The gray reference line on the way is the average speed provided by the bank for 2021 and the red is the optimal speed for 2023.
+We can see that although the optimal speed has changed due to changing market conditions, this change is still within a reasonable range (-10\% to 10\%).
+This makes a number of our assumptions in Global Emission Control model, including the relationship between fuel consumption and speed, and that freight rates remain constant over a given speed variation, relatively plausible.
+
+\begin{table}[H]
 	\caption{Comparison of Key Metrics for Container Ship 01 and Bulker 01}
 	\centering
 	\begin{tabular}{l|l|l}
@@ -990,7 +1012,9 @@ We start with Step 1, where the year chosen is 2023. Detailed information on the
 	\label{table:comparison}
 \end{table}
 
-\begin{figure}[htbp]
+
+
+\begin{figure}[H]
 	\centering
 	\begin{minipage}[t]{0.49\textwidth}
 		\centering
@@ -1004,6 +1028,24 @@ We start with Step 1, where the year chosen is 2023. Detailed information on the
 		\caption{Annual Profit Maximization of Bulker 01}
 		\label{fig:bulker01}
 	\end{minipage}
+\end{figure}
+
+\paragraph{4-year optimization considering CII and ship construction (Step 3):}
+
+Figure 7 depicts the optimization results for the period of 2023-2026, taking into account the inclusion of CII emission limits, carbon tax, and shipbuilding, using the data obtained from STEP 1.
+The decay factors applied to the CII ratings during this period are 5\%, 7\%, 9\%, and 11\% respectively.
+Additionally, the corresponding carbon tax rates are calculated as 0.0, $40\%*94$, $70\% * 94$, and $100\%*94$ dollars per ton CO2.\\
+
+What can be seen is that with the year-on-year increase in the carbon tax and the tightening of the CII restrictions, although some vessels (Bulker 01) were able to still choose to accelerate in 2023, they all subsequently showed a tendency to slow down.
+This is partly due to the fact that slowing down reduces fuel consumption and partly to avoid CII restrictions.
+Ultimately in 2026, compared with the year 2021 (red line), GHG emissions from container ships fall by more than 40\%, while Bulker's fall is no more than 15\%.
+
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.99\linewidth]{report-fig/Step3.png}
+	\caption{4-year joint optimization results for Container 01 and Bulker 01}
+	\label{fig:step3}
 \end{figure}
 
 

@@ -286,7 +286,7 @@ class Fleet:
 
         fig, ax = plt.subplots()
         ax.plot(np.arange(len(speeds_plot)), speeds_plot, label="speed", color="blue")
-        ax.set_xlabel("year")
+        ax.set_xlabel("iteration")
         ax.set_ylabel("Speed (knot)", color="blue")
         # ax.axvline(x=v_best, ymax=profit_best, c="red", linestyle="--")
         # ax.axvline(

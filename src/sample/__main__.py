@@ -129,7 +129,7 @@ def main(regime):
             routes=[route_container_0, route_bulker_0, route_bulker_0, route_bulker_0],
             global_env=env,
         )
-        fleet.mean_field(max_iter=30)
+        fleet.mean_field(max_iter=30, elas=1.3807, tol=0.3/16)
         return
     else:
         return

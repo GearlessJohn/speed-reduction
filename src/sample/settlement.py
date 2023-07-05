@@ -113,7 +113,7 @@ class Settlement:
     def hours_voyage(self, speed, acc):
         if acc:
             h0 = self.vessel.hours_2021
-            p0 = (365 * 24 - h0) * 0.5
+            p0 = (365 * 24 - h0) * 0.9
             return (h0 + p0) / (1 + p0 * speed / (h0 * self.vessel.speed_2021))
         else:
             return self.vessel.hours_2021
@@ -295,26 +295,86 @@ class Settlement:
         # Create a grid of all combinations of indices
         I0, I1, I2, I3 = np.meshgrid(indices, indices, indices, indices, indexing="ij")
 
-        # Create a condition mask for cii_class values
-        mask = (cii_class[0, I0] == "D") | (cii_class[0, I0] == "E")
-        mask &= (cii_class[1, I1] == "D") | (cii_class[1, I1] == "E")
-        mask &= (cii_class[2, I2] == "D") | (cii_class[2, I2] == "E")
+        # Create a condition mask for cii_class values where all first three indices are "D"
+        mask_D = (
+            (cii_class[0, I0] == "D")
+            & (cii_class[1, I1] == "D")
+            & (cii_class[2, I2] == "D")
+        )
+
+        # Create masks for cii_class values where any index is "E"
+        mask_E0 = cii_class[0, I0] == "E"
+        mask_E1 = cii_class[1, I1] == "E"
+        mask_E2 = cii_class[2, I2] == "E"
+        mask_E3 = cii_class[3, I3] == "E"
+
+        # Set the profits to zero where the cii_class is "E"
+        profits_E0 = profits[0, I0]
+        profits_E1 = np.where(mask_E0 , 0.0, profits[1, I1])
+        profits_E2 = np.where(mask_E0 | mask_E1 , 0.0, profits[2, I2])
+        profits_E3 = np.where(
+            mask_E0 | mask_E1 | mask_E2, 0.0, profits[3, I3]
+        )
 
         # Calculate total profits using the indices and the condition mask
         total_profit = (
-            profits[0, I0]
-            + profits[1, I1]
-            + profits[2, I2]
-            + np.where(mask, 0.0, profits[3, I3])
+            profits_E0 + profits_E1 + profits_E2 + np.where(mask_D, 0.0, profits_E3)
+        )
+        res = np.unravel_index(np.argmax(total_profit, axis=None), total_profit.shape)
+        return res, total_profit[res]
+
+
+    def cii_profits_reverse(self, profits, cii_class):
+        m = profits.shape[1]
+        zeros = np.zeros(m)
+
+        i3 = np.argmax(profits[3])
+        P3 = np.where(cii_class[2] == "E", zeros, profits[3][i3])
+
+        i2 = np.argmax(profits[2] + P3)
+        P2 = np.where(cii_class[1] == "E", zeros, P3[i2] + profits[2][i2])
+
+        i1 = np.argmax(profits[1] + P2)
+        P1 = np.where(
+            cii_class[0] == "E",
+            zeros,
+            P2[i1] + profits[1][i1]
         )
 
-        return np.unravel_index(
-            np.argmax(total_profit, axis=None), total_profit.shape
-        ), np.max(total_profit)
+        i0 = np.argmax(profits[0] + P1)
+
+        res = np.array([i0, i1, i2, i3])
+        total_profit = profits[0][i0] + P1[i0]
+
+        if (
+            (cii_class[2][i2] == "D")
+            & (cii_class[1][i1] == "D")
+            & (cii_class[0][i0] == "D")
+        ):
+            last_C = np.zeros(3, dtype="int")
+            last_C[0] = np.where(cii_class[0] == "C")[0][-1]
+            last_C[1] = np.where(cii_class[1] == "C")[0][-1]
+            last_C[2] = np.where(cii_class[2] == "C")[0][-1]
+            
+            total_profit_DDD = np.zeros(4)
+            total_profit_DDD[0] = total_profit + (profits[0][last_C[0]]-profits[0][i0])
+            total_profit_DDD[1] = total_profit + (profits[1][last_C[1]]-profits[1][i1])
+            total_profit_DDD[2] = total_profit + (profits[2][last_C[2]]-profits[2][i2])
+            total_profit_DDD[3] = total_profit - profits[3][i3]
+
+            solution = np.argmax(total_profit_DDD)
+            
+            if solution<=2:
+                res[solution]=last_C[solution]
+            
+            total_profit = total_profit_DDD[solution]
+            
+        return res, total_profit
+
 
     def optimization(self, retrofit, power, years, acc, cii_limit=True, pr=False):
         n = len(years)
-        m = 61
+        m = 601
         speed_ini = self.vessel.speed_2021
         vs = speed_ini + np.linspace(-3, 3, m)
 
@@ -330,10 +390,13 @@ class Settlement:
 
         profits = profits
         if cii_limit:
-            best, profit_max = self.cii_profits(profits=profits, cii_class=cii_class)
+            # best, profit_max = self.cii_profits(profits=profits, cii_class=cii_class)
+            best, profit_max = self.cii_profits_reverse(profits=profits, cii_class=cii_class)
         else:
             best = [np.argmax(profits[i]) for i in years]
             profit_max = np.sum([profits[i, best[i]] for i in years])
+
+        profits_best = np.array([profits[i, best[i]] for i in years])
 
         v_best = np.array([vs[best[i]] for i in years])
         savings = [
@@ -349,12 +412,17 @@ class Settlement:
             for i in years
         ]
 
-        profits_best = np.array([profits[i, best[i]] for i in years])
         if np.sum(profits_best[:-1]) == profit_max:
             profits_best[3] = 0.0
-
         cii_best = [cii_class[i, best[i]] for i in years]
+
+        # profits_best = np.where(profits_best <= 0, 0, profits_best)
+        # v_best = np.where(profits_best <= 0, 0, v_best)
+        # emissions_best = np.where(profits_best <= 0, 0, emissions_best)
+        # cii_best = np.where(profits_best <= 0, "A", cii_best)
+
         if pr:
+            print(self.vessel.name)
             print("Max profit:", profit_max / 1e6)
             print("Optimal Speed:", v_best)
             print("Optimal Profit:", profits_best)

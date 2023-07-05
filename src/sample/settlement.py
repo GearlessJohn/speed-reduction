@@ -338,19 +338,39 @@ class Settlement:
         P1 = np.where(
             cii_class[0] == "E",
             zeros,
-            P2[i1]
-            + profits[1][i1]
-            - np.where(
-                ((cii_class[2] == "D") & (cii_class[1] == "D") & (cii_class[0] == "D")),
-                profits[3][i3],
-                zeros,
-            )
+            P2[i1] + profits[1][i1]
         )
-            
+
         i0 = np.argmax(profits[0] + P1)
+
         res = np.array([i0, i1, i2, i3])
         total_profit = profits[0][i0] + P1[i0]
-        return  res, total_profit
+
+        if (
+            (cii_class[2][i2] == "D")
+            & (cii_class[1][i1] == "D")
+            & (cii_class[0][i0] == "D")
+        ):
+            last_C = np.zeros(3, dtype="int")
+            last_C[0] = np.where(cii_class[0] == "C")[0][-1]
+            last_C[1] = np.where(cii_class[1] == "C")[0][-1]
+            last_C[2] = np.where(cii_class[2] == "C")[0][-1]
+            
+            total_profit_DDD = np.zeros(4)
+            total_profit_DDD[0] = total_profit + (profits[0][last_C[0]]-profits[0][i0])
+            total_profit_DDD[1] = total_profit + (profits[1][last_C[1]]-profits[1][i1])
+            total_profit_DDD[2] = total_profit + (profits[2][last_C[2]]-profits[2][i2])
+            total_profit_DDD[3] = total_profit - profits[3][i3]
+
+            solution = np.argmax(total_profit_DDD)
+            
+            if solution<=2:
+                res[solution]=last_C[solution]
+            
+            total_profit = total_profit_DDD[solution]
+            
+        return res, total_profit
+
 
     def optimization(self, retrofit, power, years, acc, cii_limit=True, pr=False):
         n = len(years)

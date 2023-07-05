@@ -309,11 +309,11 @@ class Settlement:
         mask_E3 = cii_class[3, I3] == "E"
 
         # Set the profits to zero where the cii_class is "E"
-        profits_E0 = np.where(mask_E0, 0.0, profits[0, I0])
-        profits_E1 = np.where(mask_E0 | mask_E1, 0.0, profits[1, I1])
-        profits_E2 = np.where(mask_E0 | mask_E1 | mask_E2, 0.0, profits[2, I2])
+        profits_E0 = profits[0, I0]
+        profits_E1 = np.where(mask_E0 , 0.0, profits[1, I1])
+        profits_E2 = np.where(mask_E0 | mask_E1 , 0.0, profits[2, I2])
         profits_E3 = np.where(
-            mask_E0 | mask_E1 | mask_E2 | mask_E3, 0.0, profits[3, I3]
+            mask_E0 | mask_E1 | mask_E2, 0.0, profits[3, I3]
         )
 
         # Calculate total profits using the indices and the condition mask
@@ -322,6 +322,35 @@ class Settlement:
         )
         res = np.unravel_index(np.argmax(total_profit, axis=None), total_profit.shape)
         return res, total_profit[res]
+
+
+    def cii_profits_reverse(self, profits, cii_class):
+        m = profits.shape[1]
+        zeros = np.zeros(m)
+
+        i3 = np.argmax(profits[3])
+        P3 = np.where(cii_class[2] == "E", zeros, profits[3][i3])
+
+        i2 = np.argmax(profits[2] + P3)
+        P2 = np.where(cii_class[1] == "E", zeros, P3[i2] + profits[2][i2])
+
+        i1 = np.argmax(profits[1] + P2)
+        P1 = np.where(
+            cii_class[0] == "E",
+            zeros,
+            P2[i1]
+            + profits[1][i1]
+            - np.where(
+                ((cii_class[2] == "D") & (cii_class[1] == "D") & (cii_class[0] == "D")),
+                profits[3][i3],
+                zeros,
+            )
+        )
+            
+        i0 = np.argmax(profits[0] + P1)
+        res = np.array([i0, i1, i2, i3])
+        total_profit = profits[0][i0] + P1[i0]
+        return  res, total_profit
 
     def optimization(self, retrofit, power, years, acc, cii_limit=True, pr=False):
         n = len(years)
@@ -341,7 +370,8 @@ class Settlement:
 
         profits = profits
         if cii_limit:
-            best, profit_max = self.cii_profits(profits=profits, cii_class=cii_class)
+            # best, profit_max = self.cii_profits(profits=profits, cii_class=cii_class)
+            best, profit_max = self.cii_profits_reverse(profits=profits, cii_class=cii_class)
         else:
             best = [np.argmax(profits[i]) for i in years]
             profit_max = np.sum([profits[i, best[i]] for i in years])

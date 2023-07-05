@@ -374,7 +374,7 @@ class Settlement:
 
     def optimization(self, retrofit, power, years, acc, cii_limit=True, pr=False):
         n = len(years)
-        m = 61
+        m = 601
         speed_ini = self.vessel.speed_2021
         vs = speed_ini + np.linspace(-3, 3, m)
 

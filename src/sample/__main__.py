@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import sys
-import time
 
 from vessel import Vessel
 from global_env import GlobalEnv
@@ -24,7 +23,7 @@ env = GlobalEnv(
 )
 
 # Initializing Route objects
-route_container_0 = Route(
+rt_container_0 = Route(
     name="Shanghai-Rotterdam",
     route_type="CONTAINER SHIPS",
     distance=11999.0,
@@ -33,7 +32,7 @@ route_container_0 = Route(
     fuel_ratio=0.5,
 )
 
-route_bulker_0 = Route(
+rt_bulker_0 = Route(
     name="Houston-Shanghai",
     route_type="BULKERS",
     distance=12324.0,
@@ -43,13 +42,13 @@ route_bulker_0 = Route(
 )
 
 
-def main(regime):
+def main(regime: object) -> object:
     if regime == 0:
         return settle(
             i=1,
             data_vessels=df_vessels,
             env=env,
-            route=route_container_0,
+            route=rt_container_0,
             power=3.0,
             retrofit=False,
             acc=True,
@@ -61,7 +60,7 @@ def main(regime):
             i=5,
             data_vessels=df_vessels,
             env=env,
-            route=route_bulker_0,
+            route=rt_bulker_0,
             power=2.0,
             retrofit=False,
             acc=True,
@@ -73,7 +72,7 @@ def main(regime):
             num=100,
             data_vessels=df_vessels,
             env=env,
-            route=route_bulker_0,
+            route=rt_bulker_0,
             value_exit=0.5,
             q=0.15,
             binary=False,
@@ -83,7 +82,7 @@ def main(regime):
             i=1,
             data_vessels=df_vessels,
             env=env,
-            route=route_container_0,
+            route=rt_container_0,
             power=3.0,
             retrofit=False,
             year=0,
@@ -101,7 +100,7 @@ def main(regime):
             i=5,
             data_vessels=df_vessels,
             env=env,
-            route=route_bulker_0,
+            route=rt_bulker_0,
             power=2.0,
             retrofit=False,
             year=0,
@@ -118,7 +117,7 @@ def main(regime):
     elif regime == 5:
         return Fleet(
             vessels=[vessels[1], vessels[5], vessels[0], vessels[7]],
-            routes=[route_container_0, route_bulker_0, route_bulker_0, route_bulker_0],
+            routes=[rt_container_0, rt_bulker_0, rt_bulker_0, rt_bulker_0],
             global_env=env,
         ).global_optimization(
             retrofit=False, cii_limit=True, construction=True, pr=True
@@ -126,7 +125,7 @@ def main(regime):
     elif regime == 6:
         fleet = Fleet(
             vessels=[vessels[1], vessels[5], vessels[0], vessels[7]],
-            routes=[route_container_0, route_bulker_0, route_bulker_0, route_bulker_0],
+            routes=[rt_container_0, rt_bulker_0, rt_bulker_0, rt_bulker_0],
             global_env=env,
         )
         fleet.mean_field(max_iter=30, elas=1.3807, tol=1e-3)

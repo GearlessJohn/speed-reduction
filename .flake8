@@ -1,0 +1,5 @@
+[flake8]
+# matches configuration of black in pyproject.toml
+max-line-length = 120
+# required for compatibility with black:
+extend-ignore = E203

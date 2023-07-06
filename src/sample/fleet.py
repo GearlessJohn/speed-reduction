@@ -21,7 +21,8 @@ class Fleet:
 
     def construction(self, i, j, stm, speed, acc):
         """
-        This function estimates the excess demand of maritime transport due to speed reduction and returns the cost and ghg emission of construction of new vessel.
+        This function estimates the excess demand of maritime transport due to speed reduction 
+        and returns the cost and ghg emission of construction of new vessel.
         """
         diff = 1 - (
             speed
@@ -219,11 +220,9 @@ class Fleet:
         capacity_by_type_ini = {}
         freight_rates_ini = np.array(
             [self.routes[j].freight_rates for j in range(len(self.routes))]
-        )
-        
+        )    
         speeds_plot = []
         profits_plot = []
-        
         for j in range(len(self.vessels)):
             vessel = self.vessels[j]
             if vessel.vessel_type not in capacity_by_type_ini:
@@ -245,9 +244,8 @@ class Fleet:
                 cii_limit=cii_limit,
                 construction=construction,
             )
-            speeds_plot.append(self.speeds[1,2])
-            profits_plot.append(profits_best[1,2])
-            
+            speeds_plot.append(self.speeds[1, 2])
+            profits_plot.append(profits_best[1, 2])  
             print("Speed of vessels by type:")
             for j in range(len(self.vessels)):
                 print(
@@ -309,7 +307,7 @@ class Fleet:
         ax1.legend(loc="upper right")
 
         fig.suptitle(
-            f"Iteration Trace of Bukler 01 in 2025"
+            "Iteration Trace of Bukler 01 in 2025"
         )
         plt.show()
 

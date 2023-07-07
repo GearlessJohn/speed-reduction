@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 # Reading an Excel file using Pandas and skipping the second row
 # Also, using only columns from A to AN

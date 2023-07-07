@@ -1,13 +1,5 @@
 class Route:
-    def __init__(
-        self,
-        name,
-        route_type,
-        distance,
-        freight_rates,
-        utilization_rate,
-        fuel_ratio,
-    ):
+    def __init__(self, name, route_type, distance, freight_rates, utilization_rate, fuel_ratio, ):
         self.name = name
         self.route_type = route_type
         self.distance = distance

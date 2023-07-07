@@ -1,9 +1,10 @@
-import numpy as np
-import matplotlib.pyplot as plt
 import random
 
-from vessel import Vessel
+import matplotlib.pyplot as plt
+import numpy as np
+
 from settlement import Settlement
+from vessel import Vessel
 
 
 class MeanField:
@@ -42,19 +43,19 @@ class MeanField:
                 speed=vessel.speed_2021, saving=0.0, power=3.0, year=year
             ) / (0.95 * vessel.capacity)
             l = cf * 0.95 * vessel.capacity * T / D
-            gamma = u_actual**2 / (2 * cf * 0.95 * vessel.capacity * T * u_actual / D)
+            gamma = u_actual ** 2 / (2 * cf * 0.95 * vessel.capacity * T * u_actual / D)
             u0 = gamma * (a - l) / (1 + gamma * b)
 
             cii = vessel.cii_score_2021
             cii_e = 7.65
-            #delta_max = (np.sqrt(cii_e / cii) - 1) * u0
+            # delta_max = (np.sqrt(cii_e / cii) - 1) * u0
             delta_max = (cii_e / cii - 1) * u0
 
             x = self.theta_ - delta_max
             lam = 1
 
             p0 = a - b * u0
-            c0 = l * u0 + 1.0 / 2 / gamma * u0**2
+            c0 = l * u0 + 1.0 / 2 / gamma * u0 ** 2
             v = (-c0 + p0 * u0) * self.value_exit_
 
             self.a_.append(a)
@@ -82,12 +83,12 @@ class MeanField:
     def x_estimator(self, theta, e_delta):
         # Equation (15)
         x_hat = theta + self.lam_ * (
-            self.u0_
-            - self.gamma_ * (self.p0_ - self.b_ * e_delta - self.l_)
-            + np.sqrt(
-                self.gamma_**2 * (self.p0_ - self.b_ * e_delta - self.l_) ** 2
-                - 2 * self.gamma_ * self.v_
-            )
+                self.u0_
+                - self.gamma_ * (self.p0_ - self.b_ * e_delta - self.l_)
+                + np.sqrt(
+            self.gamma_ ** 2 * (self.p0_ - self.b_ * e_delta - self.l_) ** 2
+            - 2 * self.gamma_ * self.v_
+        )
         )
         print("x_hat\t", x_hat[:5])
         return x_hat
@@ -154,9 +155,9 @@ class MeanField:
         delta0.append(self.delta_[0])
         pis.append(
             (
-                (self.p0_ - self.b_ * self.delta_) * (self.u0_ + self.delta_)
-                - self.l_ * (self.u0_ + self.delta_)
-                - 1 / 2 / self.gamma_ * (self.u0_ + self.delta_) ** 2
+                    (self.p0_ - self.b_ * self.delta_) * (self.u0_ + self.delta_)
+                    - self.l_ * (self.u0_ + self.delta_)
+                    - 1 / 2 / self.gamma_ * (self.u0_ + self.delta_) ** 2
             )[0]
         )
 
@@ -173,14 +174,14 @@ class MeanField:
             delta0.append(self.delta_[0])
             pis.append(
                 (
-                    (self.p0_ - self.b_ * self.delta_) * (self.u0_ + self.delta_)
-                    - self.l_ * (self.u0_ + self.delta_)
-                    - 1 / 2 / self.gamma_ * (self.u0_ + self.delta_) ** 2
+                        (self.p0_ - self.b_ * self.delta_) * (self.u0_ + self.delta_)
+                        - self.l_ * (self.u0_ + self.delta_)
+                        - 1 / 2 / self.gamma_ * (self.u0_ + self.delta_) ** 2
                 )[0]
             )
             if (
-                np.abs(err - self.q_) <= tol
-                and np.mean((delta_current - self.delta_) ** 2) <= 1e-4
+                    np.abs(err - self.q_) <= tol
+                    and np.mean((delta_current - self.delta_) ** 2) <= 1e-4
             ):
                 print(f"Tolerance satisfied at iteration {i}!")
                 break

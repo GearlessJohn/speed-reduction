@@ -1,7 +1,8 @@
-import numpy as np
-from settlement import Settlement
 import matplotlib.pyplot as plt
+import numpy as np
 from tqdm import tqdm
+
+from settlement import Settlement
 
 
 class Fleet:
@@ -25,10 +26,10 @@ class Fleet:
         and returns the cost and ghg emission of construction of new vessel.
         """
         diff = 1 - (
-            speed
-            * stm.hours_voyage(speed=speed, acc=acc)
-            * (self.nmb[j][i + 1] if i + 1 <= self.years[-1] else self.nmb[j][i])
-            / (stm.vessel.speed_2021 * stm.vessel.hours_2021)
+                speed
+                * stm.hours_voyage(speed=speed, acc=acc)
+                * (self.nmb[j][i + 1] if i + 1 <= self.years[-1] else self.nmb[j][i])
+                / (stm.vessel.speed_2021 * stm.vessel.hours_2021)
         )
 
         # If there if more supply than demand, the fleet will not order new vessels.
@@ -45,15 +46,15 @@ class Fleet:
         else:
             cost_construction = 0.0
         emission_construction = CO20 * (stm.vessel.dwt / dwt0) * diff
-        return (diff, cost_construction, emission_construction)
+        return diff, cost_construction, emission_construction
 
     def global_optimization(
-        self,
-        retrofit,
-        acc=True,
-        cii_limit=True,
-        construction=True,
-        pr=False,
+            self,
+            retrofit,
+            acc=True,
+            cii_limit=True,
+            construction=True,
+            pr=False,
     ):
         self.speeds = []
         self.nmb = np.ones((len(self.vessels), len(self.years)))
@@ -85,7 +86,7 @@ class Fleet:
                     emissions_best[i] += emission_construction
                     profits_best[i] -= cost_construction
                     if i + 2 <= self.years[-1]:
-                        self.nmb[j, i + 2 :] += diff
+                        self.nmb[j, i + 2:] += diff
 
             profits.append(profits_best)
             emissions.append(emissions_best)
@@ -166,31 +167,31 @@ class Fleet:
                 capacity_by_type[vessel.vessel_type] = np.zeros(len(self.years))
 
             capacity_by_type[vessel.vessel_type] += (
-                vessel.capacity
-                * self.nmb[j]
-                * self.speeds[j]
-                * self.stms[j].hours_voyage(speed=self.speeds[j], acc=acc)
+                    vessel.capacity
+                    * self.nmb[j]
+                    * self.speeds[j]
+                    * self.stms[j].hours_voyage(speed=self.speeds[j], acc=acc)
             )
 
         for j in range(len(self.routes)):
             self.routes[j].freight_rates = freight_rates_ini[j] * (
-                elas
-                + 1
-                - elas
-                * capacity_by_type[self.routes[j].route_type]
-                / capacity_by_type_ini[self.routes[j].route_type]
+                    elas
+                    + 1
+                    - elas
+                    * capacity_by_type[self.routes[j].route_type]
+                    / capacity_by_type_ini[self.routes[j].route_type]
             )
         return
 
     def one_step(
-        self,
-        capacity_by_type_ini,
-        freight_rates_ini,
-        elas,
-        retrofit,
-        acc,
-        cii_limit,
-        construction,
+            self,
+            capacity_by_type_ini,
+            freight_rates_ini,
+            elas,
+            retrofit,
+            acc,
+            cii_limit,
+            construction,
     ):
         profits_best = self.global_optimization(
             retrofit=retrofit,
@@ -208,19 +209,19 @@ class Fleet:
         return profits_best
 
     def mean_field(
-        self,
-        tol=25e-3,
-        max_iter=20,
-        elas=1.9321,
-        retrofit=False,
-        acc=True,
-        cii_limit=True,
-        construction=True,
+            self,
+            tol=25e-3,
+            max_iter=20,
+            elas=1.9321,
+            retrofit=False,
+            acc=True,
+            cii_limit=True,
+            construction=True,
     ):
         capacity_by_type_ini = {}
         freight_rates_ini = np.array(
             [self.routes[j].freight_rates for j in range(len(self.routes))]
-        )    
+        )
         speeds_plot = []
         profits_plot = []
         for j in range(len(self.vessels)):
@@ -229,7 +230,7 @@ class Fleet:
                 capacity_by_type_ini[vessel.vessel_type] = np.zeros(len(self.years))
 
             capacity_by_type_ini[vessel.vessel_type] += (
-                vessel.capacity * vessel.speed_2021 * vessel.hours_2021
+                    vessel.capacity * vessel.speed_2021 * vessel.hours_2021
             )
 
         for i in range(1, max_iter + 1):
@@ -245,7 +246,7 @@ class Fleet:
                 construction=construction,
             )
             speeds_plot.append(self.speeds[1, 2])
-            profits_plot.append(profits_best[1, 2])  
+            profits_plot.append(profits_best[1, 2])
             print("Speed of vessels by type:")
             for j in range(len(self.vessels)):
                 print(
@@ -302,7 +303,7 @@ class Fleet:
         ax.legend(loc="upper left")
 
         ax1 = ax.twinx()
-        ax1.plot(np.arange(len(speeds_plot)), np.array(profits_plot)/1e6, label="profit", color="green")
+        ax1.plot(np.arange(len(speeds_plot)), np.array(profits_plot) / 1e6, label="profit", color="green")
         ax1.set_ylabel("Profit (M$)", color="green")
         ax1.legend(loc="upper right")
 

@@ -1,12 +1,13 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 from vessel import Vessel
 
 
 class Settlement:
     def __init__(self, vessel, route, global_env):
         assert (
-            vessel.vessel_type == route.route_type
+                vessel.vessel_type == route.route_type
         ), "Route and vessel types do not match!"
         self.vessel = vessel
         self.route = route
@@ -15,16 +16,16 @@ class Settlement:
     def cost_fuel(self, speed, saving, power, year):
         # Calculate the expenditure on fuel
         return (
-            -(
-                self.vessel.hfo_quantity_2021 * self.global_env.ifo380_prices[year]
-                + self.vessel.lfo_quantity_2021 * self.global_env.vlsifo_prices[year]
-                + self.vessel.diesel_quantity_2021 * self.global_env.mgo_prices[year]
-                + self.vessel.lng_quantity_2021 * self.global_env.lng_prices[year]
-            )
-            / self.vessel.distance_2021
-            * (speed / self.vessel.speed_2021) ** power
-            * self.route.distance
-            * (1 - saving)
+                -(
+                        self.vessel.hfo_quantity_2021 * self.global_env.ifo380_prices[year]
+                        + self.vessel.lfo_quantity_2021 * self.global_env.vlsifo_prices[year]
+                        + self.vessel.diesel_quantity_2021 * self.global_env.mgo_prices[year]
+                        + self.vessel.lng_quantity_2021 * self.global_env.lng_prices[year]
+                )
+                / self.vessel.distance_2021
+                * (speed / self.vessel.speed_2021) ** power
+                * self.route.distance
+                * (1 - saving)
         )
 
     def cost_retrofit(self, speed, power, year):
@@ -50,7 +51,7 @@ class Settlement:
 
     def cost_fuel_unit(self, speed, saving, power, year, pr=False):
         cost = self.cost_fuel(speed=speed, saving=saving, power=power, year=year) / (
-            self.vessel.capacity * self.route.utilization_rate
+                self.vessel.capacity * self.route.utilization_rate
         )
         if pr:
             print(f"\tFuel cost:\t {cost:.1f} $/{self.vessel.unit}")
@@ -68,34 +69,34 @@ class Settlement:
 
     def ghg_operation(self, speed, saving, power):
         return (
-            self.vessel.co2_emission_2021
-            / self.vessel.distance_2021
-            * self.route.distance
-            * (speed / self.vessel.speed_2021) ** power
-            * (1 - saving)
+                self.vessel.co2_emission_2021
+                / self.vessel.distance_2021
+                * self.route.distance
+                * (speed / self.vessel.speed_2021) ** power
+                * (1 - saving)
         )
 
     def ghg_construction(self, ratio):
         return (
-            self.vessel.co2_emission_2021
-            / self.vessel.distance_2021
-            * self.route.distance
-            * ratio
+                self.vessel.co2_emission_2021
+                / self.vessel.distance_2021
+                * self.route.distance
+                * ratio
         )
 
     def cost_carbon_tax(self, speed, saving, power, year):
         # Assess the financial implications of carbon emissions
         return -(
-            self.ghg_operation(speed=speed, saving=saving, power=power)
-            * self.global_env.carbon_tax_rates[year]
+                self.ghg_operation(speed=speed, saving=saving, power=power)
+                * self.global_env.carbon_tax_rates[year]
         )
 
     def cost_operation(self):
         # Determine the expenses associated with vessel operations
         return (
-            self.cost_fuel(speed=self.vessel.speed_2021, saving=0.0, power=3.0, year=0)
-            * (1 - self.route.fuel_ratio)
-            / self.route.fuel_ratio
+                self.cost_fuel(speed=self.vessel.speed_2021, saving=0.0, power=3.0, year=0)
+                * (1 - self.route.fuel_ratio)
+                / self.route.fuel_ratio
         )
 
     def cost_route(self):
@@ -105,9 +106,9 @@ class Settlement:
     def income_freight(self, year):
         # Estimate the revenue generated from the transportation of goods
         return (
-            self.vessel.capacity
-            * self.route.utilization_rate
-            * self.route.freight_rates[year]
+                self.vessel.capacity
+                * self.route.utilization_rate
+                * self.route.freight_rates[year]
         )
 
     def hours_voyage(self, speed, acc):
@@ -149,7 +150,7 @@ class Settlement:
 
         if pr:
             print(
-                f"Profit of {self.vessel.name} in one year at speed {speed:.2f} knots: {res/1e6:.2f} million dollars"
+                f"Profit of {self.vessel.name} in one year at speed {speed:.2f} knots: {res / 1e6:.2f} million dollars"
             )
 
         return res
@@ -157,15 +158,15 @@ class Settlement:
     def plot_profit_year(self, retrofit, power, year, acc, pr=False):
         vs = np.arange(7, 24, 0.01)
         profits = (
-            np.array(
-                [
-                    self.profit_year(
-                        speed=vs[j], power=power, retrofit=retrofit, acc=acc, year=year
-                    )
-                    for j in range(len(vs))
-                ]
-            )
-            / 1e6
+                np.array(
+                    [
+                        self.profit_year(
+                            speed=vs[j], power=power, retrofit=retrofit, acc=acc, year=year
+                        )
+                        for j in range(len(vs))
+                    ]
+                )
+                / 1e6
         )
         emissions = np.array(
             [
@@ -223,7 +224,7 @@ class Settlement:
                 f"{fc:.2f} $/{self.vessel.unit}",
             )
             oc = self.cost_operation() / (
-                self.vessel.capacity * self.route.utilization_rate
+                    self.vessel.capacity * self.route.utilization_rate
             )
             print(
                 "\tOperation cost:\t",
@@ -231,17 +232,17 @@ class Settlement:
             )
             print(
                 "\tProfitability:\t",
-                f"{(self.route.freight_rates[year]+oc + fc)/self.route.freight_rates[year]*100:.2f} %",
+                f"{(self.route.freight_rates[year] + oc + fc) / self.route.freight_rates[year] * 100:.2f} %",
             )
             print("\tAnnual Profit:\t", f"{profit_best:.2f} M $")
             print()
             print(
                 "\tSpeed Variation:\t",
-                f"{(v_best-self.vessel.speed_2021)/self.vessel.speed_2021*100:+.2f} %",
+                f"{(v_best - self.vessel.speed_2021) / self.vessel.speed_2021 * 100:+.2f} %",
             )
             print(
                 "\tEmission Variation:\t",
-                f"{(emissions[np.argmax(profits)]-self.emission_year(speed=self.vessel.speed_2021,saving=0.0, power=power, acc=acc))/self.emission_year(speed=self.vessel.speed_2021, saving=0.0, power=power, acc=acc)*100:+.2f} %",
+                f"{(emissions[np.argmax(profits)] - self.emission_year(speed=self.vessel.speed_2021, saving=0.0, power=power, acc=acc)) / self.emission_year(speed=self.vessel.speed_2021, saving=0.0, power=power, acc=acc) * 100:+.2f} %",
             )
             print(
                 "\t2021 CII class:\t\t",
@@ -249,7 +250,7 @@ class Settlement:
             )
             print(
                 "\tCurrent CII class:\t",
-                f"{self.cii_class(speed=v_best,power=power, year=year)}",
+                f"{self.cii_class(speed=v_best, power=power, year=year)}",
             )
             print("-" * 60)
             fig, ax = plt.subplots()
@@ -277,7 +278,7 @@ class Settlement:
             ax1.legend(loc="upper right")
 
             fig.suptitle(
-                f"{2023+year:d} annual result, Carbon Tax: {self.global_env.carbon_tax_rates[year]}, Retrofit: {retrofit} "
+                f"{2023 + year:d} annual result, Carbon Tax: {self.global_env.carbon_tax_rates[year]}, Retrofit: {retrofit} "
             )
             plt.show()
 
@@ -297,9 +298,9 @@ class Settlement:
 
         # Create a condition mask for cii_class values where all first three indices are "D"
         mask_D = (
-            (cii_class[0, I0] == "D")
-            & (cii_class[1, I1] == "D")
-            & (cii_class[2, I2] == "D")
+                (cii_class[0, I0] == "D")
+                & (cii_class[1, I1] == "D")
+                & (cii_class[2, I2] == "D")
         )
 
         # Create masks for cii_class values where any index is "E"
@@ -310,19 +311,18 @@ class Settlement:
 
         # Set the profits to zero where the cii_class is "E"
         profits_E0 = profits[0, I0]
-        profits_E1 = np.where(mask_E0 , 0.0, profits[1, I1])
-        profits_E2 = np.where(mask_E0 | mask_E1 , 0.0, profits[2, I2])
+        profits_E1 = np.where(mask_E0, 0.0, profits[1, I1])
+        profits_E2 = np.where(mask_E0 | mask_E1, 0.0, profits[2, I2])
         profits_E3 = np.where(
             mask_E0 | mask_E1 | mask_E2, 0.0, profits[3, I3]
         )
 
         # Calculate total profits using the indices and the condition mask
         total_profit = (
-            profits_E0 + profits_E1 + profits_E2 + np.where(mask_D, 0.0, profits_E3)
+                profits_E0 + profits_E1 + profits_E2 + np.where(mask_D, 0.0, profits_E3)
         )
         res = np.unravel_index(np.argmax(total_profit, axis=None), total_profit.shape)
         return res, total_profit[res]
-
 
     def cii_profits_reverse(self, profits, cii_class):
         m = profits.shape[1]
@@ -347,30 +347,29 @@ class Settlement:
         total_profit = profits[0][i0] + P1[i0]
 
         if (
-            (cii_class[2][i2] == "D")
-            & (cii_class[1][i1] == "D")
-            & (cii_class[0][i0] == "D")
+                (cii_class[2][i2] == "D")
+                & (cii_class[1][i1] == "D")
+                & (cii_class[0][i0] == "D")
         ):
-            last_C = np.zeros(3, dtype="int")
-            last_C[0] = np.where(cii_class[0] == "C")[0][-1]
-            last_C[1] = np.where(cii_class[1] == "C")[0][-1]
-            last_C[2] = np.where(cii_class[2] == "C")[0][-1]
-            
-            total_profit_DDD = np.zeros(4)
-            total_profit_DDD[0] = total_profit + (profits[0][last_C[0]]-profits[0][i0])
-            total_profit_DDD[1] = total_profit + (profits[1][last_C[1]]-profits[1][i1])
-            total_profit_DDD[2] = total_profit + (profits[2][last_C[2]]-profits[2][i2])
-            total_profit_DDD[3] = total_profit - profits[3][i3]
+            last_c = np.zeros(3, dtype="int")
+            last_c[0] = np.where(cii_class[0] == "C")[0][-1]
+            last_c[1] = np.where(cii_class[1] == "C")[0][-1]
+            last_c[2] = np.where(cii_class[2] == "C")[0][-1]
 
-            solution = np.argmax(total_profit_DDD)
-            
-            if solution<=2:
-                res[solution]=last_C[solution]
-            
-            total_profit = total_profit_DDD[solution]
-            
+            total_profit_ddd = np.zeros(4)
+            total_profit_ddd[0] = total_profit + (profits[0][last_c[0]] - profits[0][i0])
+            total_profit_ddd[1] = total_profit + (profits[1][last_c[1]] - profits[1][i1])
+            total_profit_ddd[2] = total_profit + (profits[2][last_c[2]] - profits[2][i2])
+            total_profit_ddd[3] = total_profit - profits[3][i3]
+
+            solution = np.argmax(total_profit_ddd)
+
+            if solution <= 2:
+                res[solution] = last_c[solution]
+
+            total_profit = total_profit_ddd[solution]
+
         return res, total_profit
-
 
     def optimization(self, retrofit, power, years, acc, cii_limit=True, pr=False):
         n = len(years)

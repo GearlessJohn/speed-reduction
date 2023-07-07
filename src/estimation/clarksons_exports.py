@@ -1,6 +1,6 @@
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import statsmodels.api as sm
 import statsmodels.graphics as smgraphics
 from statsmodels.tsa.seasonal import seasonal_decompose
@@ -25,7 +25,6 @@ data.rename(columns={"$/day": "Clarksons", "XTEXVA01CNM667N": "Exports"}, inplac
 result = seasonal_decompose(data["Clarksons"], model="additive", period=12)
 trend, seasonal, resid = result.trend, result.seasonal, result.resid
 data["Clarksons"] = pd.Series(trend)
-
 
 result = seasonal_decompose(data["Exports"], period=12)
 trend, seasonal, resid = result.trend, result.seasonal, result.resid

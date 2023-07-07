@@ -1,13 +1,14 @@
-import numpy as np
-import pandas as pd
 import sys
 
-from vessel import Vessel
+import numpy as np
+import pandas as pd
+
+from fleet import Fleet
 from global_env import GlobalEnv
+from meanfield import mf
 from route import Route
 from settlement import settle
-from meanfield import mf
-from fleet import Fleet
+from vessel import Vessel
 
 df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
 vessels = [Vessel(row) for _, row in df_vessels.iterrows()]

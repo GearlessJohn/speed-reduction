@@ -1,10 +1,11 @@
-import numpy as np
 import bisect
+
+import numpy as np
 
 
 class GlobalEnv:
     def __init__(
-        self, ifo380_prices, vlsifo_prices, mgo_prices, lng_prices, carbon_tax_rates
+            self, ifo380_prices, vlsifo_prices, mgo_prices, lng_prices, carbon_tax_rates
     ):
         # Initializing the attributes of the GlobalMarket object
         self.ifo380_prices = ifo380_prices
@@ -52,7 +53,7 @@ class GlobalEnv:
 
     def cii_ref(self, vessel_type, sub_type, dwt, year):
         a, c = self.cii_ac(vessel_type, sub_type, dwt)
-        cii_ref = (a * dwt**-c) * (1 - self.cii_reduction(year))
+        cii_ref = (a * dwt ** -c) * (1 - self.cii_reduction(year))
         return cii_ref
 
     def cii_expd(self, vessel_type, sub_type, dwt):

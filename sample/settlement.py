@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from vessel import Vessel
+import vessel
 
 
 class Settlement:
@@ -445,7 +445,7 @@ class Settlement:
 
 def settle(i, data_vessels, env, route, power, retrofit, year, pr, acc=True):
     # Creating a list of Vessel objects
-    vessels = [Vessel(row) for _, row in data_vessels.iterrows()]
+    vessels = [vessel.Vessel(row) for _, row in data_vessels.iterrows()]
 
     stm = Settlement(
         vessel=vessels[i],

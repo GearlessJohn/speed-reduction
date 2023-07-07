@@ -3,8 +3,8 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 
-from settlement import Settlement
-from vessel import Vessel
+import settlement
+import vessel
 
 
 class MeanField:
@@ -33,13 +33,13 @@ class MeanField:
             T = vessel.hours_2021
             D = route.distance
             u_actual = vessel.speed_2021
-            settlement = Settlement(vessel, route, global_env)
+            stm = settlement.Settlement(vessel, route, global_env)
 
             p = route.freight_rates[year] * 0.95 * vessel.capacity * T / D
             a = 5 * p
             b = 4 * p / u_actual
 
-            cf = -settlement.cost_fuel(
+            cf = -stm.cost_fuel(
                 speed=vessel.speed_2021, saving=0.0, power=3.0, year=year
             ) / (0.95 * vessel.capacity)
             l = cf * 0.95 * vessel.capacity * T / D
@@ -192,7 +192,7 @@ def vessels_sampling(row, global_env, num, pcts=[0.15, 0.2, 0.3, 0.2, 0.15]):
     """Create a sample of num vessels from an origin vessel"""
     assert np.abs(np.sum(pcts) - 1.0) <= 1e-10, "Wrong distribution of CII scores"
 
-    vessels_virual = [Vessel(row) for i in range(num)]
+    vessels_virual = [vessel.Vessel(row) for i in range(num)]
 
     fronts = np.insert(
         global_env.cii_fronts(

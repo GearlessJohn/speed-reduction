@@ -16,6 +16,7 @@ class GlobalEnv:
         self.carbon_tax_rates = carbon_tax_rates
 
     def cii_reduction(self, year):
+        """Return the CII reduction factor for a specific year."""
         reductions = {
             2021: 0.01,
             2022: 0.03,
@@ -49,7 +50,7 @@ class GlobalEnv:
                         else:
                             return 8104, 0.639
             case _:
-                raise ValueError("CII Calculation: Unknow vessel type to get a and c")
+                raise ValueError("CII Calculation: Unknown vessel type to get a and c")
 
     def cii_ref(self, vessel_type, sub_type, dwt, year):
         a, c = self.cii_ac(vessel_type, sub_type, dwt)
@@ -77,17 +78,18 @@ class GlobalEnv:
                         else:
                             return [0.85, 0.95, 1.06, 1.25]
             case _:
-                raise ValueError("CII Calculation: Unknow vessel type to get exp(d)")
+                raise ValueError("CII Calculation: Unknown vessel type to get exp(d)")
 
     def cii_fronts(self, vessel_type, sub_type, dwt, year):
         expd = np.array(self.cii_expd(vessel_type, sub_type, dwt))
         return expd * self.cii_ref(vessel_type, sub_type, dwt, year)
 
-    def cii_class(self, cii_atteined, vessel_type, sub_type, dwt, year):
+    def cii_class(self, cii_atteint, vessel_type, sub_type, dwt, year):
         cii_classes = ["A", "B", "C", "D", "E"]
 
         return cii_classes[
             bisect.bisect(
-                self.cii_fronts(vessel_type, sub_type, dwt, year), cii_atteined
+                self.cii_fronts(vessel_type, sub_type, dwt, year), cii_atteint
             )
         ]
+

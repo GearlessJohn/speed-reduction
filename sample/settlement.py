@@ -14,6 +14,7 @@ class Settlement:
         vessel (Vessel): Selected vessel.
         route (Route): Route matching for the selected vessel.
         global_env (GlobalEnv): Current global markets and policies.
+
     """
 
     def __init__(self, vessel, route, global_env):
@@ -40,6 +41,7 @@ class Settlement:
 
         Returns:
              float: The fuel cost in USD for one voyage of the selected route.
+
         """
         return (
                 (
@@ -71,6 +73,7 @@ class Settlement:
         Returns:
             cost_retrofit (float): Total cost of retrofitting, in USD.
             saving (float): Percentage of fuel consumption that can be reduced by retrofitting, between 0% and 100%.
+
         """
         fuel_cost = self.fuel_cost(speed=speed, saving=0.0, power=power, year=year)
         # Consider now the possible retrofitting measures
@@ -113,6 +116,7 @@ class Settlement:
 
         Returns:
             rating (str): A letter from A to E indicating the CII rating class of the vessel
+
         """
         rating = self.global_env.cii_class(
             self.vessel.cii_score_2021 * (speed / self.vessel.speed_2021) ** power,
@@ -170,6 +174,7 @@ class Settlement:
 
         Returns:
             float: The voyage hours in one year, between 0 and 365*24.
+
         """
         if acc:
             h0 = self.vessel.hours_2021
@@ -222,8 +227,10 @@ class Settlement:
             year (int): The year in which the calculation was performed.
             acc (bool):Whether consider the change of voyages hours, else the voyage hours are constant.
             pr (bool): Whether print all the information and plot, else not.
+
         Returns:
             v_best (float): The speed that maximizes the annual profit.
+
         """
 
         # vs is the range of speeds to be explored.
@@ -377,6 +384,7 @@ class Settlement:
             tuple: A tuple of two elements. The first element is a tuple of indices
                     where the maximum total profit is found. The second element is the
                     maximum total profit itself.
+
         """
         m = profits.shape[1]
 
@@ -431,6 +439,7 @@ class Settlement:
              tuple: A tuple of two elements. The first element is a tuple of indices
                      where the maximum total profit is found. The second element is the
                      maximum total profit itself.
+
          """
         m = profits.shape[1]
         zeros = np.zeros(m)
@@ -497,6 +506,7 @@ class Settlement:
         Returns:
             tuple: A tuple containing arrays of optimal speeds, profits, emissions, and
                    CII classes for each year.
+
         """
         n = len(years)
         m = 601

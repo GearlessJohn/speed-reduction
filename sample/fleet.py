@@ -6,6 +6,21 @@ from settlement import Settlement
 
 
 class Fleet:
+    """Fleet and its decision-making.
+
+    For a fleet, it has a number of vessels of different categories.
+    The goal of the fleet is to maximize total profit.
+
+    Attributes:
+        vessels (List[Vessel]): List of vessel types in the fleet.
+        nmb (numpy.ndarray): List of number of every type of vessel.
+        speeds (numpy.ndarray): List of speed choice of every vessel in each year.
+        routes (Route): List of routes for every type of vessel.
+        global_env (GlobalEnv): Current global markets and policies.
+        years (List[int]): List of years for which the optimization is performed.
+
+    """
+
     def __init__(self, vessels, routes, global_env, years=np.arange(4)):
         self.vessels = vessels
         self.nmb = np.ones((len(vessels), len(years)))
@@ -13,6 +28,8 @@ class Fleet:
         self.routes = routes
         self.global_env = global_env
         self.years = years
+
+        # Create Settlements for every vessel
         self.stms = [
             Settlement(
                 vessel=vessels[j], route=self.routes[j], global_env=self.global_env
@@ -21,10 +38,30 @@ class Fleet:
         ]
 
     def construction(self, i, j, stm, speed, acc):
+        """Estimate the excess demand of maritime transport due to speed reduction
+        and return the cost and ghg emission of construction of new vessel.
+
+        Based on the speed of model j ship in year i, the difference in capacity
+        is calculated using the value in 2021 as a reference.
+        The number of new ships to be built is also determined based on the difference.
+
+        Args:
+            i (int): The year of construction.
+            j (int): Index of the related vessel.
+            stm (Settlement): The pre-created Settlement instance for vessel j.
+            speed (float): Speed choice of vessel j in year i.
+            acc (bool): Whether consider the change of voyages hours.
+
+        Returns:
+            tuple: A tuple of three elements.
+            The first element is number of orders of vessel j in year i.
+            The second element is the corresponding cost.
+            The third element is the corresponding CO2 emission.
+
+            The three elements are always positive or zero, which means there is only construction but no destruction.
+
         """
-        This function estimates the excess demand of maritime transport due to speed reduction 
-        and returns the cost and ghg emission of construction of new vessel.
-        """
+        # Calculate the percentage difference in transportation capability relative to 2021 for the given speed
         diff = 1 - (
                 speed
                 * stm.voyage_hours(speed=speed, acc=acc)
@@ -36,15 +73,23 @@ class Fleet:
         if diff <= 0:
             return 0, 0, 0
 
-        # CO20 = 4.103e4
+        # We have two options for CO2 emission:
+        # The larger ones take into account the carbon emissions of maintenance and ship dismantling.
+        # The smaller ones only consider construction.
+        # co2_0 = 4.103e4
         co2_0 = 2.29e4
+
         dwt0 = 74296
+
+        # Categorizing the construction costs of different vessels
         if stm.vessel.vessel_type == "CONTAINERS":
             cost_construction = (95e6 * stm.vessel.capacity / 8000) * diff
         elif stm.vessel.vessel_type == "BULKERS":
             cost_construction = 25e6 * stm.vessel.dwt / 7e4 * diff
         else:
             cost_construction = 0.0
+
+        # Assuming a linear relationship between CO2 emissions and ship's DWT
         emission_construction = co2_0 * (stm.vessel.dwt / dwt0) * diff
         return diff, cost_construction, emission_construction
 
@@ -56,8 +101,23 @@ class Fleet:
             construction=True,
             pr=False,
     ):
-        """
-        Return the optimal profits with CII limits and construction
+        """Perform optimization on vessel speed for maximum 4-year profit with construction,
+        update the speeds attribute, and calculates related metrics.
+
+        The function calculates maximum 4-year profit for a range of speeds for each year and
+        identifies the optimal speed combination that maximizes profit. And it updates the orders of new vessels based
+        on the difference between demand and supply of maritime transportation. Can optionally plot the results.
+
+        Args:
+            retrofit (bool): Whether consider the retrofitting, else not.
+            acc (bool, optional): Whether consider the change of voyages hours.
+            cii_limit (bool, optional): Whether apply the Carbon Intensity Indicator (CII) limit. Default is True.
+            construction (bool, optional): Whether construct new wells. Default is True.
+            pr (bool, optional): If True, prints and plots the optimization results. Default is False.
+
+        Returns:
+           profits (np.ndarray): the list of best profits in each year for every vessel
+
         """
         self.speeds = []
         self.nmb = np.ones((len(self.vessels), len(self.years)))

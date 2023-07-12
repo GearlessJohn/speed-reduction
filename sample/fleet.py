@@ -27,7 +27,7 @@ class Fleet:
         """
         diff = 1 - (
                 speed
-                * stm.hours_voyage(speed=speed, acc=acc)
+                * stm.voyage_hours(speed=speed, acc=acc)
                 * (self.nmb[j][i + 1] if i + 1 <= self.years[-1] else self.nmb[j][i])
                 / (stm.vessel.speed_2021 * stm.vessel.hours_2021)
         )
@@ -173,7 +173,7 @@ class Fleet:
                     vessel.capacity
                     * self.nmb[j]
                     * self.speeds[j]
-                    * self.stms[j].hours_voyage(speed=self.speeds[j], acc=acc)
+                    * self.stms[j].voyage_hours(speed=self.speeds[j], acc=acc)
             )
 
         for j in range(len(self.routes)):

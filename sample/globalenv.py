@@ -4,15 +4,22 @@ import numpy as np
 
 
 class GlobalEnv:
-    def __init__(
-            self, ifo380_prices, vlsifo_prices, mgo_prices, lng_prices, carbon_tax_rates
-    ):
+    """Global market and policy information.
+
+    Includes global average fuel prices and carbon tax rates, as well as a CII rating calculator.
+    The rating calculations for CII are all derived from official IMO documents and use the same notation.
+
+    Attributes:
+        *_prices (List[float]): Average global price of * fuels, 2023-2026, in USD.
+        carbon_tax_rates (List[float]):  Carbon tax price from 2023 to 2026, USD per metric tonne CO2.
+    """
+
+    def __init__(self, ifo380_prices, vlsifo_prices, mgo_prices, lng_prices, carbon_tax_rates):
         # Initializing the attributes of the GlobalMarket object
         self.ifo380_prices = ifo380_prices
         self.vlsifo_prices = vlsifo_prices
         self.mgo_prices = mgo_prices
         self.lng_prices = lng_prices
-
         self.carbon_tax_rates = carbon_tax_rates
 
     def cii_reduction(self, year):
@@ -97,4 +104,3 @@ class GlobalEnv:
                 self.cii_fronts(vessel_type, sub_type, dwt, year), cii_attained
             )
         ]
-

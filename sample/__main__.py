@@ -5,7 +5,7 @@ import pandas as pd
 
 
 import fleet
-import market
+import globalenv
 import meanfield
 import route
 import settlement
@@ -15,7 +15,7 @@ df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
 vessels = [vessel.Vessel(row) for _, row in df_vessels.iterrows()]
 
 # Initializing GlobalEnv object
-global_market = market.GlobalEnv(
+global_market = globalenv.GlobalEnv(
     ifo380_prices=np.array([433.1, 404.9, 390.4, 375.0]),
     vlsifo_prices=np.array([569.0, 534.9, 523.5, 506.9]),
     mgo_prices=np.array([825.8, 805.5, 782.6, 766.5]),

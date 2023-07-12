@@ -39,7 +39,7 @@ class MeanField:
             a = 5 * p
             b = 4 * p / u_actual
 
-            cf = -stm.fuel_cost(
+            cf = stm.fuel_cost(
                 speed=vessel.speed_2021, saving=0.0, power=3.0, year=year
             ) / (0.95 * vessel.capacity)
             l = cf * 0.95 * vessel.capacity * t / d

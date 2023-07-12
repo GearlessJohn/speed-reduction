@@ -32,12 +32,12 @@ class Fleet:
                 / (stm.vessel.speed_2021 * stm.vessel.hours_2021)
         )
 
-        # If there if more supply than demand, the fleet will not order new vessels.
+        # If there is more supply than demand, the fleet will not order new vessels.
         if diff <= 0:
             return 0, 0, 0
 
         # CO20 = 4.103e4
-        CO20 = 2.29e4
+        co2_0 = 2.29e4
         dwt0 = 74296
         if stm.vessel.vessel_type == "CONTAINERS":
             cost_construction = (95e6 * stm.vessel.capacity / 8000) * diff
@@ -45,7 +45,7 @@ class Fleet:
             cost_construction = 25e6 * stm.vessel.dwt / 7e4 * diff
         else:
             cost_construction = 0.0
-        emission_construction = CO20 * (stm.vessel.dwt / dwt0) * diff
+        emission_construction = co2_0 * (stm.vessel.dwt / dwt0) * diff
         return diff, cost_construction, emission_construction
 
     def global_optimization(
@@ -56,6 +56,9 @@ class Fleet:
             construction=True,
             pr=False,
     ):
+        """
+        Return the optimal profits with CII limits and construction
+        """
         self.speeds = []
         self.nmb = np.ones((len(self.vessels), len(self.years)))
         profits = []
@@ -287,19 +290,7 @@ class Fleet:
         ax.plot(np.arange(len(speeds_plot)), speeds_plot, label="speed", color="blue")
         ax.set_xlabel("iteration")
         ax.set_ylabel("Speed (knot)", color="blue")
-        # ax.axvline(x=v_best, ymax=profit_best, c="red", linestyle="--")
-        # ax.axvline(
-        #     x=self.vessel.speed_2021,
-        #     ymax=profit_best,
-        #     c="grey",
-        #     linestyle="-.",
-        # )
-        # ax.annotate(
-        #     f"Optimal Speed={v_best:0.2f} knots",
-        #     xy=(v_best, profit_best),
-        #     xytext=(v_best, profit_best * 0.95),
-        #     arrowprops=dict(facecolor="red"),
-        # )
+
         ax.legend(loc="upper left")
 
         ax1 = ax.twinx()
@@ -308,7 +299,7 @@ class Fleet:
         ax1.legend(loc="upper right")
 
         fig.suptitle(
-            "Iteration Trace of Bukler 01 in 2025"
+            "Iteration Trace of Bulker 01 in 2025"
         )
         plt.show()
 

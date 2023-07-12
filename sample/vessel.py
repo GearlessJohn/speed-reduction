@@ -1,4 +1,13 @@
 class Vessel:
+    """The example of vessel information
+
+        Longer class information...
+        Longer class information...
+
+        Attributes:
+            likes_spam: A boolean indicating if we like SPAM or not.
+            eggs: An integer count of the eggs we have laid.
+        """
     def __init__(self, row):
         # Initializing the attributes of the Vessel object
         # ID

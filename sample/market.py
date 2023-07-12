@@ -28,6 +28,7 @@ class GlobalEnv:
         return reductions[year]
 
     def cii_ac(self, vessel_type, sub_type, dwt):
+        """Return the a and c parameters for calculation of CII reference line"""
         match vessel_type:
             case "CONTAINER SHIPS":
                 return 1984, 0.489
@@ -53,11 +54,13 @@ class GlobalEnv:
                 raise ValueError("CII Calculation: Unknown vessel type to get a and c")
 
     def cii_ref(self, vessel_type, sub_type, dwt, year):
+        """"Return the CII reference line"""
         a, c = self.cii_ac(vessel_type, sub_type, dwt)
         cii_ref = (a * dwt ** -c) * (1 - self.cii_reduction(year))
         return cii_ref
 
     def cii_expd(self, vessel_type, sub_type, dwt):
+        """Return the distances of different frontiers from the reference"""
         match vessel_type:
             case "CONTAINER SHIPS":
                 return [0.83, 0.94, 1.07, 1.19]
@@ -81,15 +84,17 @@ class GlobalEnv:
                 raise ValueError("CII Calculation: Unknown vessel type to get exp(d)")
 
     def cii_fronts(self, vessel_type, sub_type, dwt, year):
+        """Return the frontiers of different classes"""
         expd = np.array(self.cii_expd(vessel_type, sub_type, dwt))
         return expd * self.cii_ref(vessel_type, sub_type, dwt, year)
 
-    def cii_class(self, cii_atteint, vessel_type, sub_type, dwt, year):
+    def cii_class(self, cii_attained, vessel_type, sub_type, dwt, year):
+        """"Return the CII class for a given vessel with its attained CII"""
         cii_classes = ["A", "B", "C", "D", "E"]
 
         return cii_classes[
             bisect.bisect(
-                self.cii_fronts(vessel_type, sub_type, dwt, year), cii_atteint
+                self.cii_fronts(vessel_type, sub_type, dwt, year), cii_attained
             )
         ]
 

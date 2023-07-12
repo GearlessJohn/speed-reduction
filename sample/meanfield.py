@@ -30,20 +30,20 @@ class MeanField:
 
         for i in range(len(self.vessels)):
             vessel = vessels[i]
-            T = vessel.hours_2021
-            D = route.distance
+            t = vessel.hours_2021
+            d = route.distance
             u_actual = vessel.speed_2021
             stm = settlement.Settlement(vessel, route, global_env)
 
-            p = route.freight_rates[year] * 0.95 * vessel.capacity * T / D
+            p = route.freight_rates[year] * 0.95 * vessel.capacity * t / d
             a = 5 * p
             b = 4 * p / u_actual
 
-            cf = -stm.cost_fuel(
+            cf = -stm.fuel_cost(
                 speed=vessel.speed_2021, saving=0.0, power=3.0, year=year
             ) / (0.95 * vessel.capacity)
-            l = cf * 0.95 * vessel.capacity * T / D
-            gamma = u_actual ** 2 / (2 * cf * 0.95 * vessel.capacity * T * u_actual / D)
+            l = cf * 0.95 * vessel.capacity * t / d
+            gamma = u_actual ** 2 / (2 * cf * 0.95 * vessel.capacity * t * u_actual / d)
             u0 = gamma * (a - l) / (1 + gamma * b)
 
             cii = vessel.cii_score_2021
@@ -85,10 +85,8 @@ class MeanField:
         x_hat = theta + self.lam_ * (
                 self.u0_
                 - self.gamma_ * (self.p0_ - self.b_ * e_delta - self.l_)
-                + np.sqrt(
-            self.gamma_ ** 2 * (self.p0_ - self.b_ * e_delta - self.l_) ** 2
-            - 2 * self.gamma_ * self.v_
-        )
+                + np.sqrt(self.gamma_ ** 2 * (self.p0_ - self.b_ * e_delta - self.l_) ** 2
+                          - 2 * self.gamma_ * self.v_)
         )
         print("x_hat\t", x_hat[:5])
         return x_hat
@@ -188,17 +186,19 @@ class MeanField:
         return errs, delta0, pis
 
 
-def vessels_sampling(row, global_env, num, pcts=[0.15, 0.2, 0.3, 0.2, 0.15]):
+def vessels_sampling(row, global_env, num, pcts=None):
     """Create a sample of num vessels from an origin vessel"""
+    if pcts is None:
+        pcts = [0.15, 0.2, 0.3, 0.2, 0.15]
     assert np.abs(np.sum(pcts) - 1.0) <= 1e-10, "Wrong distribution of CII scores"
 
-    vessels_virual = [vessel.Vessel(row) for i in range(num)]
+    vessels_virtual = [vessel.Vessel(row) for _ in range(num)]
 
     fronts = np.insert(
         global_env.cii_fronts(
-            vessels_virual[0].vessel_type,
-            vessels_virual[0].sub_type,
-            vessels_virual[0].dwt,
+            vessels_virtual[0].vessel_type,
+            vessels_virtual[0].sub_type,
+            vessels_virtual[0].dwt,
             year=2021,
         ),
         0,
@@ -212,22 +212,20 @@ def vessels_sampling(row, global_env, num, pcts=[0.15, 0.2, 0.3, 0.2, 0.15]):
 
     random.shuffle(ciis)
     for i in range(num):
-        vessels_virual[i].cii_score_2021 = ciis[i]
+        vessels_virtual[i].cii_score_2021 = ciis[i]
 
-    return vessels_virual, ciis, fronts
+    return vessels_virtual, ciis, fronts
 
 
 def mf(num, data_vessels, env, route, q=0.15, value_exit=0.5, binary=False, year=0):
     # Launch Model
-    # Create a virual sample of vessels with same information
+    # Create a virtual sample of vessels with same information
 
     vessels_virtual, ciis, fronts = vessels_sampling(
         row=data_vessels.iloc[5], global_env=env, num=num
     )
 
     mf = MeanField(vessels_virtual, route, env, q=q, value_exit=value_exit, year=year)
-    # mf.x_ = mf.x_ * (1 + 0.9 * 2 * (np.random.rand(len(mf.x_)) - 0.5))
-    # mf.x_ = mf.x_ * (1 + np.random.randn(len(mf.x_)))
 
     # Simulate
     errs, delta0, pis = mf.simulate(tol=0.01, max_iter=15, binary=binary)
@@ -256,10 +254,10 @@ def mf(num, data_vessels, env, route, q=0.15, value_exit=0.5, binary=False, year
     axs[4].set_title("Distribution of final y")
 
     fig.suptitle(
-        f"{len(mf.x_):d} navires, q: {mf.q_:.2f}, exit value rate: {mf.value_exit_:.2f}"
+        f"{len(mf.x_):d} vessels, q: {mf.q_:.2f}, exit value rate: {mf.value_exit_:.2f}"
     )
 
     plt.show()
     # fig.savefig(
-    #     f"./fig/meanfield-{len(mf.x_):d} navires-exitz value rate {mf.value_exit_:.1f}.png"
+    #     f"./fig/meanfield-{len(mf.x_):d} vessels-exit value rate {mf.value_exit_:.1f}.png"
     # )

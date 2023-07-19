@@ -100,6 +100,7 @@ class Fleet:
             cii_limit=True,
             construction=True,
             pr=False,
+            plot=True
     ):
         """Perform optimization on vessel speed for maximum 4-year profit with construction,
         update the speeds attribute, and calculates related metrics.
@@ -136,6 +137,7 @@ class Fleet:
                 cii_limit=cii_limit,
                 acc=acc,
                 pr=False,
+                plot=False
             )
             self.speeds.append(v_best)
             if construction:
@@ -191,7 +193,7 @@ class Fleet:
             print("CII class of vessels by type:")
             for j in range(nmb_vessels):
                 print(f"\t{self.vessels[j].name}: \t", ciis[j])
-
+        if plot:
             fig, axs = plt.subplots(nrows=nmb_vessels, ncols=2, figsize=(10, 6))
             for j in range(nmb_vessels):
                 axs[j][0].plot(2023 + self.years, self.speeds[j])
@@ -262,6 +264,7 @@ class Fleet:
             cii_limit=cii_limit,
             construction=construction,
             pr=False,
+            plot=False
         )
         self.freight_estimator(
             capacity_by_type_ini=capacity_by_type_ini,
@@ -280,6 +283,7 @@ class Fleet:
             acc=True,
             cii_limit=True,
             construction=True,
+            plot=True
     ):
         capacity_by_type_ini = {}
         freight_rates_ini = np.array(
@@ -346,21 +350,22 @@ class Fleet:
                 )
                 routes.add(self.routes[j].name)
 
-        fig, ax = plt.subplots()
-        ax.plot(np.arange(len(speeds_plot)), speeds_plot, label="speed", color="blue")
-        ax.set_xlabel("iteration")
-        ax.set_ylabel("Speed (knot)", color="blue")
+        if plot:
+            fig, ax = plt.subplots()
+            ax.plot(np.arange(len(speeds_plot)), speeds_plot, label="speed", color="blue")
+            ax.set_xlabel("iteration")
+            ax.set_ylabel("Speed (knot)", color="blue")
 
-        ax.legend(loc="upper left")
+            ax.legend(loc="upper left")
 
-        ax1 = ax.twinx()
-        ax1.plot(np.arange(len(speeds_plot)), np.array(profits_plot) / 1e6, label="profit", color="green")
-        ax1.set_ylabel("Profit (M$)", color="green")
-        ax1.legend(loc="upper right")
+            ax1 = ax.twinx()
+            ax1.plot(np.arange(len(speeds_plot)), np.array(profits_plot) / 1e6, label="profit", color="green")
+            ax1.set_ylabel("Profit (M$)", color="green")
+            ax1.legend(loc="upper right")
 
-        fig.suptitle(
-            "Iteration Trace of Bulker 01 in 2025"
-        )
-        plt.show()
+            fig.suptitle(
+                "Iteration Trace of Bulker 01 in 2025"
+            )
+            plt.show()
 
         return

@@ -215,7 +215,7 @@ class Settlement:
 
         return res
 
-    def plot_annual_profit(self, retrofit, power, year, acc, pr=False):
+    def plot_annual_profit(self, retrofit, power, year, acc, pr=False, plot=True):
         """Return the optimal speed to maximize the annual profit.
 
         The optimal speed was calculated from 7 to 24 in intervals of 0.01 knots.
@@ -331,6 +331,7 @@ class Settlement:
             )
             print("-" * 60)
 
+        if plot:
             # Plot the profits as function of speed.
             fig, ax = plt.subplots()
             ax.plot(vs, profits, label="profit", color="blue")
@@ -487,7 +488,7 @@ class Settlement:
 
         return res, total_profit
 
-    def optimization(self, retrofit, power, years, acc, cii_limit=True, pr=False):
+    def optimization(self, retrofit, power, years, acc, cii_limit=True, pr=False, plot=True):
         """Perform optimization on vessel speed for maximum 4-year profit, and calculates related metrics.
 
         The function calculates maximum 4-year profit for a range of speeds for each year and
@@ -565,6 +566,7 @@ class Settlement:
             print("Emission:", emissions_best)
             print("CII Class:", cii_best)
 
+        if plot:
             # plot code here
             fig, ax = plt.subplots()
             ax.plot(2023 + np.array(years), v_best, c="blue")
@@ -581,7 +583,7 @@ class Settlement:
         return v_best, profits_best, emissions_best, cii_best
 
 
-def settle(i, data_vessels, env, route, power, retrofit, year, pr, acc=True):
+def settle(i, data_vessels, env, route, power, retrofit, year, pr, plot, acc=True):
     # Creating a list of Vessel objects
     vessels = [vessel.Vessel(row) for _, row in data_vessels.iterrows()]
 
@@ -590,6 +592,7 @@ def settle(i, data_vessels, env, route, power, retrofit, year, pr, acc=True):
         route=route,
         global_env=env,
     )
+    v_best = .0
     if pr:
-        stm.plot_annual_profit(retrofit=retrofit, power=power, year=year, pr=pr, acc=acc)
-    return stm
+        v_best = stm.plot_annual_profit(retrofit=retrofit, power=power, year=year, pr=pr, plot=plot, acc=acc)
+    return stm, v_best

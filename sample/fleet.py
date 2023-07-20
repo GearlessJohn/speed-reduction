@@ -283,6 +283,7 @@ class Fleet:
             acc=True,
             cii_limit=True,
             construction=True,
+            pr=True,
             plot=True
     ):
         capacity_by_type_ini = {}
@@ -302,7 +303,6 @@ class Fleet:
 
         for i in range(1, max_iter + 1):
             speeds_previous = self.speeds
-            print(f"iteration {i}:")
             profits_best = self.one_step(
                 capacity_by_type_ini=capacity_by_type_ini,
                 freight_rates_ini=freight_rates_ini,
@@ -312,15 +312,37 @@ class Fleet:
                 cii_limit=cii_limit,
                 construction=construction,
             )
-            speeds_plot.append(self.speeds[1, 2])
-            profits_plot.append(profits_best[1, 2])
-            print("Speed of vessels by type:")
+            speeds_plot.append(self.speeds[0, 0])
+            profits_plot.append(profits_best[0, 0])
+            if pr:
+                print(f"iteration {i}:")
+                print("Speed of vessels by type:")
+                for j in range(len(self.vessels)):
+                    print(
+                        f"\t{self.vessels[j].name}:\t",
+                        self.speeds[j] - speeds_previous[j],
+                    )
+                print("Freight rates:")
+                routes = set()
+                for j in range(len(self.vessels)):
+                    if self.routes[j].name not in routes:
+                        print(
+                            f"\t{self.routes[j].name}:\t",
+                            self.routes[j].freight_rates,
+                        )
+                        routes.add(self.routes[j].name)
+                print()
+            if np.mean(np.abs(self.speeds - speeds_previous)) < tol:
+                print(f"Tolerance satisfied at iteration {i}!")
+                break
+        if pr:
+            print("Final speed of vessels:")
             for j in range(len(self.vessels)):
                 print(
                     f"\t{self.vessels[j].name}:\t",
-                    self.speeds[j] - speeds_previous[j],
+                    self.speeds[j],
                 )
-            print("Freight rates:")
+            print("Final freight rates:")
             routes = set()
             for j in range(len(self.vessels)):
                 if self.routes[j].name not in routes:
@@ -329,26 +351,6 @@ class Fleet:
                         self.routes[j].freight_rates,
                     )
                     routes.add(self.routes[j].name)
-            print()
-            if np.mean(np.abs(self.speeds - speeds_previous)) < tol:
-                print(f"Tolerance satisfied at iteration {i}!")
-                break
-
-        print("Final speed of vessels:")
-        for j in range(len(self.vessels)):
-            print(
-                f"\t{self.vessels[j].name}:\t",
-                self.speeds[j],
-            )
-        print("Final freight rates:")
-        routes = set()
-        for j in range(len(self.vessels)):
-            if self.routes[j].name not in routes:
-                print(
-                    f"\t{self.routes[j].name}:\t",
-                    self.routes[j].freight_rates,
-                )
-                routes.add(self.routes[j].name)
 
         if plot:
             fig, ax = plt.subplots()

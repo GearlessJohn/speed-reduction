@@ -11,6 +11,12 @@ vessel = sample.vessel.Vessel(name="Vessel Test", vessel_type="CONTAINER SHIPS",
                               cii_score_2021=7,
                               cii_class_2021="C")
 
+vessel1 = sample.vessel.Vessel(name="Vessel Test", vessel_type="CONTAINER SHIPS", sub_type="PANAMAX / POST PANAMAX",
+                               dwt=100000, capacity=9000, unit="TEU", built=2015, distance_2021=80000, hours_2021=5000,
+                               hfo_2021=15000, lfo_2021=2000, lng_2021=0, diesel_2021=2000, co2_2021=65000,
+                               cii_score_2021=7.1,
+                               cii_class_2021="C")
+
 global_market = sample.globalenv.GlobalEnv(
     ifo380_prices=np.array([433.1, 404.9, 390.4, 375.0]),
     vlsifo_prices=np.array([569.0, 534.9, 523.5, 506.9]),
@@ -57,3 +63,9 @@ def test_cii_profit_reverse_optimization():
     )
     res, total_profit = stm.cii_profits_reverse(profits, cii_class)
     assert np.array_equal(res, [1, 0, 1, 0]) and total_profit == 6.7
+
+
+def test_alternative_vessel_constructor():
+    flt = sample.fleet.Fleet([vessel, vessel1], [rt_container_0, rt_container_0], global_market)
+    flt.mean_field(max_iter=1, pr=False, plot=False)
+    assert min(flt.routes[0].freight_rates) > 0

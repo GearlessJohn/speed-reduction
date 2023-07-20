@@ -28,6 +28,7 @@
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#test">Test</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
@@ -103,6 +104,12 @@ Use the following command to install all required packages:
 [//]: # (   const API_KEY = 'ENTER YOUR API';)
 
 [//]: # (   ```)
+### Test
+After the installation, please use `pytest` to do a check of the main functions and data.
+  ```sh
+  pytest
+  ```
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

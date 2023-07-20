@@ -1,6 +1,6 @@
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import statsmodels.api as sm
 import statsmodels.graphics as smgraphics
 from statsmodels.tsa.seasonal import seasonal_decompose
@@ -22,23 +22,25 @@ data = pd.merge(clarksons, exports, left_on="Date", right_on="DATE")
 data.drop(columns=["DATE"], inplace=True)
 data.rename(columns={"$/day": "Clarksons", "XTEXVA01CNM667N": "Exports"}, inplace=True)
 
-result = seasonal_decompose(data["Clarksons"], model="additive", period=12)
-trend, seasonal, resid = result.trend, result.seasonal, result.resid
-data["Clarksons"] = pd.Series(trend)
+# result = seasonal_decompose(data["Clarksons"], model="additive", period=12)
+# trend, seasonal, resid = result.trend, result.seasonal, result.resid
+# data["Clarksons"] = pd.Series(trend)
 
 
-result = seasonal_decompose(data["Exports"], period=12)
-trend, seasonal, resid = result.trend, result.seasonal, result.resid
-data["Exports"] = pd.Series(trend)
+# result = seasonal_decompose(data["Exports"], period=12)
+# trend, seasonal, resid = result.trend, result.seasonal, result.resid
+# data["Exports"] = pd.Series(trend)
+
+data = data.groupby(data.Date.dt.year).mean()
+# print(data.columns)
 
 data["Exports"] = data["Exports"].pct_change() * 100
 data["Clarksons"] = data["Clarksons"].pct_change() * 100
+data = data.dropna()
 
-data = data[(data["Date"] >= "2019-01-01") & (data["Date"] <= "2022-07-01")]
-# print(data.info)
+print(data)
 
-# data = data[np.abs(data["Clarksons"])<5]
-# data = data[np.abs(data["Exports"])<20]
+data = data[data["Clarksons"] < 200]
 
 x = data["Exports"]
 # X = sm.add_constant(x)
@@ -50,9 +52,6 @@ results = model.fit()
 
 print(results.summary())
 
-data.plot(x="Date", y=["Exports", "Clarksons"])
-# plt.savefig("./data/clarksons-exports.png")
-
 fig, ax = plt.subplots()
 ax.set_xlabel("Exports")
 ax.set_ylabel("Clarksons")
@@ -60,4 +59,4 @@ ax.scatter(x, y, label="original data")
 ax.plot(x, results.fittedvalues, label="predictions", color="r")
 plt.legend()
 plt.show()
-fig.savefig("./fig/predict_exports.png")
+# fig.savefig("./fig/predict_exports.png")

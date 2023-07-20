@@ -1,4 +1,26 @@
 class Vessel:
+    """The instance of vessel with all its information.
+
+    Vessel information including ID, capacity, construction information, engine and voyage data.
+
+    Attributes:
+            name (str): Name of the vessel.
+            vessel_type (str): Main type of the vessel, including CONTAINER SHIPS, BULKERS, GAS CARRIERS, TANKERS.
+            sub_type (str): Subtype of the vessel, related with its size.
+            dwt (float): Dead-weight tonnage of the vessel, in metric tonnes.
+            capacity (float): Capacity of the vessel, number of TEU for CONTAINER SHIPS and dwt for other types.
+            unit (str): Unit of capacity, TEU for CONTAINER SHIPS and metric ton for others.
+            built (float): Year of construction of the vessel.
+            age (int): Age of the vessel, by calculating the difference between 2023 and the year of construction.
+            distance_2021 (float): Distance sailed in 2021，in nautical miles.
+            hours_2021 (float): Sailing time in 2021, in hours.
+            speed_2021 (float): Average speed in 2021, in nautical miles per hour.
+            *_quantity_2021 (float): Fuel consumption in * category in 2021.
+            co2_emission_2021 (float): CO2 emission in 2021.
+            cii_score_2021 (float): Attained CII Score in 2021 .
+            cii_class_2021 (str): Attained CII class in 2021, from A to E.
+    """
+
     def __init__(self, row):
         # Initializing the attributes of the Vessel object
         # ID

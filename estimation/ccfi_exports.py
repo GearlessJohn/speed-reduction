@@ -1,6 +1,6 @@
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import statsmodels.api as sm
 import statsmodels.graphics as smgraphics
 from statsmodels.tsa.seasonal import seasonal_decompose
@@ -10,7 +10,6 @@ ccfi["Date"] = ccfi["Date"].astype("datetime64[ns]") + pd.Timedelta(days=1)
 
 exports = pd.read_csv("./data/ChinaExports.csv")
 exports["DATE"] = exports["DATE"].astype("datetime64[ns]")
-
 
 data = pd.merge(ccfi, exports, left_on="Date", right_on="DATE")
 data.drop(columns=["DATE"], inplace=True)
@@ -26,7 +25,6 @@ data.rename(columns={"SHSPCCFI Index": "ccfi", "XTEXVA01CNM667N": "Exports"}, in
 # data["Exports"] = pd.Series(trend)
 
 data = data.groupby(data.Date.dt.year).mean()
-
 
 data["Exports"] = data["Exports"].pct_change() * 100
 data["ccfi"] = data["ccfi"].pct_change() * 100

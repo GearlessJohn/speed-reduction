@@ -1,12 +1,12 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
-# Reading an Excel file using Pandas and skipping the second row
-# Also, using only columns from A to AN
-data_cacib = pd.read_excel(
-    "./data/CACIB fleet sample V2.xlsx", skiprows=[1], usecols="A:AN"
-).dropna(subset=["Hours Under way 2021"])
+# Reading an Excel file using Pandas and skipping the second row.
+# Also, using only columns from A to AN.
+data_cacib = pd.read_excel("./data/CACIB fleet sample V2.xlsx", skiprows=[1], usecols="A:AN").dropna(
+    subset=["Hours Under way 2021"])
 
+# Fill the None section with 0.
 data_cacib = data_cacib.fillna(
     {
         "HFO quantity 2021": 0,

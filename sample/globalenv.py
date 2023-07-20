@@ -1,20 +1,29 @@
-import numpy as np
 import bisect
+
+import numpy as np
 
 
 class GlobalEnv:
-    def __init__(
-        self, ifo380_prices, vlsifo_prices, mgo_prices, lng_prices, carbon_tax_rates
-    ):
+    """Global market and policy information.
+
+    Includes global average fuel prices and carbon tax rates, as well as a CII rating calculator.
+    The rating calculations for CII are all derived from official IMO documents and use the same notation.
+
+    Attributes:
+        *_prices (List[float]): Average global price of * fuels, 2023-2026, in USD.
+        carbon_tax_rates (List[float]):  Carbon tax price from 2023 to 2026, USD per metric tonne CO2.
+    """
+
+    def __init__(self, ifo380_prices, vlsifo_prices, mgo_prices, lng_prices, carbon_tax_rates):
         # Initializing the attributes of the GlobalMarket object
         self.ifo380_prices = ifo380_prices
         self.vlsifo_prices = vlsifo_prices
         self.mgo_prices = mgo_prices
         self.lng_prices = lng_prices
-
         self.carbon_tax_rates = carbon_tax_rates
 
     def cii_reduction(self, year):
+        """Return the CII reduction factor for a specific year."""
         reductions = {
             2021: 0.01,
             2022: 0.03,
@@ -26,6 +35,7 @@ class GlobalEnv:
         return reductions[year]
 
     def cii_ac(self, vessel_type, sub_type, dwt):
+        """Return the a and c parameters for calculation of CII reference line"""
         match vessel_type:
             case "CONTAINER SHIPS":
                 return 1984, 0.489
@@ -48,14 +58,16 @@ class GlobalEnv:
                         else:
                             return 8104, 0.639
             case _:
-                raise ValueError("CII Calculation: Unknow vessel type to get a and c")
+                raise ValueError("CII Calculation: Unknown vessel type to get a and c")
 
     def cii_ref(self, vessel_type, sub_type, dwt, year):
+        """"Return the CII reference line"""
         a, c = self.cii_ac(vessel_type, sub_type, dwt)
-        cii_ref = (a * dwt**-c) * (1 - self.cii_reduction(year))
+        cii_ref = (a * dwt ** -c) * (1 - self.cii_reduction(year))
         return cii_ref
 
     def cii_expd(self, vessel_type, sub_type, dwt):
+        """Return the distances of different frontiers from the reference"""
         match vessel_type:
             case "CONTAINER SHIPS":
                 return [0.83, 0.94, 1.07, 1.19]
@@ -76,17 +88,19 @@ class GlobalEnv:
                         else:
                             return [0.85, 0.95, 1.06, 1.25]
             case _:
-                raise ValueError("CII Calculation: Unknow vessel type to get exp(d)")
+                raise ValueError("CII Calculation: Unknown vessel type to get exp(d)")
 
     def cii_fronts(self, vessel_type, sub_type, dwt, year):
+        """Return the frontiers of different classes"""
         expd = np.array(self.cii_expd(vessel_type, sub_type, dwt))
         return expd * self.cii_ref(vessel_type, sub_type, dwt, year)
 
-    def cii_class(self, cii_atteined, vessel_type, sub_type, dwt, year):
+    def cii_class(self, cii_attained, vessel_type, sub_type, dwt, year):
+        """"Return the CII class for a given vessel with its attained CII"""
         cii_classes = ["A", "B", "C", "D", "E"]
 
         return cii_classes[
             bisect.bisect(
-                self.cii_fronts(vessel_type, sub_type, dwt, year), cii_atteined
+                self.cii_fronts(vessel_type, sub_type, dwt, year), cii_attained
             )
         ]

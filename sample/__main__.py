@@ -11,7 +11,7 @@ import settlement
 import vessel
 
 df_vessels = pd.read_excel("./data/CACIB-SAMPLE.xlsx")
-vessels = [vessel.Vessel(row) for _, row in df_vessels.iterrows()]
+vessels = [vessel.Vessel(row=row) for _, row in df_vessels.iterrows()]
 
 # Initializing GlobalEnv object
 global_market = globalenv.GlobalEnv(

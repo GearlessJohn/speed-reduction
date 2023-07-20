@@ -182,7 +182,7 @@ class Fleet:
             print("Emission of vessels by type:")
             for j in range(nmb_vessels):
                 print(
-                    f"\t{self.vessels[j].name}: (2021: {self.vessels[j].co2_emission_2021:0.3f}) \t",
+                    f"\t{self.vessels[j].name}: (2021: {self.vessels[j].co2_2021:0.3f}) \t",
                     emissions[j],
                 )
 
@@ -210,7 +210,7 @@ class Fleet:
 
                 axs[j][1].plot(2023 + self.years, emissions[j])
                 axs[j][1].axline(
-                    xy1=(2023, self.vessels[j].co2_emission_2021),
+                    xy1=(2023, self.vessels[j].co2_2021),
                     slope=0,
                     c="red",
                     ls="-.",

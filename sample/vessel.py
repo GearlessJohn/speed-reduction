@@ -21,44 +21,69 @@ class Vessel:
             cii_class_2021 (str): Attained CII class in 2021, from A to E.
     """
 
-    def __init__(self, row):
-        # Initializing the attributes of the Vessel object
-        # ID
-        self.imo_number = row["IMO Number"]
-        self.name = row["Name"]
-        self.vessel_type = row["Type"]
-        self.sub_type = row["Sub_type"]
+    def __init__(self, row=None, name=None, vessel_type=None, sub_type=None, dwt=None, capacity=None, unit=None, built=None, distance_2021=None, hours_2021=None,
+                 hfo_2021=None, lfo_2021=None, diesel_2021=None, lng_2021=None, co2_2021=None, cii_score_2021=None, cii_class_2021=None):
+        if row is not None:
+            # Initializing the attributes of the Vessel object
+            # ID
+            self.imo_number = row["IMO Number"]
+            self.name = row["Name"]
+            self.vessel_type = row["Type"]
+            self.sub_type = row["Sub_type"]
 
-        # Capacity
-        self.gt = row["GT"]
-        self.dwt = row["Dwt"]
-        self.capacity = row["Capacity"]
-        self.unit = row["Unit"]
+            # Capacity
+            self.gt = row["GT"]
+            self.dwt = row["Dwt"]
+            self.capacity = row["Capacity"]
+            self.unit = row["Unit"]
 
-        # Build
-        self.built = row["Built"]
-        self.age = int(2023 - self.built)
-        self.builder = row["Builder"]
-        self.length = row["Length overall (m)"]
-        self.beam = row["Beam (m)"]
-        self.draught = row["Draught (m)"]
+            # Build
+            self.built = row["Built"]
+            self.age = int(2023 - self.built)
+            self.builder = row["Builder"]
+            self.length = row["Length overall (m)"]
+            self.beam = row["Beam (m)"]
+            self.draught = row["Draught (m)"]
 
-        # Engine
-        self.main_engine = row["Main engine"]
-        self.main_engine_fuel_type = str.split(row["Main Engine Fuel Type"], sep=",")[0]
-        self.output = row["Output (kW)"]
-        self.service_speed = row["Service Speed Design (kn)"]
+            # Engine
+            self.main_engine = row["Main engine"]
+            self.main_engine_fuel_type = str.split(row["Main Engine Fuel Type"], sep=",")[0]
+            self.output = row["Output (kW)"]
+            self.service_speed = row["Service Speed Design (kn)"]
 
-        self.sfoc = row["SFOC"]
+            self.sfoc = row["SFOC"]
 
-        # Travel
-        self.distance_2021 = row["Distance Travelled 2021"]
-        self.hours_2021 = row["Hours Under way 2021"]
-        self.speed_2021 = self.distance_2021 / self.hours_2021
-        self.hfo_quantity_2021 = row["HFO quantity 2021"]
-        self.lfo_quantity_2021 = row["LFO quantity 2021"]
-        self.diesel_quantity_2021 = row["Diesel/Gas Oil quantity 2021"]
-        self.lng_quantity_2021 = row["LNG 2021"]
-        self.co2_emission_2021 = row["CO2 Emissions TtW 2021"]
-        self.cii_score_2021 = row["Actual CII 2021"]
-        self.cii_class_2021 = row["2021 CII rating"]
+            # Travel
+            self.distance_2021 = row["Distance Travelled 2021"]
+            self.hours_2021 = row["Hours Under way 2021"]
+            self.speed_2021 = self.distance_2021 / self.hours_2021
+            self.hfo_2021 = row["HFO quantity 2021"]
+            self.lfo_2021 = row["LFO quantity 2021"]
+            self.diesel_2021 = row["Diesel/Gas Oil quantity 2021"]
+            self.lng_2021 = row["LNG 2021"]
+            self.co2_2021 = row["CO2 Emissions TtW 2021"]
+            self.cii_score_2021 = row["Actual CII 2021"]
+            self.cii_class_2021 = row["2021 CII rating"]
+
+        else:
+            self.name = name
+            self.vessel_type = vessel_type
+            self.sub_type = sub_type
+            self.dwt = dwt
+            self.capacity = capacity
+            self.unit = unit
+            self.built = built
+            self.age = int(2023 - self.built)
+
+            self.distance_2021 = distance_2021
+            self.hours_2021 = hours_2021
+            self.speed_2021 = self.distance_2021 / self.hours_2021
+
+            self.hfo_2021 = hfo_2021
+            self.lfo_2021 = lfo_2021
+            self.diesel_2021 = diesel_2021
+            self.lng_2021 = lng_2021
+
+            self.co2_2021 = co2_2021
+            self.cii_score_2021 = cii_score_2021
+            self.cii_class_2021 = cii_class_2021

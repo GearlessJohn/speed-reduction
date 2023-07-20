@@ -43,12 +43,13 @@ class Settlement:
              float: The fuel cost in USD for one voyage of the selected route.
 
         """
+        assert year < 2000, "The year should start from 0."
         return (
                 (
-                        self.vessel.hfo_quantity_2021 * self.global_env.ifo380_prices[year]
-                        + self.vessel.lfo_quantity_2021 * self.global_env.vlsifo_prices[year]
-                        + self.vessel.diesel_quantity_2021 * self.global_env.mgo_prices[year]
-                        + self.vessel.lng_quantity_2021 * self.global_env.lng_prices[year]
+                        self.vessel.hfo_2021 * self.global_env.ifo380_prices[year]
+                        + self.vessel.lfo_2021 * self.global_env.vlsifo_prices[year]
+                        + self.vessel.diesel_2021 * self.global_env.mgo_prices[year]
+                        + self.vessel.lng_2021 * self.global_env.lng_prices[year]
                 )
                 / self.vessel.distance_2021
                 * (speed / self.vessel.speed_2021) ** power
@@ -112,12 +113,13 @@ class Settlement:
             speed (float): Vessel's actual navigation speed, in nautical miles per hour.
             power (float): The relationship between fuel consumption per unit distance travelled and speed,
                 is generally between 2 and 3.
-            year (int): The year in which the calculation was performed.
+            year (int): The year in which the calculation was performed, 0 means 2023, 1 means 2024 ...
 
         Returns:
             rating (str): A letter from A to E indicating the CII rating class of the vessel
 
         """
+        assert year < 2000, "The year should start from 0."
         rating = self.global_env.cii_class(
             self.vessel.cii_score_2021 * (speed / self.vessel.speed_2021) ** power,
             self.vessel.vessel_type,
@@ -130,7 +132,7 @@ class Settlement:
     def operation_ghg(self, speed, saving, power):
         """Return the CO2 emission of one voyage."""
         return (
-                self.vessel.co2_emission_2021
+                self.vessel.co2_2021
                 / self.vessel.distance_2021
                 * self.route.distance
                 * (speed / self.vessel.speed_2021) ** power
@@ -583,7 +585,7 @@ class Settlement:
         return v_best, profits_best, emissions_best, cii_best
 
 
-def settle(i, data_vessels, env, route, power, retrofit, year, pr, plot, acc=True):
+def settle(i, data_vessels, env, route, power, retrofit, year, pr, plot=True, acc=True):
     # Creating a list of Vessel objects
     vessels = [vessel.Vessel(row) for _, row in data_vessels.iterrows()]
 

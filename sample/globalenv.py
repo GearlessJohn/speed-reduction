@@ -97,6 +97,7 @@ class GlobalEnv:
 
     def cii_class(self, cii_attained, vessel_type, sub_type, dwt, year):
         """"Return the CII class for a given vessel with its attained CII"""
+        assert year > 2020, "The year should start from 2021."
         cii_classes = ["A", "B", "C", "D", "E"]
 
         return cii_classes[

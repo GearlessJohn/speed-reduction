@@ -18,7 +18,6 @@ global_market = sample.globalenv.GlobalEnv(
     mgo_prices=np.array([825.8, 805.5, 782.6, 766.5]),
     lng_prices=np.array([609.9, 744.6, 697.9, 608.4]),
     carbon_tax_rates=np.array([0.0, 94.0 * 0.4, 94.0 * 0.7, 94.0 * 1.0]),
-    # carbon_tax_rates=np.zeros(4),
 )
 
 # Initializing Route objects

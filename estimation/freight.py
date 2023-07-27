@@ -20,6 +20,8 @@ data = pd.merge(clarksons, data_eco, left_index=True, right_index=True, how="lef
 data.rename(columns={"$/day": "Clarksons"}, inplace=True)
 y = data.pop("Clarksons")
 X = data.drop(["Date"], axis=1)
+X = X.drop(X.filter(regex='Bulker|Tanker').columns, axis=1)
+print(X.columns)
 
 X_train, X_test, y_train, y_test = train_test_split(X.index, y, test_size=0.2)
 X_train = X.loc[X_train]

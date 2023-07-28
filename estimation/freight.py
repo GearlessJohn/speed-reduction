@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.linear_model import Lasso
 from sklearn.model_selection import train_test_split
 
@@ -58,11 +59,12 @@ def model_result(model, X_train, y_train, X_test, y_test):
 
 
 # print(np.expand_dims(y_train.values, axis=0))
-alpha_list = [1 * (i + 1) for i in range(10, 20)]
+alpha_list = [1 * (i + 1) for i in range(1, 30)]
 loss_tot = []
 for alpha in alpha_list:
     # model = Lasso(alpha=alpha)
-    model = RandomForestRegressor(max_depth=alpha)
+    # model = RandomForestRegressor(max_depth=alpha)
+    model=KNeighborsRegressor(n_neighbors=alpha)
     loss_model = model_result(model, X_train.values, y_train.values, X_test.values, y_test.values)
     loss_tot.append(loss_model)
 

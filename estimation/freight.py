@@ -5,6 +5,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.linear_model import Lasso
 from sklearn.model_selection import train_test_split
+from sklearn.decomposition import PCA
 
 data_eco = pd.read_excel("./data/projections Shipping Baseline.xlsx").dropna()
 data_eco["Data"] = data_eco["Date"].astype("datetime64[ns]")
@@ -24,6 +25,13 @@ X = data.drop(["Date"], axis=1)
 X = X.drop(X.filter(regex='Bulker|Tanker').columns, axis=1)
 print(X.columns)
 
+# # PCA step
+# n_components=10
+# pca = PCA(n_components=n_components)
+# principalComponents = pca.fit_transform(X.values)
+# X = pd.DataFrame(data=principalComponents, columns=['principal component' + str(i) for i in range(1, n_components+1)])
+# print(X.columns)
+
 X_train, X_test, y_train, y_test = train_test_split(X.index, y, test_size=0.2)
 X_train = X.loc[X_train]
 X_test = X.loc[X_test]
@@ -42,6 +50,10 @@ def standardise(data, list_column):
 standardise(X_train, X_train.columns.to_list())
 standardise(X_test, X_test.columns.to_list())
 
+X_train_vec = X_train.values
+X_test_vec = X_test.values
+y_train_vec = y_train.values
+y_train_vec = y_train.values
 
 def MAE(pred, real):
     N = len(pred)

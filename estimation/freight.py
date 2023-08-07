@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.linear_model import Lasso
 from sklearn.model_selection import train_test_split
-from sklearn.decomposition import PCA
+import statsmodels.api as sm
 
 data_eco = pd.read_excel("./data/projections Shipping Baseline.xlsx").dropna()
 data_eco["Data"] = data_eco["Date"].astype("datetime64[ns]")
@@ -24,13 +24,6 @@ y = data.pop("Clarksons")
 X = data.drop(["Date"], axis=1)
 X = X.drop(X.filter(regex='Bulker|Tanker').columns, axis=1)
 print(X.columns)
-
-# # PCA step
-# n_components=10
-# pca = PCA(n_components=n_components)
-# principalComponents = pca.fit_transform(X.values)
-# X = pd.DataFrame(data=principalComponents, columns=['principal component' + str(i) for i in range(1, n_components+1)])
-# print(X.columns)
 
 X_train, X_test, y_train, y_test = train_test_split(X.index, y, test_size=0.2)
 X_train = X.loc[X_train]
@@ -53,7 +46,7 @@ standardise(X_test, X_test.columns.to_list())
 X_train_vec = X_train.values
 X_test_vec = X_test.values
 y_train_vec = y_train.values
-y_train_vec = y_train.values
+y_test_vec = y_train.values
 
 def MAE(pred, real):
     N = len(pred)
@@ -71,7 +64,7 @@ def model_result(model, X_train, y_train, X_test, y_test):
 
 
 # print(np.expand_dims(y_train.values, axis=0))
-alpha_list = [1 * (i + 1) for i in range(1, 30)]
+alpha_list = [i for i in range(1, 30)]
 loss_tot = []
 for alpha in alpha_list:
     # model = Lasso(alpha=alpha)
@@ -80,6 +73,12 @@ for alpha in alpha_list:
     loss_model = model_result(model, X_train.values, y_train.values, X_test.values, y_test.values)
     loss_tot.append(loss_model)
 
+
+linear_model = sm.OLS(y_train, X_train)
+results = linear_model.fit()
+
+# print(results.summary())
+print(MAE([linear_model.predict(X_test.iloc[i]) for i in range(len(X_test_vec))], y_test))
 
 fig = plt.figure()
 ax = plt.axes()

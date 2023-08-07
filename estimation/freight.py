@@ -1,3 +1,5 @@
+import tqdm
+import warnings
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -5,7 +7,9 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.linear_model import Lasso
 from sklearn.model_selection import train_test_split
-import statsmodels.api as sm
+from sklearn.neural_network import MLPRegressor
+# Pay attention to the difference between regressor and classifier!
+warnings.filterwarnings("ignore")
 
 data_eco = pd.read_excel("./data/projections Shipping Baseline.xlsx").dropna()
 data_eco["Data"] = data_eco["Date"].astype("datetime64[ns]")
@@ -23,12 +27,7 @@ data.rename(columns={"$/day": "Clarksons"}, inplace=True)
 y = data.pop("Clarksons")
 X = data.drop(["Date"], axis=1)
 X = X.drop(X.filter(regex='Bulker|Tanker').columns, axis=1)
-print(X.columns)
-
-X_train, X_test, y_train, y_test = train_test_split(X.index, y, test_size=0.2)
-X_train = X.loc[X_train]
-X_test = X.loc[X_test]
-
+# print(X.columns)
 
 # standardise the columns of numeric values
 def standardise(data, list_column):
@@ -40,13 +39,9 @@ def standardise(data, list_column):
             data[name_column] = (data[name_column] - data[name_column].mean())
 
 
-standardise(X_train, X_train.columns.to_list())
-standardise(X_test, X_test.columns.to_list())
+standardise(X, X.columns.to_list())
 
-X_train_vec = X_train.values
-X_test_vec = X_test.values
-y_train_vec = y_train.values
-y_test_vec = y_train.values
+
 
 def MAE(pred, real):
     N = len(pred)
@@ -62,23 +57,20 @@ def model_result(model, X_train, y_train, X_test, y_test):
     loss = MAE(y_pred, y_test)
     return loss
 
-
-# print(np.expand_dims(y_train.values, axis=0))
-alpha_list = [i for i in range(1, 30)]
+alpha_list = [i+1 for i in range(0, 30)]
 loss_tot = []
-for alpha in alpha_list:
+for alpha in tqdm.tqdm(alpha_list):
+    X_train, X_test, y_train, y_test = train_test_split(X.index, y, test_size=0.3)
+    X_train = X.loc[X_train]
+    X_test = X.loc[X_test]
     # model = Lasso(alpha=alpha)
     # model = RandomForestRegressor(max_depth=alpha)
-    model=KNeighborsRegressor(n_neighbors=alpha)
+    # model = KNeighborsRegressor(n_neighbors=4)
+    model = MLPRegressor(random_state=1, max_iter=1000, hidden_layer_sizes=(1000, 45, 15))
     loss_model = model_result(model, X_train.values, y_train.values, X_test.values, y_test.values)
     loss_tot.append(loss_model)
 
-
-linear_model = sm.OLS(y_train, X_train)
-results = linear_model.fit()
-
-# print(results.summary())
-print(MAE([linear_model.predict(X_test.iloc[i]) for i in range(len(X_test_vec))], y_test))
+print("Mean MAE score", np.mean(loss_tot))
 
 fig = plt.figure()
 ax = plt.axes()
@@ -86,5 +78,3 @@ ax.scatter(alpha_list, loss_tot)
 ax.plot(alpha_list, loss_tot)
 plt.title("Loss")
 plt.show()
-
-# model_Lasso = Lasso(alpha=0.1 * np.argmin(np.array(loss_Lasso_tot)))

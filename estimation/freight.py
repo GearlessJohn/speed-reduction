@@ -1,13 +1,15 @@
-import tqdm
 import warnings
+
 import numpy as np
 import pandas as pd
+import tqdm
 from matplotlib import pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.neighbors import KNeighborsRegressor
 from sklearn.linear_model import Lasso
 from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
+
 # Pay attention to the difference between regressor and classifier!
 warnings.filterwarnings("ignore")
 
@@ -27,6 +29,8 @@ data.rename(columns={"$/day": "Clarksons"}, inplace=True)
 y = data.pop("Clarksons")
 X = data.drop(["Date"], axis=1)
 X = X.drop(X.filter(regex='Bulker|Tanker').columns, axis=1)
+
+
 # print(X.columns)
 
 # standardise the columns of numeric values
@@ -42,12 +46,11 @@ def standardise(data, list_column):
 standardise(X, X.columns.to_list())
 
 
-
 def MAE(pred, real):
     N = len(pred)
     sum = 0
     for i in range(N):
-        sum += abs(pred[i] - real[i])/real[i]
+        sum += abs(pred[i] - real[i]) / real[i]
     return sum / N
 
 
@@ -57,7 +60,8 @@ def model_result(model, X_train, y_train, X_test, y_test):
     loss = MAE(y_pred, y_test)
     return loss
 
-alpha_list = [i+1 for i in range(0, 30)]
+
+alpha_list = [i + 1 for i in range(0, 30)]
 loss_tot = []
 for alpha in tqdm.tqdm(alpha_list):
     X_train, X_test, y_train, y_test = train_test_split(X.index, y, test_size=0.3)

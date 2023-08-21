@@ -61,7 +61,7 @@ def model_result(model, X_train, y_train, X_test, y_test):
     return loss
 
 
-alpha_list = [i + 1 for i in range(0, 30)]
+alpha_list = [i + 1 for i in range(0, 1)]
 loss_tot = []
 for alpha in tqdm.tqdm(alpha_list):
     X_train, X_test, y_train, y_test = train_test_split(X.index, y, test_size=0.3)
@@ -70,11 +70,11 @@ for alpha in tqdm.tqdm(alpha_list):
     # model = Lasso(alpha=alpha)
     # model = RandomForestRegressor(max_depth=alpha)
     # model = KNeighborsRegressor(n_neighbors=4)
-    model = MLPRegressor(random_state=1, max_iter=1000, hidden_layer_sizes=(1000, 45, 15))
+    model = MLPRegressor(random_state=1, max_iter=4000, hidden_layer_sizes=(1000, 150, 30))
     loss_model = model_result(model, X_train.values, y_train.values, X_test.values, y_test.values)
     loss_tot.append(loss_model)
 
-print("Mean MAE score", np.mean(loss_tot))
+print(f"Mean MAE score {100*np.mean(loss_tot):2.1f}%")
 
 fig = plt.figure()
 ax = plt.axes()

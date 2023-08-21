@@ -436,7 +436,7 @@ Ultimately we can obtain the optimal combination of speeds $V^\ast$ for a ship u
 
 
 The final domain of optimization will be a set of $61^4$ points.
-And we cannot compute the optimal solution directly in reverse order.
+We could compute it directly, but a better solution would be to use an inverse order algorithm.
 Let's consider the optimization of profits in a reverse chronological order.
 The sequence can be described as follows:
 
@@ -468,8 +468,22 @@ where $AP_i^\ast = AP(v_i^\ast, FP_i, FR_i, CT_i)$ and $CII_i$ is a function of 
 	\label{tb:sample_profit}
 \end{table}
 
+However, the above algorithm has a bug.
 The table (\ref{tb:sample_profit}) is a tabular representation of the profit margins based on different conditions.
-We proceed by computing the maximum profit of year 4, where $P_4 = 1$ and $C_4 = C$. Subsequently, we obtain $P_3 = 1.5$ and $P_2 = 1.5$ with $C_3 = C_4 = D$. For the first year, the fleet is necessitated to choose a speed such that $C_1 = C$, if it aims to retain its entire profit from year 4. Consequently, $P_1$ escalates to 2.5, enabling the fleet to retain the profit of year 4. The cumulative profit totals to $1+1.5+1.5+2.5 = 6.5$. However, there might exist a superior choice, namely to decelerate in year 2 to enforce $C_2 = C$. Then, $P_2$ decreases to 1.2, but $P_1$ increases to 3, whilst retaining $P_4 = 1$. Consequently, the final total profit amounts to $1 + 1.5 + 1.3 + 3 = 6.8$.
+We proceed by computing the maximum profit of year 4, where $P_4 = 1$ and $C_4 = C$. Subsequently, we obtain $P_3 = 1.5$ and $P_2 = 1.5$ with $C_3 = C_4 = D$. 
+For the first year, the fleet is necessitated to choose a speed such that $C_1 = C$, if it aims to retain its entire profit from year 4. 
+Consequently, $P_1$ escalates to 2.5, enabling the fleet to retain the profit of year 4. 
+The cumulative profit totals to $1+1.5+1.5+2.5 = 6.5$. 
+However, there might exist a superior choice, namely to decelerate in year 2 to enforce $C_2 = C$. 
+Then, $P_2$ decreases to 1.2, but $P_1$ increases to 3, whilst retaining $P_4 = 1$. 
+Consequently, the final total profit amounts to $1 + 1.5 + 1.3 + 3 = 6.8$. \\ 
+
+To solve this bug, we need to add an extra step. 
+When the above algorithm outputs a result where the first three years are $CDD$, we need to additionally calculate the results of $DCD$, $DDC$ and take the best result. Mathematically, we can prove that this algorithm gives the best result by reverse order strong recursion.
+\textbf{With the reverse order algorithm, we can reduce the complexity of the problem from $61^4$ to $61*4$.}
+
+
+
 
 
 \subsubsection{Step 3: Construction of new vessels}
@@ -546,6 +560,8 @@ In the process of ensuring stable freight rate calculations, we employ the widel
 	\item Repeat steps M and E until either a specified convergence condition is achieved, such as the average absolute change in speed being less than 0.1, or the maximum predetermined number of iterations has been reached.\\
 \end{enumerate}
 
+In particular, the maximum number of iterations is set to 12. 
+Namely, it is assumed that the global fleet adjusts its speed once a month and up to 12 times a year.
 
 \subsubsection{Theoretical justification and guarantees}
 % Provide here some formal theory justifying the correctness of the method. If it applies, state theoretical guarantees and provide a brief overview of the analysis.
@@ -918,14 +934,6 @@ The algorithm used by \texttt{numpy.argmax} is straightforward and can be summar
 It's important to note that the purpose of \texttt{numpy.argmax} is not to find the optimal solution in terms of algorithmic complexity or performance optimization.
 Instead, it provides a convenient way to obtain the indices of maximum values in an array using highly optimized NumPy routines, which leverage low-level optimizations for efficient array manipulation and element-wise comparisons.\\
 
-
-
-There could be 'smarter' solutions like reverse order calculation.
-Indeed, the main problem with the reverse order algorithm in section 2.2.2 lies in the emergence of the DDD situation. This problem can probably be improved by specialized treatment of the DDD case.
-For example, when the optimal option for 2023-2025 is CDD and the maximum profit rate for 2023 leads to an CII of D, different combinations of C and D can be tried, e.g. DCD, DCC. However, the validity of this improved algorithm has yet to be tested and proved mathematically.
-For the moment, using the full calculation to find the maximum value takes two seconds per ship and is therefore not the most urgent part to improve.\\
-
-
 \subsubsection{EM Algorithm}
 
 The second part of intensive calculations of the report involves calculating an equilibrium point for flexible prices, as outlined in section 2.2.4 and 2.3.
@@ -959,7 +967,7 @@ In this formula, the variables and terms represent the following:
 	\item $\text{previous\_velocity}_{i,t}$ represents the velocity of the same container ship $i$ in the previous iteration.
 \end{itemize}
 
-And for Competition model, the only change is that there is only one year.\\
+And for Competition mean-field model, the only change is that there is only one year.\\
 
 In summary, the NumPy library in Python was used to efficiently calculate the profitability of different vessel speeds while considering CII limits.
 For the calculation of equilibrium points with flexible prices, the EM algorithm was employed, which offers advantages such as handling missing data and converging to local optima.

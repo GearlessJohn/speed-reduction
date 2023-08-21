@@ -277,7 +277,7 @@ class Fleet:
     def mean_field(
             self,
             tol=25e-3,
-            max_iter=20,
+            max_iter=12,
             elas=1.9321,
             retrofit=False,
             acc=True,

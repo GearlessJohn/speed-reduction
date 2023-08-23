@@ -391,7 +391,7 @@ So, according to equation 1, we have:
 
 In addition, in order to calculate the optimal speed for 2023-2024, we need to estimate the fuel and freight prices for this period.
 In this model, \textbf{we use a range of \href{https://www.cmegroup.com/markets/energy/refined-products/singapore-380cst-fuel-oil-platts-swap-futures.html}{[fuel futures prices]} and average them on an annual basis}.
-Beyond that, \textbf{for calculations up to step 3, we assume that freight rates remain constant in 2023-2026}.\\
+Beyond that, \textbf{we use the freight rate index forecasted by the bank's in-house economist to forecast future freight rates}.\\
 
 
 In the absence of CII restrictions, if we want to calculate the 2023-2026 optimal speed combination, we only need to calculate the optimal velocity for each year separately.
@@ -1158,7 +1158,6 @@ While progress has been made in the models presented in this paper, there are st
 	In figure \ref{fig:voyage_dist}, the green line is the predicted value from this model, the orange line is the value obtained from the direct linear regression, and the x marker is the true sailing time.
 	By comparing this with the speed-sailing times of the vessels provided by the bank for different years, the equation 11 used in this report still has an error of over 10\%, although some correction has been made. Further machine learning methods need to be considered to fit a true function.
 	\item \textbf{A more accurate relationship between speed and fuel consumption:} So far we have only made a general distinction between the two cases below and above 13 knots. The real relationship is much more complex.
-	\item \textbf{Forecasts of future freight prices: } With the help of the \textit{IFRS 9: Maritime asset financing LGD} model, it is possible to forecast freight prices for future markets, thus enabling better model accuracy.
 \end{enumerate}
 
 Addressing these areas of improvement will enhance the accuracy and reliability of the models used in this study.

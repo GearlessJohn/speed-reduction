@@ -60,7 +60,7 @@ class CNN(nn.Module):
         self.n_feature = n_feature
         self.conv1 = nn.Conv1d(in_channels=1, out_channels=n_feature, kernel_size=K, padding=2)
         # self.conv2 = nn.Conv1d(n_feature, n_feature, kernel_size=K, padding=2)
-        self.fc1 = nn.Linear(self.n_feature*12, output_size)
+        self.fc1 = nn.Linear(self.n_feature * 12, output_size)
         self.dropout = nn.Dropout(p=0.5)
         # self.batchnorm = nn.BatchNorm1d(output_size, momentum=0.1)
 
@@ -76,7 +76,7 @@ class CNN(nn.Module):
         x = F.relu(x)
         # x = F.max_pool1d(x, kernel_size=4)  # [batch, 32, 4]
         print("x.shape", x.shape)
-        x = x.reshape(-1, self.n_feature*12)
+        x = x.reshape(-1, self.n_feature * 12)
         # x = self.dropout(x)
         x = self.fc1(x)
         x = self.dropout(x)

@@ -61,16 +61,16 @@ def model_result(model, X_train, y_train, X_test, y_test):
     return loss
 
 
-alpha_list = [i + 1 for i in range(0, 1)]
+alpha_list = [i + 1 for i in range(0, 5)]
 loss_tot = []
+# model = MLPRegressor(random_state=1, max_iter=200, hidden_layer_sizes=(300, 150, 10))
+model = KNeighborsRegressor(n_neighbors=3)
 for alpha in tqdm.tqdm(alpha_list):
     X_train, X_test, y_train, y_test = train_test_split(X.index, y, test_size=0.3)
     X_train = X.loc[X_train]
     X_test = X.loc[X_test]
     # model = Lasso(alpha=alpha)
     # model = RandomForestRegressor(max_depth=alpha)
-    # model = KNeighborsRegressor(n_neighbors=4)
-    model = MLPRegressor(random_state=1, max_iter=4000, hidden_layer_sizes=(1000, 150, 30))
     loss_model = model_result(model, X_train.values, y_train.values, X_test.values, y_test.values)
     loss_tot.append(loss_model)
 

@@ -58,7 +58,7 @@ for idx, name in enumerate(unique_names):
     axes[row, col].plot(subset["S"], subset.S.apply(lambda x: (0.9 * YT + 0.1 * VT) / ((0.9 * (YT / VT - 1) / v) + 1 / x)),
                         '-', label=f"Theoretical {name}")
     axes[row, col].set_xlabel("Speed")
-    axes[row, col].set_ylabel("Number of voyages")
+    axes[row, col].set_ylabel("Voyage distance")
     axes[row, col].legend()
     axes[row, col].set_title(f"{name}")
 

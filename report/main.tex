@@ -84,10 +84,10 @@ In pariticular, Crédit Agricole was one of the funding signatories of the Posei
 The Poseidon Principles are a framework established in 2019 to assess and disclose the climate alignment of ship finance portfolios.
 Their main function is to align ship financing with the International Maritime Organization's greenhouse gas reduction targets, promoting a transition to a more sustainable maritime industry.
 The principles require financial institutions to annually measure and disclose the carbon intensity of their shipping portfolios, collaborate with clients to develop decarbonization strategies, and transparently report their climate alignment scores and progress.
-The Poseidon Principles have gained traction within the industry, with major signatories including leading international banks such as Citi, Societe Generale, ABN AMRO, BNP Paribas, DNB, and Crédit Agricole, and maritime lenders committed to driving decarbonization efforts in the shipping sector.
+The Poseidon Principles have gained traction within the industry, with major signatories including leading international banks such as Citi, Société Générale, ABN AMRO, BNP Paribas, DNB, and Crédit Agricole, and maritime lenders committed to driving decarbonization efforts in the shipping sector.
 This aligns with the bank's broader commitment to environmental sustainability and responsible business practices. By adhering to the Poseidon Principles, Crédit Agricole CIB is committed to financing maritime projects that align with necessary climate goals.
 This involves assessing the climate alignment of shipping portfolios, with an aim to enhance methodologies and strategies that drive decarbonization and sustainability in the shipping sector.
-Therefore, \textbf{the main objective of my internship} is to build a model capable of calculating the expected speed of different vessels and the corresponding environmental impact, based on available market information, key data on ship navigation (annual range, fuel consumption, CO2 emissions, etc.) provided by Poseidon Principle and internal financial data from Credit Agricole CIB, as well as future forecasts.\\
+Therefore, \textbf{the main objective of my internship} is to build a model capable of calculating the expected speed of different vessels and the corresponding environmental impact, based on available market information, key data on ship navigation (annual range, fuel consumption, CO2 emissions, etc.) provided by Poseidon Principle and internal financial data from Crédit Agricole CIB, as well as future forecasts.\\
 
 On the other hand, in 2018, IMO published several strategies for the reduction of GHG emissions with the goal of reducing them by at least 40\% by 2030 compared to 2008 levels.
 These include, but are not limited to, improving ship design, utilizing cleaner fuels, adopting energy-efficient equipment, and implementing voyage optimization.\\
@@ -145,7 +145,7 @@ Inevitably, the construction of theses new vessels will contribute to greenhouse
 
 Furthermore, the maritime transport market will face a substantial supply reduction due to a global declartion of vessels and the fact that the construction of new vessels averages as two-year timeline.
 Consequently, we can anticipate an extended period of increasing freight rates.
-This translated into greater profit per voyage, which, in turn, allows vessels initially categorized with superior CII classifications (A) to incrementally increase their speed up to the regulatory limit (C or D) to maximize their profitability through increased trip frequency.
+This translated into greater profit per voyage, which, in turn, allows vessels initially categorized with superior CII classifications (A) to incrementally increase their speed-up to the regulatory limit (C or D) to maximize their profitability through increased trip frequency.
 However, this acceleration will also result in an uptick in GHG emissions.\\
 
 Thus, the ultimate question to be addressed is: \textbf{Will GHG emission decrease in the era of global maritime transport deceleration, and if so, to what extent?}\\
@@ -240,7 +240,7 @@ The figure \ref{fig:resistance} shows the resistance received by a ship in a rea
 	\right.
 \end{equation}
 
-$Fc^i_{ini}$, $D_{ini}$ and $v_{ini}$ are the annual fuel consumption, annual voyage distance and annual average speed for 2021, respectively, provided by Credit Agricole CIB.
+$Fc^i_{ini}$, $D_{ini}$ and $v_{ini}$ are the annual fuel consumption, annual voyage distance and annual average speed for 2021, respectively, provided by Crédit Agricole CIB.
 And $i$ represents different types of fuels, including Heavy Fuel Oil (HFO), Light Fuel Oil (LFO), Diesel and Liquefied Natural Gas (LNG). D is the distance of a certain route, and v is the actual voyage speed.
 In reality, most container ships have an average annual speed between 15-17 knots, while bulk carriers have an annual average speed between 10-12.5 knots.
 Thus, the above formula can be well applied to different situations.\\
@@ -595,7 +595,7 @@ The fundamental reason for the second problem is that the entire shipping market
 That is, when fleets generally accelerate to increase supply, freight prices fall, which in turn causes fleets to slow down to reduce fuel costs and increase profits.
 Conversely, when fleets generally slow down, demand outstrips supply in the market, freight rates rise and fleets choose to increase speed to increase the number of trips per year in order to maximize profits.
 In fact, under some extreme initial conditions, the EM program can even go into oscillation. That is, the speed of the fleet keeps cycling between two modes, V1-V2-V1-V2, etc.
-Also to solve this problem, the algorithm sets the maximum number of iterations.
+Also, to solve this problem, the algorithm sets the maximum number of iterations.
 
 
 \subsection{Competition Model}
@@ -789,7 +789,7 @@ We will cover the method of estimation in the next section.
 \subsection{Data and Estimation of parameters}
 
 \subsubsection{Data Source}
-In this report, the ship data involved is sourced from Credit Agricole CIB. This includes basic information about the ships (length, beam, carrying capacity, category) and navigation data (navigation time, navigation distance, fuel consumption, CO2 emissions, CII score).
+In this report, the ship data involved is sourced from Crédit Agricole CIB. This includes basic information about the ships (length, beam, carrying capacity, category) and navigation data (navigation time, navigation distance, fuel consumption, CO2 emissions, CII score).
 This navigation data cannot be made available or displayed directly due to the bank's confidentiality requirements.
 At the same time all ship names must be omitted and indicated only by category plus number (e.g. Container Ship 01).\\
 
@@ -1126,7 +1126,7 @@ Therefore, in order to maximize profits, they will choose to ignore CII regulati
 In turn, the E rating cut-off for becoming 86-100th is drawn up. This leads to the fact that ultimately for some ships with already low initial CII scores, they can choose to accelerate appropriately.
 This increases the total profit without exiting the market.\\
 
-This is a very interesting result, as competitive strategy is often thought of as a very "harsh" measure.
+It is a very interesting result, as competitive strategy is often thought of as a very "harsh" measure.
 Because under such regulations, certain number of ships would be withdrawn from the market in any case.
 But from the point of view of carbon emission control, such a policy would instead lead to both greener and more polluting ships increasing their carbon emissions, contrary to the aims of the IMO.
 
@@ -1151,13 +1151,24 @@ This led to an increase in the boundary, enabling other vessels to accelerate, u
 
 While progress has been made in the models presented in this paper, there are still areas that require improvement. These include:
 \begin{enumerate}
-	\item \textbf{Improvements to the EM algorithm:} The EM algorithm currently used in this report is poor in terms of both convergence and accuracy. The stochastic EM algorithm can probably be used as an effective replacement.
+	\item \textbf{Improvements to the EM algorithm:} The EM algorithm currently used in this report is poor in terms of both convergence and accuracy. In particular, the EM algorithm does not give optimal results with certainty. 
+	Depending on the initial conditions, the results given by the EM algorithm may be local extremes.
 	\item \textbf{More precise estimation of operating costs:} Our current estimate of operating costs is based on a rough estimate of 50\% of total costs in 2021. More detailed calculations will require more accurate fleet billing data, which would need to be supported by a fleet of vessels.
-	\item  \textbf{An accurate understanding of the impact of speed on navigation time:} The relationship between a ship's speed and running time is very complex as it contains a certain element of randomness, while the relationship between waiting time and sailing speed is not linear. By comparing this with the speed-sailing times of the vessels provided by the bank for different years, the equation 11 used in this report still has an error of over 10\%, although some correction has been made. Further machine learning methods need to be considered to fit a true function.
+	\item  \textbf{An accurate understanding of the impact of speed on navigation time:} The relationship between a ship's speed and running time is very complex as it contains a certain element of randomness, while the relationship between waiting time and sailing speed is not linear. 
+	In figure \ref{fig:voyage_dist}, the green line is the predicted value from this model, the orange line is the value obtained from the direct linear regression, and the x marker is the true sailing time.
+	By comparing this with the speed-sailing times of the vessels provided by the bank for different years, the equation 11 used in this report still has an error of over 10\%, although some correction has been made. Further machine learning methods need to be considered to fit a true function.
 	\item \textbf{A more accurate relationship between speed and fuel consumption:} So far we have only made a general distinction between the two cases below and above 13 knots. The real relationship is much more complex.
+	\item \textbf{Forecasts of future freight prices: } With the help of the \textit{IFRS 9: Maritime asset financing LGD} model, it is possible to forecast freight prices for future markets, thus enabling better model accuracy.
 \end{enumerate}
 
 Addressing these areas of improvement will enhance the accuracy and reliability of the models used in this study.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\linewidth]{report-fig/voyage_dist.png}
+	\caption{Voyage distance as function of speed}
+	\label{fig:voyage_dist}
+\end{figure}
 
 
 \newpage

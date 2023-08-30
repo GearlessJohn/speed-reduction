@@ -84,10 +84,10 @@ In pariticular, Crédit Agricole was one of the funding signatories of the Posei
 The Poseidon Principles are a framework established in 2019 to assess and disclose the climate alignment of ship finance portfolios.
 Their main function is to align ship financing with the International Maritime Organization's greenhouse gas reduction targets, promoting a transition to a more sustainable maritime industry.
 The principles require financial institutions to annually measure and disclose the carbon intensity of their shipping portfolios, collaborate with clients to develop decarbonization strategies, and transparently report their climate alignment scores and progress.
-The Poseidon Principles have gained traction within the industry, with major signatories including leading international banks such as Citi, Societe Generale, ABN AMRO, BNP Paribas, DNB, and Crédit Agricole, and maritime lenders committed to driving decarbonization efforts in the shipping sector.
+The Poseidon Principles have gained traction within the industry, with major signatories including leading international banks such as Citi, Société Générale, ABN AMRO, BNP Paribas, DNB, and Crédit Agricole, and maritime lenders committed to driving decarbonization efforts in the shipping sector.
 This aligns with the bank's broader commitment to environmental sustainability and responsible business practices. By adhering to the Poseidon Principles, Crédit Agricole CIB is committed to financing maritime projects that align with necessary climate goals.
 This involves assessing the climate alignment of shipping portfolios, with an aim to enhance methodologies and strategies that drive decarbonization and sustainability in the shipping sector.
-Therefore, \textbf{the main objective of my internship} is to build a model capable of calculating the expected speed of different vessels and the corresponding environmental impact, based on available market information, key data on ship navigation (annual range, fuel consumption, CO2 emissions, etc.) provided by Poseidon Principle and internal financial data from Credit Agricole CIB, as well as future forecasts.\\
+Therefore, \textbf{the main objective of my internship} is to build a model capable of calculating the expected speed of different vessels and the corresponding environmental impact, based on available market information, key data on ship navigation (annual range, fuel consumption, CO2 emissions, etc.) provided by Poseidon Principle and internal financial data from Crédit Agricole CIB, as well as future forecasts.\\
 
 On the other hand, in 2018, IMO published several strategies for the reduction of GHG emissions with the goal of reducing them by at least 40\% by 2030 compared to 2008 levels.
 These include, but are not limited to, improving ship design, utilizing cleaner fuels, adopting energy-efficient equipment, and implementing voyage optimization.\\
@@ -145,7 +145,7 @@ Inevitably, the construction of theses new vessels will contribute to greenhouse
 
 Furthermore, the maritime transport market will face a substantial supply reduction due to a global declartion of vessels and the fact that the construction of new vessels averages as two-year timeline.
 Consequently, we can anticipate an extended period of increasing freight rates.
-This translated into greater profit per voyage, which, in turn, allows vessels initially categorized with superior CII classifications (A) to incrementally increase their speed up to the regulatory limit (C or D) to maximize their profitability through increased trip frequency.
+This translated into greater profit per voyage, which, in turn, allows vessels initially categorized with superior CII classifications (A) to incrementally increase their speed-up to the regulatory limit (C or D) to maximize their profitability through increased trip frequency.
 However, this acceleration will also result in an uptick in GHG emissions.\\
 
 Thus, the ultimate question to be addressed is: \textbf{Will GHG emission decrease in the era of global maritime transport deceleration, and if so, to what extent?}\\
@@ -240,7 +240,7 @@ The figure \ref{fig:resistance} shows the resistance received by a ship in a rea
 	\right.
 \end{equation}
 
-$Fc^i_{ini}$, $D_{ini}$ and $v_{ini}$ are the annual fuel consumption, annual voyage distance and annual average speed for 2021, respectively, provided by Credit Agricole CIB.
+$Fc^i_{ini}$, $D_{ini}$ and $v_{ini}$ are the annual fuel consumption, annual voyage distance and annual average speed for 2021, respectively, provided by Crédit Agricole CIB.
 And $i$ represents different types of fuels, including Heavy Fuel Oil (HFO), Light Fuel Oil (LFO), Diesel and Liquefied Natural Gas (LNG). D is the distance of a certain route, and v is the actual voyage speed.
 In reality, most container ships have an average annual speed between 15-17 knots, while bulk carriers have an annual average speed between 10-12.5 knots.
 Thus, the above formula can be well applied to different situations.\\
@@ -391,7 +391,7 @@ So, according to equation 1, we have:
 
 In addition, in order to calculate the optimal speed for 2023-2024, we need to estimate the fuel and freight prices for this period.
 In this model, \textbf{we use a range of \href{https://www.cmegroup.com/markets/energy/refined-products/singapore-380cst-fuel-oil-platts-swap-futures.html}{[fuel futures prices]} and average them on an annual basis}.
-Beyond that, \textbf{for calculations up to step 3, we assume that freight rates remain constant in 2023-2026}.\\
+Beyond that, \textbf{we use the freight rate index forecasted by the bank's in-house economist to forecast future freight rates}.\\
 
 
 In the absence of CII restrictions, if we want to calculate the 2023-2026 optimal speed combination, we only need to calculate the optimal velocity for each year separately.
@@ -436,7 +436,7 @@ Ultimately we can obtain the optimal combination of speeds $V^\ast$ for a ship u
 
 
 The final domain of optimization will be a set of $61^4$ points.
-And we cannot compute the optimal solution directly in reverse order.
+We could compute it directly, but a better solution would be to use an inverse order algorithm.
 Let's consider the optimization of profits in a reverse chronological order.
 The sequence can be described as follows:
 
@@ -468,8 +468,22 @@ where $AP_i^\ast = AP(v_i^\ast, FP_i, FR_i, CT_i)$ and $CII_i$ is a function of 
 	\label{tb:sample_profit}
 \end{table}
 
+However, the above algorithm has a bug.
 The table (\ref{tb:sample_profit}) is a tabular representation of the profit margins based on different conditions.
-We proceed by computing the maximum profit of year 4, where $P_4 = 1$ and $C_4 = C$. Subsequently, we obtain $P_3 = 1.5$ and $P_2 = 1.5$ with $C_3 = C_4 = D$. For the first year, the fleet is necessitated to choose a speed such that $C_1 = C$, if it aims to retain its entire profit from year 4. Consequently, $P_1$ escalates to 2.5, enabling the fleet to retain the profit of year 4. The cumulative profit totals to $1+1.5+1.5+2.5 = 6.5$. However, there might exist a superior choice, namely to decelerate in year 2 to enforce $C_2 = C$. Then, $P_2$ decreases to 1.2, but $P_1$ increases to 3, whilst retaining $P_4 = 1$. Consequently, the final total profit amounts to $1 + 1.5 + 1.3 + 3 = 6.8$.
+We proceed by computing the maximum profit of year 4, where $P_4 = 1$ and $C_4 = C$. Subsequently, we obtain $P_3 = 1.5$ and $P_2 = 1.5$ with $C_3 = C_4 = D$. 
+For the first year, the fleet is necessitated to choose a speed such that $C_1 = C$, if it aims to retain its entire profit from year 4. 
+Consequently, $P_1$ escalates to 2.5, enabling the fleet to retain the profit of year 4. 
+The cumulative profit totals to $1+1.5+1.5+2.5 = 6.5$. 
+However, there might exist a superior choice, namely to decelerate in year 2 to enforce $C_2 = C$. 
+Then, $P_2$ decreases to 1.2, but $P_1$ increases to 3, whilst retaining $P_4 = 1$. 
+Consequently, the final total profit amounts to $1 + 1.5 + 1.3 + 3 = 6.8$. \\ 
+
+To solve this bug, we need to add an extra step. 
+When the above algorithm outputs a result where the first three years are $CDD$, we need to additionally calculate the results of $DCD$, $DDC$ and take the best result. Mathematically, we can prove that this algorithm gives the best result by reverse order strong recursion.
+\textbf{With the reverse order algorithm, we can reduce the complexity of the problem from $61^4$ to $61*4$.}
+
+
+
 
 
 \subsubsection{Step 3: Construction of new vessels}
@@ -546,6 +560,8 @@ In the process of ensuring stable freight rate calculations, we employ the widel
 	\item Repeat steps M and E until either a specified convergence condition is achieved, such as the average absolute change in speed being less than 0.1, or the maximum predetermined number of iterations has been reached.\\
 \end{enumerate}
 
+In particular, the maximum number of iterations is set to 12. 
+Namely, it is assumed that the global fleet adjusts its speed once a month and up to 12 times a year.
 
 \subsubsection{Theoretical justification and guarantees}
 % Provide here some formal theory justifying the correctness of the method. If it applies, state theoretical guarantees and provide a brief overview of the analysis.
@@ -579,7 +595,7 @@ The fundamental reason for the second problem is that the entire shipping market
 That is, when fleets generally accelerate to increase supply, freight prices fall, which in turn causes fleets to slow down to reduce fuel costs and increase profits.
 Conversely, when fleets generally slow down, demand outstrips supply in the market, freight rates rise and fleets choose to increase speed to increase the number of trips per year in order to maximize profits.
 In fact, under some extreme initial conditions, the EM program can even go into oscillation. That is, the speed of the fleet keeps cycling between two modes, V1-V2-V1-V2, etc.
-Also to solve this problem, the algorithm sets the maximum number of iterations.
+Also, to solve this problem, the algorithm sets the maximum number of iterations.
 
 
 \subsection{Competition Model}
@@ -773,7 +789,7 @@ We will cover the method of estimation in the next section.
 \subsection{Data and Estimation of parameters}
 
 \subsubsection{Data Source}
-In this report, the ship data involved is sourced from Credit Agricole CIB. This includes basic information about the ships (length, beam, carrying capacity, category) and navigation data (navigation time, navigation distance, fuel consumption, CO2 emissions, CII score).
+In this report, the ship data involved is sourced from Crédit Agricole CIB. This includes basic information about the ships (length, beam, carrying capacity, category) and navigation data (navigation time, navigation distance, fuel consumption, CO2 emissions, CII score).
 This navigation data cannot be made available or displayed directly due to the bank's confidentiality requirements.
 At the same time all ship names must be omitted and indicated only by category plus number (e.g. Container Ship 01).\\
 
@@ -819,16 +835,16 @@ Finally, for ship i, its GHG emission in shipbuilding phase are given by:
 \end{equation}
 
 \paragraph{Elasticity between freight rate and supply:}
-In figure \ref{fig:elasticity}, we give the specific calculation of the elasticity 1.93 in equation (\ref{eq:fr_mf}).\\
+In figure \ref{fig:elasticity}, we give the specific calculation of the elasticity 1.38 in equation (\ref{eq:fr_mf}).\\
 
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\linewidth]{report-fig/Elasticity.png}
-	\caption{Linear relationship between the Clarkson Freight Index and Chinese exports}
+	\caption{Linear relationship between the China Containerized Freight Index and Chinese exports}
 	\label{fig:elasticity}
 \end{figure}
 
-The Clarkson Index is provided by Crédit Agricole while the China exports data comes from \href{https://fred.stlouisfed.org/series/XTEXVA01CNM667S}{[FRED]}.
+The China Containerized Freight Index is provided by Crédit Agricole while the China exports data comes from \href{https://fred.stlouisfed.org/series/XTEXVA01CNM667S}{[FRED]}.
 All raw data are calculated by month.
 Before performing a linear regression, we first calculate an annual average of the data.
 This has two advantages, one of which is that it removes the effect of periodicity within each year.
@@ -918,14 +934,6 @@ The algorithm used by \texttt{numpy.argmax} is straightforward and can be summar
 It's important to note that the purpose of \texttt{numpy.argmax} is not to find the optimal solution in terms of algorithmic complexity or performance optimization.
 Instead, it provides a convenient way to obtain the indices of maximum values in an array using highly optimized NumPy routines, which leverage low-level optimizations for efficient array manipulation and element-wise comparisons.\\
 
-
-
-There could be 'smarter' solutions like reverse order calculation.
-Indeed, the main problem with the reverse order algorithm in section 2.2.2 lies in the emergence of the DDD situation. This problem can probably be improved by specialized treatment of the DDD case.
-For example, when the optimal option for 2023-2025 is CDD and the maximum profit rate for 2023 leads to an CII of D, different combinations of C and D can be tried, e.g. DCD, DCC. However, the validity of this improved algorithm has yet to be tested and proved mathematically.
-For the moment, using the full calculation to find the maximum value takes two seconds per ship and is therefore not the most urgent part to improve.\\
-
-
 \subsubsection{EM Algorithm}
 
 The second part of intensive calculations of the report involves calculating an equilibrium point for flexible prices, as outlined in section 2.2.4 and 2.3.
@@ -959,7 +967,7 @@ In this formula, the variables and terms represent the following:
 	\item $\text{previous\_velocity}_{i,t}$ represents the velocity of the same container ship $i$ in the previous iteration.
 \end{itemize}
 
-And for Competition model, the only change is that there is only one year.\\
+And for Competition mean-field model, the only change is that there is only one year.\\
 
 In summary, the NumPy library in Python was used to efficiently calculate the profitability of different vessel speeds while considering CII limits.
 For the calculation of equilibrium points with flexible prices, the EM algorithm was employed, which offers advantages such as handling missing data and converging to local optima.
@@ -1118,7 +1126,7 @@ Therefore, in order to maximize profits, they will choose to ignore CII regulati
 In turn, the E rating cut-off for becoming 86-100th is drawn up. This leads to the fact that ultimately for some ships with already low initial CII scores, they can choose to accelerate appropriately.
 This increases the total profit without exiting the market.\\
 
-This is a very interesting result, as competitive strategy is often thought of as a very "harsh" measure.
+It is a very interesting result, as competitive strategy is often thought of as a very "harsh" measure.
 Because under such regulations, certain number of ships would be withdrawn from the market in any case.
 But from the point of view of carbon emission control, such a policy would instead lead to both greener and more polluting ships increasing their carbon emissions, contrary to the aims of the IMO.
 
@@ -1143,13 +1151,23 @@ This led to an increase in the boundary, enabling other vessels to accelerate, u
 
 While progress has been made in the models presented in this paper, there are still areas that require improvement. These include:
 \begin{enumerate}
-	\item \textbf{Improvements to the EM algorithm:} The EM algorithm currently used in this report is poor in terms of both convergence and accuracy. The stochastic EM algorithm can probably be used as an effective replacement.
+	\item \textbf{Improvements to the EM algorithm:} The EM algorithm currently used in this report is poor in terms of both convergence and accuracy. In particular, the EM algorithm does not give optimal results with certainty. 
+	Depending on the initial conditions, the results given by the EM algorithm may be local extremes.
 	\item \textbf{More precise estimation of operating costs:} Our current estimate of operating costs is based on a rough estimate of 50\% of total costs in 2021. More detailed calculations will require more accurate fleet billing data, which would need to be supported by a fleet of vessels.
-	\item  \textbf{An accurate understanding of the impact of speed on navigation time:} The relationship between a ship's speed and running time is very complex as it contains a certain element of randomness, while the relationship between waiting time and sailing speed is not linear. By comparing this with the speed-sailing times of the vessels provided by the bank for different years, the equation 11 used in this report still has an error of over 10\%, although some correction has been made. Further machine learning methods need to be considered to fit a true function.
+	\item  \textbf{An accurate understanding of the impact of speed on navigation time:} The relationship between a ship's speed and running time is very complex as it contains a certain element of randomness, while the relationship between waiting time and sailing speed is not linear. 
+	In figure \ref{fig:voyage_dist}, the green line is the predicted value from this model, the orange line is the value obtained from the direct linear regression, and the x marker is the true sailing time.
+	By comparing this with the speed-sailing times of the vessels provided by the bank for different years, the equation 11 used in this report still has an error of over 10\%, although some correction has been made. Further machine learning methods need to be considered to fit a true function.
 	\item \textbf{A more accurate relationship between speed and fuel consumption:} So far we have only made a general distinction between the two cases below and above 13 knots. The real relationship is much more complex.
 \end{enumerate}
 
 Addressing these areas of improvement will enhance the accuracy and reliability of the models used in this study.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\linewidth]{report-fig/voyage_dist.png}
+	\caption{Voyage distance as function of speed}
+	\label{fig:voyage_dist}
+\end{figure}
 
 
 \newpage

@@ -28,7 +28,7 @@ rt_container_0 = route.Route(
     name="Shanghai-Rotterdam",
     route_type="CONTAINER SHIPS",
     distance=11999.0,
-    freight_rates=np.array([1000.0, 1000.0, 1000.0, 1000.0]),
+    freight_rates=np.array([1000.0, 1000.0 * 16.9 / 14, 1000.0 * 16.9 / 11.1, 1000.0 * 16.9 / 12.4]),
     utilization_rate=0.95,
     fuel_ratio=0.5,
 )
@@ -37,7 +37,7 @@ rt_bulker_0 = route.Route(
     name="Houston-Shanghai",
     route_type="BULKERS",
     distance=12324.0,
-    freight_rates=np.array([35.0, 35.0, 35.0, 35.0]),
+    freight_rates=np.array([35.0, 35.0 * 15.3 / 14.6, 35.0 * 16.1 / 14.6, 35.0 * 16.5 / 14.6]),
     utilization_rate=0.9,
     fuel_ratio=0.5,
 )

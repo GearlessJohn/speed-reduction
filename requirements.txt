@@ -4,3 +4,4 @@ tqdm>=4.64.1
 pandas>=1.4.4
 setuptools>=65.3.0
 statsmodels>=0.13.2
+scikit-learn>=1.2.2
